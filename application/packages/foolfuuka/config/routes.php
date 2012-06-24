@@ -12,6 +12,7 @@ if(
 	$route['search'] = "foolfuuka/chan/search";
 	$route['search/(.*?)'] = "foolfuuka/chan/search/$1";
 	
+	$route['admin'] = "foolfuuka/boards/manage";
 	$route['admin/boards'] = "foolfuuka/boards/manage";
 	$route['admin/boards/(.*?)'] = "foolfuuka/boards/$1";
 	$route['admin/posts'] = "foolfuuka/posts";

@@ -201,7 +201,7 @@ class Post_model extends CI_Model
 			ON
 			' . ($join_on ? $join_on : $this->radix->get_table($board)) . '.`doc_id`
 			=
-			' . $this->db->protect_identifiers('xg') . '.`doc_id`
+			' . $this->db->protect_identifiers('xg') . '.`extra_id`
 		';
 	}
 
@@ -2470,7 +2470,7 @@ class Post_model extends CI_Model
 		{
 			return FALSE;
 		}
-
+		//die(print_r($query->row(),true));
 		return $query->row();
 	}
 
@@ -3089,7 +3089,7 @@ class Post_model extends CI_Model
 
 		$this->db->query('
 			INSERT INTO ' . $this->radix->get_table($board, '_extra') .'
-			(doc_id, json' . (!empty($extra_columns)?', ' . implode(', ', $extra_columns):'') . ')
+			(extra_id, json' . (!empty($extra_columns)?', ' . implode(', ', $extra_columns):'') . ')
 			VALUES
 			(' . implode(', ', array_map(function($extra){ return '?'; }, $extra)). ')',
 			$extra
