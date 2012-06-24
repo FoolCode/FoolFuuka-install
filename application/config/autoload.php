@@ -37,7 +37,7 @@
 |
 */
 
-$autoload['packages'] = array(APPPATH.'packages/foolfuuka/');
+$autoload['packages'] = array(APPPATH.'packages/' . FOOL_PACKAGE . '/');
 
 
 /*

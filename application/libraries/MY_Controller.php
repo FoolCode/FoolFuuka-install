@@ -36,8 +36,12 @@ class MY_Controller extends CI_Controller
 
 			// plugin system as early we can without losing on security
 			$this->load->model('plugins_model', 'plugins');
-			$this->plugins->load_plugins();
+			
+			require_once 'application/packages/foolfuuka/package_plugin.php';
+			$this->plugins->inject_plugin('package', 'Package_plugin');
 
+			$this->plugins->load_plugins();
+			
 			$this->plugins->run_hook('ff_my_controller_after_load_settings');
 
 			// This is the first chance we get to load the right translation file

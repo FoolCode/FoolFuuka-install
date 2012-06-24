@@ -11,9 +11,6 @@ class Fuuka_Controller extends MY_Controller
 	{
 		parent::__construct();
 		
-		// load the radixes (boards)
-		$this->load->model('radix_model', 'radix');
-		
 		Fuuka_Controller::cron();
 	}
 
