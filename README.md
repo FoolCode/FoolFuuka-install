@@ -1,66 +1,42 @@
-FoOlFuuka
-=========
+#FuelPHP
 
-### Notice: FoOlFuuka is not yet ready to be installed. 
+* Version: 1.2
+* [Website](http://fuelphp.com/)
+* [Release Documentation](http://docs.fuelphp.com)
+* [Development Documentation](http://fueldevdocs.exite.eu) and in its own [git repo](https://github.com/fuel/docs)
+* [Forums](http://fuelphp.com/forums) for comments, discussion and community support
 
-The following is about the features that will be available when it reaches version 0.8, that by our plans will be the first version that can be used by the public.
+## Description
 
-About
------
+FuelPHP is a fast, lightweight PHP 5.3 framework. In an age where frameworks are a dime a dozen, We believe that FuelPHP will stand out in the crowd.  It will do this by combining all the things you love about the great frameworks out there, while getting rid of the bad.
 
-FoOlFuuka is an imageboard written in PHP, based on the CodeIgniter MVC framework.
+##Development Team
 
-The project started as an alternative to the Fuuka interface, in order to be able to implement moderation features and few optimizations to be able to take on the traffic. Over time we noticed that it would've been a successful and complete imageboard script. Now it can work both as an archive interface through Asagi, and as a normal imageboard.
+* Harro Verton - Project Manager, Developer ([http://wanwizard.eu/](http://wanwizard.eu/))
+* Jelmer Schreuder - Project Architect, Senior Developer ([http://jelmerschreuder.nl/](http://jelmerschreuder.nl/))
+* Frank de Jonge - Developer ([http://frenky.net/](http://frenky.net/))
+* Phil Sturgeon - Developer ([http://philsturgeon.co.uk](http://philsturgeon.co.uk))
+* Dan Horrigan - Founder, Developer ([http://dhorrigan.com](http://dhorrigan.com))
 
-This document will explain what's cool about FoOlFuuka. You will have to go to the [documentation site](http://foolrulez.github.com/FoOlFuuka/) for installation instructions and other useful articles.
+##Downloading FuelPHP
 
-Requirements
-------------
+Since FuelPHP uses Submodules and since GitHub Downloads don't support submodules, do not download FuelPHP using the Downloads link here. Instead, use the [download links location in the docs](http://docs.fuelphp.com/installation/download.html).
 
-* PHP 5.3, __PHP 5.3.11+ suggested__
-* MySQL 5.1, __MySQL 5.5+ suggested__
+##Cloning FuelPHP
 
-The heart
----------
+FuelPHP uses submodules for things like the **core** folder.  After you clone the repository you will need to init and update the submodules.
 
-* Theme appeal 
+Here is the basic usage:
 
-    You won't have to choose an imageboard script for its looks anymore, because FoOlFuuka can be any of them, with its powerful theme system, allowing you to fully customize the interface, from Yotsuba to Reddit (you know, for April Fools).
+    git clone --recursive git://github.com/fuel/fuel.git
 
-* Stress relieved
+The above command is the same as running:
 
-    We need FoOlFuuka to store over 100.000.000 posts without ever pruning any, while there's hundreds of people browsing them. This challenge brought us to build an optimized system that will feel light both on shared hosts and on sites as large... at least as large as ours.
+    git clone git://github.com/fuel/fuel.git
+    cd fuel/
+    git submodule init
+    git submodule update
 
-* Code sparkles
+You can also shorten the last two commands to one:
 
-    Web applications easily become huge, and one can't use improvisation when building one from scratch. That's why with PHP it's good practice to use battle-tested frameworks (like for any other language in case of webApps). CodeIgniter irons the "bad parts" of PHP, while we keep the code readable and extensible. It's coded by a team, so we care about this.
-
-* Search unites
-
-    Projects need connections, people need to look back to their own posts, oldfriends want to tell how times have changed. The search system keeps your old posts alive with its many options, so your community can keep track of the posts and kick butt.
-
-* Discussions never end
-
-    Inherited like the search system from Fuuka, we've powered up the Ghost system to work also with normal boards. Because threads are never deleted, it would be annoying to see old threads necroed. That's how old threads become ghosts, and whoever posts in them will get the thread bumped only in the Ghost index. That pun was not intended.
-
-* Admin happy
-
-    Never touch the configuration files. The administration panel covers everything, from board creation to archive fetcher startup. From giving you server suggestions to adding MarkDown help pages. Migrations are handled, auto-upgrades too.
-
-* Easy to install
-
-    Have you ever installed Wordpress, or just any PHP application? FoOlFuuka is just as easy to install. Reach our wiki for details.
-
-The Team
---------
-
-The members of the FoOlz team that contribute to this project:
-* Woxxy - http://twitter.com/woxxy
-* oohnoitz - http://twitter.com/oohnoitz
-* bennner - http://twitter.com/bennnner
-* MarieFairchild - http://twitter.com/siveruu
-* Darais - http://twitter.com/daraistenko
-
-Thanks to the rest of the team for putting up with us wasting time on this large project.
-
-Special thanks to Eksopl, coder of [Fuuka](http://github.com/eksopl/fuuka) and [Asagi](http://github.com/eksopl/asagi) archivers, for his collaboration and advice.
+    git submodule update --init
