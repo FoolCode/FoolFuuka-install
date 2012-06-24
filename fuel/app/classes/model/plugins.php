@@ -23,14 +23,14 @@ class Plugins extends \Model
 	 *
 	 * @var array 
 	 */
-	private $_controller_uris = array();
+	private static $_controller_uris = array();
 	
 	/**
 	 * List of hooks with their associated classes, priority and callback
 	 * 
 	 * @var array 
 	 */
-	private $_hooks = array();
+	private static $_hooks = array();
 
 
 	/**
@@ -88,22 +88,22 @@ class Plugins extends \Model
 		$slugs_with_data = array();
 		foreach ($slugs as $slug)
 		{
-			$done = FALSE;
+			$done = false;
 			foreach ($result as $r)
 			{
 				if ($slug == $r->slug)
 				{
 					$slugs_with_data[$slug] = $r;
-					$done = TRUE;
+					$done = true;
 				}
 			}
 			
-			if($done === FALSE) $slugs_with_data[$slug] = new stdClass();
+			if($done === false) $slugs_with_data[$slug] = new stdClass();
 			$slugs_with_data[$slug]->info = $this->get_info_by_slug($slug);
 
 			if (!$done)
 			{
-				$slugs_with_data[$slug]->enabled = FALSE;
+				$slugs_with_data[$slug]->enabled = false;
 			}
 		}
 
@@ -131,18 +131,13 @@ class Plugins extends \Model
 	public static function get_by_slug($slug)
 	{
 		$query = DB::select('*')->from('plugins')->where('slug', $slug)->execute();
+
+		if(!count($query))
+			return false;
 		
-		$this->db->query('
-			SELECT *
-			FROM ' . $this->db->dbprefix('plugins') . '
-			WHERE slug = ?
-		',
-			array($slug));
+		$query[0]->info = $this->get_info_by_slug($slug);
 
-		$plugin = $query->row();
-		$plugin->info = $this->get_info_by_slug($slug);
-
-		return $plugin;
+		return $query[0];
 	}
 
 
@@ -162,9 +157,9 @@ class Plugins extends \Model
 				continue;
 			
 			$slug = $plugin->slug;
-			if (file_exists('content/plugins/' . $slug . '/' . $slug . '.php'))
+			if (file_exists(DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php'))
 			{
-				require_once 'content/plugins/' . $slug . '/' . $slug . '.php';
+				require_once DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php';
 				$this->$slug = new $slug();
 
 				if ($initialize && method_exists($this->$slug, 'initialize_plugin'))
@@ -174,7 +169,7 @@ class Plugins extends \Model
 			}
 			else
 			{
-				log_message('error', 'Plugin to be loaded couldn\'t be found: ' . $slug);
+				log_message('error', 'Plugin to be loaded couldn\'t be found: '.$slug);
 			}
 		}
 	}
@@ -213,13 +208,7 @@ class Plugins extends \Model
 	 */
 	public function enable($slug)
 	{
-		$this->db->query('
-			INSERT INTO ' . $this->db->dbprefix('plugins') . '
-			(slug, enabled)
-			VALUES (?, 1)
-			ON DUPLICATE KEY UPDATE enabled = 1
-		',
-			array($slug));
+		DB::insert('plugins')->set(array('slug' => $slug, 'enabled' => 1))->execute();
 
 		$this->upgrade($slug);
 		
@@ -240,12 +229,7 @@ class Plugins extends \Model
 	 */
 	public function disable($slug)
 	{
-		$query = $this->db->query('
-			UPDATE ' . $this->db->dbprefix('plugins') . '
-			SET enabled = 0
-			WHERE slug = ?
-		',
-			array($slug));
+		DB::insert('plugins')->set(array('slug' => $slug, 'enabled' => 0))->execute();
 
 		if(method_exists($this->$slug, 'plugin_disable'))
 			$this->$slug->plugin_disable();
@@ -264,7 +248,7 @@ class Plugins extends \Model
 		if(method_exists($this->$slug, 'plugin_remove'))
 			$this->$slug->plugin_remove();
 
-		delete_files('content/plugins/' . $slug, TRUE);
+		delete_files(DOCROOT.'content/plugins/'.$slug, TRUE);
 	}
 
 
@@ -275,17 +259,17 @@ class Plugins extends \Model
 	 * @param string $slug the directory name of the plugin
 	 * @return boolean TRUE on success, FALSE on failure
 	 */
-	function upgrade($slug)
+	public function upgrade($slug)
 	{
 		$plugin = $this->get_by_slug($slug);
 
-		if (file_exists('content/plugins/' . $slug . '/' . $slug . '.php'))
+		if (file_exists(DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php'))
 		{
-			require_once 'content/plugins/' . $slug . '/' . $slug . '.php';
+			require_once DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php';
 		}
 		else
 		{
-			log_message('error', 'Plugin to be loaded couldn\'t be found: ' . $slug);
+			log_message('error', 'Plugin to be loaded couldn\'t be found: '.$slug);
 			return array('error', 'file_not_found');
 		}
 
@@ -297,12 +281,7 @@ class Plugins extends \Model
 			if(method_exists($class, 'plugin_install'))
 				$class->plugin_install();
 
-			$query = $this->db->query('
-				UPDATE ' . $this->db->dbprefix('plugins') . '
-				SET revision = 0
-				WHERE slug = ?
-			',
-				array($slug));
+			DB::update('plugins')->value('revision', 0)->where('slug', $slug)->execute();
 		}
 
 		$done = FALSE;
@@ -327,12 +306,7 @@ class Plugins extends \Model
 					break;
 				}
 
-				$query = $query->db->query('
-					UPDATE ' . $this->db->dbprefix('plugins') . '
-					SET revision = ?
-					WHERE slug = ?
-				',
-					array($plugin->revision + 1, $slug));
+				DB::update('plugins')->value('revision', $plugin->revision + 1)->where('slug', $slug)->execute();
 			}
 			else
 			{
@@ -350,7 +324,7 @@ class Plugins extends \Model
 	 * @param array $uri the uri_array, basically $this->uri->segment_array()
 	 * @return bool|array FALSE if not found, else the item from $this->_controller_uris
 	 */
-	function get_controller_function($uri)
+	public static function get_controller_function($uri)
 	{
 		return $this->is_controller_function($uri);
 	}
@@ -364,7 +338,7 @@ class Plugins extends \Model
 	 * @param array $uri the uri_array, basically $this->uri->segment_array()
 	 * @return bool|array FALSE if not found, else the item from $this->_controller_uris
 	 */
-	function is_controller_function($uri_array)
+	public static function is_controller_function($uri_array)
 	{
 		// codeigniter $this->uri->rsegment_uri sends weird indexes in the array with 1+ start
 		// this reindexes the array
@@ -401,7 +375,7 @@ class Plugins extends \Model
 	 * @param type $controller_name
 	 * @param type $method 
 	 */
-	function register_controller_function(&$class, $uri_array, $method)
+	public static function register_controller_function(&$class, $uri_array, $method)
 	{
 		$this->_controller_uris[] = array('uri_array' => $uri_array, 'plugin' => $class, 'method' => $method);
 	}
@@ -413,7 +387,7 @@ class Plugins extends \Model
 	 * @param string $section under which controller/section of the sidebar must this sidebar element appear
 	 * @param array $array the overriding array, comprehending only the additions and modifications to the sidebar
 	 */
-	public function register_admin_sidebar_element($section, $array = null)
+	public static function register_admin_sidebar_element($section, $array = null)
 	{
 		// the user can also send an array with the index inseted in $section
 		if(!is_null($array))
@@ -514,7 +488,7 @@ class Plugins extends \Model
 	 * @param int $priority the lowest, the highest the priority. negatives ALLOWED
 	 * @param string|Closure $method name of the method or the closure to run
 	 */
-	public function register_hook(&$class, $target, $priority, $method)
+	public static function register_hook(&$class, $target, $priority, $method)
 	{
 		$this->_hooks[$target][] = array('plugin' => $class, 'priority' => $priority, 'method' => $method);
 	}
