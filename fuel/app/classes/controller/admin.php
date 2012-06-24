@@ -5,18 +5,12 @@ class Controller_Admin extends Controller
 
     public function before()
     {
-		
+		if( ! Auth::has_access('admin.logged'))
+			Response::redirect('admin/auth/login');
     }
-
-    // your methods
 
     public function action_index()
     {
-        // load the dashboard
-    }
-
-    public function action_login()
-    {
-        // log in the user
+        Response::redirect('admin/boards/manage');
     }
 }

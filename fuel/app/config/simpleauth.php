@@ -56,6 +56,9 @@ return array(
 	 * Roles as name => array(location => rights)
 	 */
 	'roles' => array(
+		'user' => array('admin' => array('logged')),
+		'moderator' => array('admin' => array('logged')),
+		'admin' => array('admin' => array('logged')),
 		/**
 		 * Examples
 		 * ---
