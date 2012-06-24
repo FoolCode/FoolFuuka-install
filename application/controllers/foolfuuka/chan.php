@@ -392,7 +392,7 @@ class Chan extends Public_Controller
 				'tools_modal',
 				'tools_search'
 			),				// use MY_Controller to make the plugin system easier to use
-			'backend_vars' => MY_Controller::get_backend_vars() // for JSON on bottom of page, from MY_Controller
+			'backend_vars' => Fuuka_Controller::get_backend_vars() // for JSON on bottom of page, from MY_Controller
 		);
 
 		// include the board shortname in the backend_vars if it's set

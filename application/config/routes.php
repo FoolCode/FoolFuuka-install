@@ -38,8 +38,6 @@
 |
 */
 
-$route['default_controller'] = "chan";
-
 // if we're using special subdomains or if we're under system stuff
 if(
 	!defined('FOOL_SUBDOMAINS_ENABLED')
@@ -51,18 +49,19 @@ if(
 	$route['api/chan'] = "api/chan_api";
 	$route['api/chan/(.*?)'] = "api/chan_api/$1";
 	$route['cli'] = "cli";
-	$route['search'] = "chan/search";
-	$route['search/(.*?)'] = "chan/search/$1";
-	$route['admin'] = "admin/boards";
 	$route['admin/members/members'] = 'admin/members/membersa';
 	$route['admin/plugins'] = "admin/plugins_admin/manage";
 	$route['admin/plugins/(.*?)'] = "admin/plugins_admin/$1";
 
-	$route_admin_controllers = glob(APPPATH . 'controllers/admin/*.php');
+	$route_admin_controllers = array_merge(
+		glob(APPPATH . 'controllers/admin/*.php'), 
+		glob(APPPATH . 'controllers/' . FOOL_PACKAGE . '/*.php')
+	);
 
 	foreach($route_admin_controllers as $key => $item)
 	{
 		$item = str_replace(APPPATH . 'controllers/admin/', '', $item);
+		$item = str_replace(APPPATH . 'controllers/' . FOOL_PACKAGE . '/', '', $item);
 		$route_admin_controllers[$key] = substr($item, 0, strlen($item) - 4);
 	}
 	$route_admin_controllers[] = 'plugins';
@@ -72,29 +71,11 @@ if(
 	$route['admin/(?!(' . implode('|', $route_admin_controllers) . '))(\w+)/(.*?)'] = "admin/plugin/$2/$3";
 }
 
-// if we're using special subdomains or if we're under boards/archives:
-if(
-	!defined('FOOL_SUBDOMAINS_ENABLED')
-	|| strpos($_SERVER['HTTP_HOST'], FOOL_SUBDOMAINS_BOARD) !== FALSE
-	|| strpos($_SERVER['HTTP_HOST'], FOOL_SUBDOMAINS_ARCHIVE) !== FALSE
-)
-{
-	if(!defined('FOOL_SUBDOMAINS_ENABLED'))
-	{
-		$protected_radixes = implode('|', unserialize(FOOL_PROTECTED_RADIXES));
-		$route['(?!(' . $protected_radixes . '))(\w+)/(.*?).xml'] = "chan/$2/feeds/$3";
-		$route['(?!(' . $protected_radixes . '))(\w+)/(.*?)'] = "chan/$2/$3";
-	}
-	else
-	{
-		$route['(\w+)/(.*?).xml'] = "chan/$1/feeds/$2";
-		$route['(\w+)/(.*?)'] = "chan/$1/$2";
-	}
-	$route['(\w+)'] = "chan/$1/page";
-}
+//$route['default_controller'] = "foolfuuka/chan";
+//$route['404_override'] = 'foolfuuka/chan/show_404';
 
-$route['404_override'] = 'chan/show_404';
 
+include 'application/packages/' . FOOL_PACKAGE . '/config/routes.php';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

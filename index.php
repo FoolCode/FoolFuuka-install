@@ -19,6 +19,7 @@
  *
  */
 	define('ENVIRONMENT', 'development');
+	define('FOOL_PACKAGE', 'foolfuuka');
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -193,7 +194,7 @@ if (defined('ENVIRONMENT'))
 	
 /*
  *---------------------------------------------------------------
- * Custom FoOlFuuka
+ * Custom FoOlFrame
  *---------------------------------------------------------------
  */
 	// die if there is a MAINTENANCE.html file, and include it
@@ -201,6 +202,8 @@ if (defined('ENVIRONMENT'))
 	{
 		die(file_get_contents('MAINTENANCE.html'));
 	}
+	
+	require_once 'application/packages/' . FOOL_PACKAGE . '/config/constants.php';
 
 
 /*

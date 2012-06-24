@@ -410,7 +410,10 @@ if (!function_exists('__autoload')) {
 	function __autoload($class) {
 		if (strpos($class, 'CI_') !== 0) {
 			if (file_exists(APPPATH . 'libraries/' . $class . EXT))
-				@include_once( APPPATH . 'libraries/' . $class . EXT );
+				include_once( APPPATH . 'libraries/' . $class . EXT );
+
+			if (file_exists(APPPATH . 'packages/' . FOOL_PACKAGE . '/libraries/' . $class . EXT))
+				include_once( APPPATH . 'packages/' . FOOL_PACKAGE . '/libraries/' . $class . EXT );
 		}
 	}
 

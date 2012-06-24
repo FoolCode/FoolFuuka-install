@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class Public_Controller extends MY_Controller
+class Public_Controller extends Fuuka_Controller
 {
 	public function __construct()
 	{
