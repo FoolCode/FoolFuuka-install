@@ -20,6 +20,16 @@ class Controller_Admin_Auth extends Controller_Admin
 			if ($auth->login())
 			{
 				// credentials ok, go right in
+				Cookie::set('autologin', Session::get('login_hash'));
+				DB::insert('user_autologin')->set(array(
+					'user_id' => Auth::get_id(),
+					'user_hash' => Session::get('login_hash'),
+					'expiration' => time() + 604800, // 7 days
+					'last_ip' => Input::ip_decimal(),
+					'user_agent' => Input::user_agent(),
+					'last_login' => time()
+				))->execute();
+
 				Response::redirect('admin');
 			}
 			else

@@ -1,6 +1,7 @@
 <?php
 
-class View extends Fuel\Core\View {
+class View extends Fuel\Core\View
+{
 
 	protected function process_file($file_override = false)
 	{
