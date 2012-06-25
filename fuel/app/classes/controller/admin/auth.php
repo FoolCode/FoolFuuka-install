@@ -32,12 +32,11 @@ class Controller_Admin_Auth extends Controller_Admin
 		}
 
 		// Show the login form
-		$data['controller_title'] = __('Authorization');
-		$data['navbar'] = View::forge('admin/navbar', $data);
-		$data['sidebar'] = View::forge('admin/sidebar', $data);
-		$data['main_content_view'] = View::forge('admin/auth/login', $data);
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Login');
+		$this->_views['main_content_view'] = View::forge('admin/auth/login');
 
-		return Response::forge(View::forge('admin/default', $data));
+		return Response::forge(View::forge('admin/default', $this->_views));
 	}
 
 
@@ -54,7 +53,8 @@ class Controller_Admin_Auth extends Controller_Admin
 			if($val->run())
 			{
 				Auth::create_user(Input::post('username'), Input::post('password'), Input::post('email'));
-				Notice::set('success', __('The registration was successful.'));
+				Notice::set_flash('success', __('The registration was successful.'));
+				Response::redirect('admin/auth/login');
 			}
 			else
 			{
@@ -63,14 +63,11 @@ class Controller_Admin_Auth extends Controller_Admin
 
 		}
 
-		$data['controller_title'] = __('Authorization');
-		$data['navbar'] = View::forge('admin/navbar', $data);
-		$data['sidebar'] = View::forge('admin/sidebar', $data);
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Register');
+		$this->_views['main_content_view'] = View::forge('admin/auth/register');
 
-
-		$data['main_content_view'] = View::forge('admin/auth/register', $data);
-
-		return Response::forge(View::forge('admin/default', $data));
+		return Response::forge(View::forge('admin/default', $this->_views));
 	}
 
 

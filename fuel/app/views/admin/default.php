@@ -30,8 +30,9 @@
 					<ul class="breadcrumb">
 						<?php
 						echo '<li>' . $controller_title . '</li>';
-						if (isset($function_title))
-							echo ' <span class="divider">/</span> <li>' . $function_title . '</li>';
+
+						if (isset($method_title))
+							echo ' <span class="divider">/</span> <li>' . $method_title . '</li>';
 						if (isset($extra_title) && !empty($extra_title))
 						{
 							$breadcrumbs = count($extra_title);
@@ -55,8 +56,12 @@
 
 					<div class="alerts">
 						<?php
-						//echo get_notices();
-						?>
+							$notices = array_merge(Notices::get(), Notices::flash());
+							foreach($notices as $notice) : ?>
+							<div class="alert alert-"<?= $notice['level'] ?>">
+								<?= htmlentities($notice, ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+							</div>
+						<?php endforeach ?>
 					</div>
 
 					<?php

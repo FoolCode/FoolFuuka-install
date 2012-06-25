@@ -28,6 +28,7 @@ Autoloader::register();
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 Fuel::load(APPPATH.'config/constants.php');
 Autoloader::alias_to_namespace('Model\\Preferences');
+Autoloader::alias_to_namespace('Model\\Notices');
 
 function __($string)
 {

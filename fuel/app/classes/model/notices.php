@@ -12,14 +12,15 @@ class Notices extends \Model
 
 	public static function flash()
 	{
-		return Session::get_flash('notices');
+		$array = \Session::get_flash('notices');
+		return is_array($array)?$array:array();
 	}
 
 
 	public static function set_flash($level, $message)
 	{
 		self::$_flash_notices[] = array('level' => $level, 'message' => $message);
-		Session::get_flash('notices', self::$_flash_notices);
+		\Session::get_flash('notices', self::$_flash_notices);
 	}
 
 	public static function get()
