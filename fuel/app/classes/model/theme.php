@@ -2,6 +2,7 @@
 
 namespace Model;
 
+
 /**
  * FoOlFrame Theme Model
  *
@@ -38,13 +39,6 @@ class Theme extends \Model
 	 * @var string|bool the folder name of the theme or FALSE if not set
 	 */
 	private $_selected_theme = FALSE;
-
-	/**
-	 * The reference to the theme controller
-	 *
-	 * @var object|bool the object of the theme controller or FALSE if there's none
-	 */
-	private $_theme_controller = FALSE;
 
 	/**
 	 * The selected layout
@@ -87,6 +81,7 @@ class Theme extends \Model
 	 * @var array
 	 */
 	private $_metadata = array();
+
 
 	/**
 	 * Returns all the themes available and saves the array in a variable
@@ -134,7 +129,7 @@ class Theme extends \Model
 	 */
 	public static function get_available_themes()
 	{
-		if($this->auth->is_mod_admin())
+		if ($this->auth->is_mod_admin())
 		{
 			// admins get all the themes
 			return array_keys($this->get_all());
@@ -142,7 +137,7 @@ class Theme extends \Model
 		else
 		{
 			$active_themes = get_setting('fs_theme_active_themes');
-			if(!$active_themes || !$active_themes = @unserialize($active_themes))
+			if (!$active_themes || !$active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
 				return array(
@@ -153,9 +148,9 @@ class Theme extends \Model
 			}
 			else
 			{
-				foreach($active_themes as $key => $enabled)
+				foreach ($active_themes as $key => $enabled)
 				{
-					if(!$enabled)
+					if (!$enabled)
 					{
 						unset($active_themes[$key]);
 					}
@@ -190,7 +185,7 @@ class Theme extends \Model
 	{
 		if ($theme_styles = $this->get_available_styles($this->_selected_theme))
 		{
-			$style = Cookie::get('theme_' . $this->_selected_theme . '_style');
+			$style = Cookie::get('theme_'.$this->_selected_theme.'_style');
 			if ($style !== false && in_array($style, $theme_styles))
 				$class[] = $style;
 			else
@@ -235,7 +230,7 @@ class Theme extends \Model
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir('content/themes/' . $file))
+				if (is_dir('content/themes/'.$file))
 				{
 					$array[] = $file;
 				}
@@ -263,7 +258,7 @@ class Theme extends \Model
 
 			return $config;
 		}
-		
+
 		return false;
 	}
 
@@ -277,12 +272,12 @@ class Theme extends \Model
 	public function set_theme($theme)
 	{
 		// sending FALSE leaves the situation unchanged
-		if($theme === FALSE)
+		if ($theme === FALSE)
 		{
 			return FALSE;
 		}
 
-		if(!in_array($theme, $this->get_available_themes()))
+		if (!in_array($theme, $this->get_available_themes()))
 		{
 			$theme = FOOL_THEME_DEFAULT;
 		}
@@ -292,14 +287,14 @@ class Theme extends \Model
 
 		// load the theme functions if there is such a file
 		$theme_functions_file = DOCROOT.'content/themes/'.$theme.'/theme_functions.php';
-		if(file_exists($theme_functions_file))
+		if (file_exists($theme_functions_file))
 		{
 			require_once $theme_functions_file;
 		}
 
 		// load the theme plugin file if present
 		$theme_plugin_file = 'content/themes/'.$theme.'/theme_plugin.php';
-		if(file_exists($theme_plugin_file))
+		if (file_exists($theme_plugin_file))
 		{
 			Plugins::inject_plugin('theme', 'Theme_Plugin_'.$theme, true, $theme_plugin_file);
 		}
@@ -354,6 +349,7 @@ class Theme extends \Model
 		unset($this->_view_variables[$name]);
 	}
 
+
 	/**
 	 * Adds breadcrumbs to the title
 	 *
@@ -362,13 +358,14 @@ class Theme extends \Model
 	 */
 	public function set_title($title)
 	{
-		if(is_array($title))
+		if (is_array($title))
 			$this->_title = $title;
 		else
 			$this->_title[] = $title;
 
 		return $this->_title;
 	}
+
 
 	/**
 	 * Adds metadata to header
@@ -378,7 +375,7 @@ class Theme extends \Model
 	 */
 	public function set_metadata($metadata)
 	{
-		if(is_array($metadata))
+		if (is_array($metadata))
 			$this->_metadata = $metadata;
 		else
 			$this->_metadata[] = $metadata;
@@ -398,13 +395,14 @@ class Theme extends \Model
 		$asset = ltrim($asset, '/');
 		if (file_exists('content/themes/'.$this->_selected_theme.'/'.$asset))
 		{
-			return 'content/themes/'.$this->_selected_theme.'/'.$asset.'?v=' . FOOL_VERSION;
+			return 'content/themes/'.$this->_selected_theme.'/'.$asset.'?v='.FOOL_VERSION;
 		}
 		else
 		{
 			return 'content/themes/'.$this->get_config('extends').'/'.$asset.'?v='.FOOL_VERSION;
 		}
 	}
+
 
 	/**
 	 * This function is used in case of CSS files. A child theme may load both its
@@ -416,16 +414,16 @@ class Theme extends \Model
 	public function fallback_override($asset, $double = FALSE)
 	{
 		// if we aren't going to have stuff like two CSS overrides, return the theme's file
-		if(!$double || $this->get_config('extends') == $this->_selected_theme)
+		if (!$double || $this->get_config('extends') == $this->_selected_theme)
 		{
 			return array($this->fallback_asset($asset));
 		}
 
 		$result = array();
-		if(file_exists('content/themes/'.$this->get_config('extends').'/'.$asset))
+		if (file_exists('content/themes/'.$this->get_config('extends').'/'.$asset))
 			$result[] = 'content/themes/'.$this->get_config('extends').'/'.$asset.'?v='.FOOL_VERSION;
 
-		if(file_exists('content/themes/'.$this->_selected_theme.'/'.$asset))
+		if (file_exists('content/themes/'.$this->_selected_theme.'/'.$asset))
 			$result[] = 'content/themes/'.$this->_selected_theme.'/'.$asset.'?v='.FOOL_VERSION;
 
 		// we want first extended theme and then the override
@@ -453,23 +451,19 @@ class Theme extends \Model
 		foreach ($this->_selected_partials as $name => $partial)
 		{
 			$partials[$name] = $this->_build(
-				$partial['partial'],
-				'partial',
-				array_merge($this->_view_variables, $partial['data'])
+				$partial['partial'], 'partial', array_merge($this->_view_variables, $partial['data'])
 			);
 		}
 
 		// build the content that goes in the middle
 		$content = $this->_build(
-			$view,
-			'content',
-			array_merge($this->_view_variables, array('template' => array('partials' => $partials)))
+			$view, 'content', array_merge($this->_view_variables, array('template' => array('partials' => $partials)))
 		);
 
 		// if there's no selected layout output or return this
-		if($without_layout || $this->_selected_layout === FALSE)
+		if ($without_layout || $this->_selected_layout === FALSE)
 		{
-			if($return)
+			if ($return)
 				return $content;
 
 			return $this->output->append_output($content);
@@ -477,21 +471,20 @@ class Theme extends \Model
 
 		// build the layout
 		$html = $this->_build(
-			$this->_selected_layout,
-			'layout',
+			$this->_selected_layout, 'layout',
 			array_merge(
 				$this->_view_variables,
 				array('template' => array(
-						'body' => $content,
-						'title' => implode($this->_title_separator, $this->_title),
-						'partials' => $partials,
-						'metadata' => implode("\n", $this->_metadata)
-					)
+					'body' => $content,
+					'title' => implode($this->_title_separator, $this->_title),
+					'partials' => $partials,
+					'metadata' => implode("\n", $this->_metadata)
+				)
 				)
 			)
 		);
 
-		if($return)
+		if ($return)
 			return $html;
 
 		return new Response($html, 200);
@@ -520,7 +513,7 @@ class Theme extends \Model
 					break;
 				case 'content':
 				case 'partial':
-					if (file_exists('content/themes/' . $_directory . '/views/' . $_file.'.php'))
+					if (file_exists('content/themes/'.$_directory.'/views/'.$_file.'.php'))
 					{
 						$_location = 'content/themes/'.$_directory.'/views/'.$_file.'.php';
 					}
