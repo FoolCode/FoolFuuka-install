@@ -24,63 +24,63 @@ class Theme extends \Model
 	 *
 	 * @var array associative array('theme_dir' => array('item' => 'value'));
 	 */
-	private $_loaded = array();
+	private static $_loaded = array();
 
 	/**
 	 * If get_all() was used, this will be true and themes won't be checked again
 	 *
 	 * @var array
 	 */
-	private $_is_all_loaded = FALSE;
+	private static $_is_all_loaded = FALSE;
 
 	/**
 	 * The name of the selected theme
 	 *
 	 * @var string|bool the folder name of the theme or FALSE if not set
 	 */
-	private $_selected_theme = FALSE;
+	private static $_selected_theme = FALSE;
 
 	/**
 	 * The selected layout
 	 *
 	 * @var string|bool FALSE when not choosen
 	 */
-	private $_selected_layout = FALSE;
+	private static $_selected_layout = FALSE;
 
 	/**
 	 * The selected partials
 	 *
 	 * @var array keys as the name of the partial and the value an array of set variables
 	 */
-	private $_selected_partials = array();
+	private static $_selected_partials = array();
 
 	/**
 	 * Variables available to all views
 	 *
 	 * @var array
 	 */
-	private $_view_variables = array();
+	private static $_view_variables = array();
 
 	/**
 	 * The string separating pieces of the <title>
 	 *
 	 * @var string
 	 */
-	private $_title_separator = '»';
+	private static $_title_separator = '»';
 
 	/**
 	 * The breadcrumbs of which the title is composed
 	 *
 	 * @var array
 	 */
-	private $_title = array();
+	private static $_title = array();
 
 	/**
 	 * The lines of metadata to print
 	 *
 	 * @var array
 	 */
-	private $_metadata = array();
+	private static $_metadata = array();
 
 
 	/**
@@ -88,20 +88,20 @@ class Theme extends \Model
 	 *
 	 * @return array array with the theme name as index, and their config as value
 	 */
-	public function get_all()
+	public static function get_all()
 	{
-		if ($this->_is_all_loaded)
-			return $this->_loaded;
+		if (static::$_is_all_loaded)
+			return static::$_loaded;
 
 		$array = array();
 
-		foreach ($this->get_all_names() as $name)
+		foreach (static::get_all_names() as $name)
 		{
-			$array[$name] = $this->load_config($name);
+			$array[$name] = static::load_config($name);
 		}
 
-		$this->_is_all_loaded = true;
-		$this->_loaded = $array;
+		static::$_is_all_loaded = true;
+		static::$_loaded = $array;
 
 		return $array;
 	}
@@ -129,7 +129,7 @@ class Theme extends \Model
 	 */
 	public static function get_available_themes()
 	{
-		if ($this->auth->is_mod_admin())
+		if (Auth::member('mod'))
 		{
 			// admins get all the themes
 			return array_keys($this->get_all());
@@ -219,7 +219,7 @@ class Theme extends \Model
 	 *
 	 * @return type
 	 */
-	public function get_all_names()
+	public static function get_all_names()
 	{
 		$array = array();
 
@@ -248,7 +248,7 @@ class Theme extends \Model
 	 * @param string $name the folder name of the theme
 	 * @return array the config array or FALSE if not found
 	 */
-	private function load_config($name)
+	private static function load_config($name)
 	{
 		if (file_exists(DOCROOT.'content/themes/'.$name.'/theme_config.php'))
 		{

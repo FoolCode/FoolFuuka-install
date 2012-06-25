@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -22,7 +22,7 @@ $config['license'] = 'Apache License 2.0';
 $config['license_url'] = 'http://www.apache.org/licenses/LICENSE-2.0.html';
 
 
-// some general theme configuration 
+// some general theme configuration
 
 // which theme should this theme extend? Insert the folder name of the other theme
 $config['extends'] = 'default'; // it's ok to refer it to itself, it means there's no fallback

@@ -50,8 +50,8 @@
 					</ul>
 
 					<?php
-					if (isset($function_title))
-						echo '<h3>' . $function_title . '</h3>';
+					if (isset($method_title))
+						echo '<h3>' . $method_title . '</h3>';
 					?>
 
 					<div class="alerts">

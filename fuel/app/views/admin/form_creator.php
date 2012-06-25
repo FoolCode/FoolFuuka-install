@@ -1,13 +1,10 @@
 <?php
-if (!defined('BASEPATH'))
-	exit('No direct script access allowed');
-
 
 /*
  * How to use: just as any view.
- * 
- * $form = $this->load->view('admin/form_creator', $data, TRUE);
- * 
+ *
+ * $form = $this->load->view('admin/Form::creator', $data, TRUE);
+ *
  * The $data must have the $data['form'] index. The keys in the array are the
  * name="" field.
  *
@@ -37,17 +34,17 @@ if (!defined('BASEPATH'))
  * 			),
  * ...
  * 		);
- * 
- * Values outside of $not_input will be sent to the form_ function (where applicable).
- * 
- * 
- * 
+ *
+ * Values outside of $not_input will be sent to the Form:: function (where applicable).
+ *
+ *
+ *
  * $object if set will automatically populate the fields
  * $object must be an object, so you need $board->archive, with the key being
  * the same name as the name=""
- * 
- * 
- * 
+ *
+ *
+ *
  */
 ?>
 
@@ -60,11 +57,11 @@ if (!defined('BASEPATH'))
 
 		// separate up the array so we can put the rest in the form function
 		$not_input = array(
-			'help', 
-			'label', 
-			'validation', 
-			'validation_func', 
-			'preferences', 
+			'help',
+			'label',
+			'validation',
+			'validation_func',
+			'preferences',
 			'array',
 			'sub',
 			'sub_inverse',
@@ -83,41 +80,41 @@ if (!defined('BASEPATH'))
 				unset($item[$not]);
 			}
 		}
-				
+
 		// support for HTML form arrays
 		if(isset($helpers['array']) && $helpers['array'])
 		{
 			$item['name'] = $name . '[]';
-			
+
 			$item['value_array'] = array();
-			
-			if ($this->input->post($item['name']))
+
+			if (Input::post($item['name']))
 			{
-				$item['value_array'] = $this->input->post($item['name']);
+				$item['value_array'] = Input::post($item['name']);
 				$item['value_array'] = array_filter($item['value_array']);
 			}
-			else 
+			else
 			{
 				if(isset($item['value']))
 					$item['value_array'] = unserialize($item['value_array']);
 			}
-			
-			
-			
+
+
+
 			$count = count($item['value_array'])+1;
 		}
 		else
 		{
 			$item['name'] = $name;
 
-			if ($this->input->post($item['name']))
+			if (Input::post($item['name']))
 			{
-				$item['value'] = $this->input->post($item['name']);
+				$item['value'] = Input::post($item['name']);
 			}
-			
+
 			$count = 1;
 		}
-		
+
 
 		// loop all the array to generate the html
 		if (isset($item['type'])) :
@@ -126,13 +123,13 @@ if (!defined('BASEPATH'))
 				{
 					//$item['value'] = $item['value_array'][$i];
 				}
-				
+
 				switch ($item['type']):
 
 					// internal variable that goes into database but is not public in any way
 					case 'internal':
 						break;
-					
+
 					case 'separator':
 						?>
 						<br/><br/>
@@ -159,12 +156,11 @@ if (!defined('BASEPATH'))
 						{
 							// better not supporting it, things might get messy
 							log_message('error',
-								'The form automator doesn\'t support hidden in form_opens.');
-							show_error('The form automator doesn\'t support hidden in form_opens.');
+								'The form automator doesn\'t support hidden in Form::opens.');
+							show_error('The form automator doesn\'t support hidden in Form::opens.');
 						}
 
-						echo form_open(
-							isset($item['action']) ? $item['action'] : '',
+						echo Form::open(
 							isset($item['attributes']) ? $item['attributes'] : '',
 							isset($item['hidden']) ? $item['hidden'] : array()
 						);
@@ -172,7 +168,7 @@ if (!defined('BASEPATH'))
 
 
 					case 'close':
-						echo form_close(); // I know there's a variable there but it's useless
+						echo Form::close(); // I know there's a variable there but it's useless
 						break;
 
 
@@ -182,8 +178,8 @@ if (!defined('BASEPATH'))
 						{
 							// better not supporting it, things might get messy
 							log_message('error',
-								'The form automator doesn\'t support arrays of hidden values in form_hidden.');
-							show_error('The form automator doesn\'t support arrays of hidden values in form_hidden.');
+								'The form automator doesn\'t support arrays of hidden values in Form::hidden.');
+							show_error('The form automator doesn\'t support arrays of hidden values in Form::hidden.');
 						}
 
 
@@ -196,14 +192,14 @@ if (!defined('BASEPATH'))
 
 						if (isset($item['value']))
 						{
-							echo form_hidden($name, $item['value']);
+							echo Form::hidden($name, $item['value']);
 						}
 						break;
 
 
 					case 'submit':
 					case 'reset':
-						echo call_user_func('form_' . $item['type'], $item);
+						echo call_user_func('Form::' . $item['type'], $item);
 						break;
 
 
@@ -222,11 +218,11 @@ if (!defined('BASEPATH'))
 								{
 									$checked = FALSE;
 								}
-								
+
 								?>
 								<label class="radio">
 									<?php
-									echo form_radio($name, $radio_key, $checked)
+									echo Form::radio($name, $radio_key, $checked)
 									?>
 									<?php echo $radio_value ?>
 								</label>
@@ -246,12 +242,12 @@ if (!defined('BASEPATH'))
 
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$checked = get_setting($name);
-							
+							$checked = Preferences::get($name);
+
 							if(isset($helpers['array_key']))
 							{
 								$checked = @unserialize($checked);
-								
+
 								if(isset($checked[$helpers['array_key']]))
 								{
 									$checked = $checked[$helpers['array_key']];
@@ -274,26 +270,26 @@ if (!defined('BASEPATH'))
 						{
 							$checked = isset($object->$name) ? $object->$name : FALSE;
 						}
-						
-						$extra = '';
+
+						$extra = array();
 						if(isset($helpers['sub']))
 						{
-							$extra .= 'data-function="hasSubForm"';
+							$extra['data-function'] = 'hasSubForm';
 						}
-						
+
 						if(isset($item['disabled']))
 						{
-							$extra .= ' disabled="disabled"';
+							$extra['disabled'] = 'disabled';
 						}
 						?>
 						<label class="checkbox">
 							<?php
-							echo form_checkbox($name, $item['value'], $checked, $extra)
+							echo Form::checkbox($name, $item['value'], $checked, $extra)
 							?>
 							<?php echo $helpers['help'] ?>
 						</label>
 						<?php
-						
+
 						// sub and sub_inverse, respectively popup and appear by default
 						if(isset($helpers['sub']))
 						{
@@ -303,9 +299,9 @@ if (!defined('BASEPATH'))
 							else
 								$data['hide'] = FALSE;
 							$data['parent'] = $name;
-							$this->load->view('admin/form_creator', $data);
+							$this->load->view('admin/Form::creator', $data);
 						}
-						
+
 						if(isset($helpers['sub_inverse']))
 						{
 							$data = array('form' => $helpers['sub_inverse']);
@@ -314,11 +310,11 @@ if (!defined('BASEPATH'))
 							else
 								$data['hide'] = FALSE;
 							$data['parent'] = $name . '_inverse';
-							$this->load->view('admin/form_creator', $data);
+							$this->load->view('admin/Form::creator', $data);
 						}
-						
+
 						break;
-					
+
 					case 'checkbox_array':
 						$data_form = array();
 						if (!isset($item['value']))
@@ -337,16 +333,16 @@ if (!defined('BASEPATH'))
 							{
 								$checked = $checkbox['checked'];
 							}
-							
-							$data_form[$item['name'].'[' . $checkbox['array_key'] . ']'] = 
+
+							$data_form[$item['name'].'[' . $checkbox['array_key'] . ']'] =
 								array_merge($checkbox, array(
 									'type' => 'checkbox', 'value' => 1, 'checked' => $checked
 								)
 							);
 						}
 						echo $helpers['help'];
-						$this->load->view('admin/form_creator', array('form' => $data_form));
-						break;	
+						echo View::forge('admin/form_creator', array('form' => $data_form));
+						break;
 
 					case 'dropdown':
 						?>
@@ -354,7 +350,7 @@ if (!defined('BASEPATH'))
 						<?php
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$item['selected'] = get_setting($name);;
+							$item['selected'] = Preferences::get($name);;
 						}
 						else if (isset($item['value']))
 						{
@@ -368,8 +364,8 @@ if (!defined('BASEPATH'))
 						{
 							$item['selected'] = $helpers['default_value'];
 						}
-						
-						echo form_dropdown($name, $item['options'], $item['selected']);
+
+						echo Form::dropdown($name, $item['options'], $item['selected']);
 						?>
 						<span class="help-inline">
 							<?php
@@ -378,9 +374,9 @@ if (!defined('BASEPATH'))
 						</span>
 						<?php
 						break;
-					
-					// These are the standard CodeIgniter functions that accept array 
-					// http://codeigniter.com/user_guide/helpers/form_helper.html
+
+					// These are the standard CodeIgniter functions that accept array
+					// http://codeigniter.com/user_guide/helpers/Form::helper.html
 					case 'input':
 					case 'password':
 					case 'upload':
@@ -388,11 +384,14 @@ if (!defined('BASEPATH'))
 					case 'multiselect':
 					case 'button':
 
+						$helper['type'] = $item['type'];
+						unset($item['type']);
+
 						if (!isset($item['value']))
 						{
 							if (isset($helpers['preferences']) && $helpers['preferences'])
 							{
-								$item['value'] = get_setting($name);
+								$item['value'] = Preferences::get($name);
 								if(isset($helpers['array']) && $helpers['array'])
 								{
 									$item['value'] = unserialize($item['value']);
@@ -421,13 +420,13 @@ if (!defined('BASEPATH'))
 								$item['value'] = '';
 							}
 						}
-						
+
 						?>
-						<?php 
+						<?php
 							// if help is not set, put the label in help-inline
 							if (isset($helpers['help'])) : ?><label><?php echo $helpers['label'] ?></label><?php endif; ?>
 						<?php
-						echo call_user_func('form_' . $item['type'], $item);
+						echo Form::$helper['type']($item);
 						?>
 						<span class="help-inline">
 							<?php
