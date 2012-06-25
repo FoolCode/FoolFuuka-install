@@ -1,11 +1,13 @@
 <?php
 
+
 class Controller_Admin_Auth extends Controller_Admin
 {
 
-    public function action_login()
-    {
-        $data = array();
+
+	public function action_login()
+	{
+		$data = array();
 
 		// If so, you pressed the submit button. let's go over the steps
 		if (Input::post())
@@ -24,27 +26,74 @@ class Controller_Admin_Auth extends Controller_Admin
 			{
 				// Oops, no soup for you. try to login again. Set some values to
 				// repopulate the username field and give some error text back to the view
-				$data['username']    = Input::post('username');
+				$data['username'] = Input::post('username');
 				$data['login_error'] = 'Wrong username/password combo. Try again';
 			}
 		}
 
 		// Show the login form
-		echo View::forge('auth/login',$data);
-    }
-	
+		$data['controller_title'] = __('Authorization');
+		$data['navbar'] = View::forge('admin/navbar', $data);
+		$data['sidebar'] = View::forge('admin/sidebar', $data);
+		$data['main_content_view'] = View::forge('admin/auth/login', $data);
+
+		return Response::forge(View::forge('admin/default', $data));
+	}
+
+
 	public function action_register()
-	{}
-	
+	{
+		if (Input::post())
+		{
+			$val = Validaton::forge('register');
+			$val->add('username', __('Username'), 'required|min_length[4]|max_length[32]');
+			$val->add('email', __('Email'), 'required|valid_email');
+			$val->add('password', __('Password'), 'required|min_length[4]|max_length[32]');
+			$val->add('confirm_password', __('Confirm password'), 'required|match_field[password]');
+
+			if($val->run())
+			{
+				Auth::create_user(Input::post('username'), Input::post('password'), Input::post('email'));
+			}
+			else
+			{
+				$data['errors'] = $val->error();
+			}
+
+		}
+
+		$data['controller_title'] = __('Authorization');
+		$data['navbar'] = View::forge('admin/navbar', $data);
+		$data['sidebar'] = View::forge('admin/sidebar', $data);
+
+
+		$data['main_content_view'] = View::forge('admin/auth/register', $data);
+
+		return Response::forge(View::forge('admin/default', $data));
+	}
+
+
 	public function action_validate()
-	{}
-	
+	{
+
+	}
+
+
 	public function action_forgotten_password()
-	{}
-		
+	{
+
+	}
+
+
 	public function action_change_password()
-	{}
-	
+	{
+
+	}
+
+
 	public function action_change_email()
-	{}
+	{
+
+	}
+
 }

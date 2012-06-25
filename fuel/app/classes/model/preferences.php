@@ -2,20 +2,29 @@
 
 namespace Model;
 
+
 class Preferences extends \Model
 {
-	private static $_settings = array();
+
+	private static $_preferences = array();
+
+
+	public static function _init()
+	{
+		self::load_settings();
+	}
+
 
 	public static function load_settings()
 	{
-		$preferences = DB::select('*')->from('preferences')->as_assoc()->execute();
+		$preferences = \DB::select('*')->from('preferences')->as_assoc()->execute();
 
-		foreach ($preferences as $item)
+		foreach($preferences as $pref)
 		{
-			$this->_settings[$item['name']] = $item['value'];
+			self::$_preferences[$pref['name']] = $pref['value'];
 		}
 
-		return $this->_settings;
+		return self::$_preferences;
 	}
 
 
@@ -51,7 +60,23 @@ class Preferences extends \Model
 
 	public static function get($setting, $fallback = null)
 	{
-		$preferences = $this->_settings;
+		if(isset(self::$_preferences[$setting]))
+			return self::$_preferences[$setting];
+
+		if($fallback != null)
+			return $fallback;
+
+		return null;
+	}
+
+
+	/**
+	 *
+	 *  This is a function to strip the 'name' tag from HTML
+	 *
+	public static function get($setting, $fallback = null)
+	{
+		$preferences = self::$_preferences;
 
 		// remove associative array
 		if (substr($setting, -2, 1) == '[' && substr($setting, -1, 1) == ']')
@@ -73,6 +98,10 @@ class Preferences extends \Model
 
 		return false;
 	}
+	 *
+	 *
+	 */
+
 
 	public static function set($setting, $value)
 	{
@@ -105,6 +134,7 @@ class Preferences extends \Model
 
 		return $value;
 	}
+
 }
 
 /* end of file preferences.php */

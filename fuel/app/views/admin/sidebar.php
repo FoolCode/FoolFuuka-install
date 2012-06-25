@@ -1,13 +1,7 @@
-<?php
-if (!defined('BASEPATH'))
-	exit('No direct script access allowed');
-?>
-
-
 <?php if(!empty($sidebar)) : ?>
 <div class="well">
 	<ul class="nav nav-list" style="padding: 9px 0">
-		<?php 
+		<?php
 		//echo '<pre>'.print_r($sidebar, TRUE).'</pre>';die();
 			foreach($sidebar as $key => $item) : ?>
 			<li class="nav-header">
