@@ -41,6 +41,8 @@
 	);
 	?>
 
+<?= Form::open() ?>
+
 	<label><?php echo Form::label(__('Username'),
 	$username['id']); ?></label>
 	<?php echo Form::input($username); ?>

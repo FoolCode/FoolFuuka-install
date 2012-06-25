@@ -3,7 +3,7 @@
 	$login = array(
 		'name' => 'username',
 		'id' => 'username',
-		'value' => '',//set_value('login'),
+		'value' => Input::post('login'),
 		'maxlength' => 80,
 		'size' => 30,
 		'placeholder' => __('Required')
@@ -22,7 +22,7 @@
 		'name' => 'remember',
 		'id' => 'remember',
 		'value' => 1,
-		'checked' => '',//set_value('remember'),
+		'checked' => Input::post('remember'),
 	);
 	$captcha = array(
 		'name' => 'captcha',

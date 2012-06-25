@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?php echo Preferences::get('fs_gen_site_title'); ?> <?php echo __('Control Panel') ?></title>
+		<title><?php echo Preferences::get('fs_gen_site_title', FOOL_NAME); ?> <?php echo __('Control Panel') ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" />

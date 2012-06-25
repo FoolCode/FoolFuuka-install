@@ -27,7 +27,7 @@ class Controller_Admin_Auth extends Controller_Admin
 				// Oops, no soup for you. try to login again. Set some values to
 				// repopulate the username field and give some error text back to the view
 				$data['username'] = Input::post('username');
-				$data['login_error'] = 'Wrong username/password combo. Try again';
+				Notice::set('error', __('Wrong username/password. Try again'));
 			}
 		}
 
@@ -45,19 +45,20 @@ class Controller_Admin_Auth extends Controller_Admin
 	{
 		if (Input::post())
 		{
-			$val = Validaton::forge('register');
-			$val->add('username', __('Username'), 'required|min_length[4]|max_length[32]');
-			$val->add('email', __('Email'), 'required|valid_email');
-			$val->add('password', __('Password'), 'required|min_length[4]|max_length[32]');
-			$val->add('confirm_password', __('Confirm password'), 'required|match_field[password]');
+			$val = Validation::forge('register');
+			$val->add_field('username', __('Username'), 'required|min_length[4]|max_length[32]');
+			$val->add_field('email', __('Email'), 'required|valid_email');
+			$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
+			$val->add_field('confirm_password', __('Confirm password'), 'required|match_field[password]');
 
 			if($val->run())
 			{
 				Auth::create_user(Input::post('username'), Input::post('password'), Input::post('email'));
+				Notice::set('success', __('The registration was successful.'));
 			}
 			else
 			{
-				$data['errors'] = $val->error();
+				Notice::set('error', $val->error());
 			}
 
 		}
