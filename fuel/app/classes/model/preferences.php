@@ -1,6 +1,6 @@
 <?php
 
-namespace Preferences;
+namespace Model;
 
 class Preferences extends \Model
 {

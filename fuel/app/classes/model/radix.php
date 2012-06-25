@@ -1,6 +1,6 @@
 <?php
 
-namespace Radix;
+namespace Model;
 
 class Radix extends \Model
 {

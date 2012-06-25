@@ -1,6 +1,6 @@
 <?php
 
-namespace Post;
+namespace Model;
 
 class Post extends \Model
 {
