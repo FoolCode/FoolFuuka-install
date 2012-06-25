@@ -1,12 +1,12 @@
 <?php
 
-namespace Library;
+namespace Model;
 
-class Inet
+class Inet extends \Model
 {
 
 
-	public static function ptod()
+	public static function ptod($ip_address)
 	{
 		$fallback = FALSE;
 
@@ -37,8 +37,8 @@ class Inet
 					}
 					else
 					{
-						$part = new Math_BigInteger($part);
-						$magic = new Math_BigInteger('4294967296');
+						$part = new Math_Biginteger($part);
+						$magic = new Math_Biginteger('4294967296');
 						$part = $part->add($magic)->toString();
 					}
 				}
@@ -50,7 +50,7 @@ class Inet
 			}
 
 			$decimal = $parts[4];
-			if ($fallback)
+			if (!$fallback)
 			{
 				$decimal = bcadd($decimal, bcmul($parts[3], '4294967296'));
 				$decimal = bcadd($decimal, bcmul($parts[2], '18446744073709551616'));
@@ -61,20 +61,20 @@ class Inet
 				$parts_big = array();
 				$parts_big_mul = array();
 
-				$decimal = new Math_BigInteger($decimal);
+				$decimal = new Math_Biginteger($decimal);
 
-				$parts_big[3] = new Math_BigInteger($parts[3]);
-				$parts_big_mul[3] = new Math_BigInteger('4294967296');
+				$parts_big[3] = new Math_Biginteger($parts[3]);
+				$parts_big_mul[3] = new Math_Biginteger('4294967296');
 				$parts_mul = $parts_big[3]->multiply($parts_big_mul[3]);
 				$decimal = $parts_mul->add($decimal);
 
-				$parts_big[2] = new Math_BigInteger($parts[2]);
-				$parts_big_mul[2] = new Math_BigInteger('18446744073709551616');
+				$parts_big[2] = new Math_Biginteger($parts[2]);
+				$parts_big_mul[2] = new Math_Biginteger('18446744073709551616');
 				$parts_mul = $parts_big[2]->multiply($parts_big_mul[2]);
 				$decimal = $parts_mul->add($decimal);
 
-				$parts_big[1] = new Math_BigInteger($parts[1]);
-				$parts_big_mul[1] = new Math_BigInteger('79228162514264337593543950336');
+				$parts_big[1] = new Math_Biginteger($parts[1]);
+				$parts_big_mul[1] = new Math_Biginteger('79228162514264337593543950336');
 				$parts_mul = $parts_big[1]->multiply($parts_big_mul[1]);
 				$decimal = $parts_mul->add($decimal);
 
@@ -89,7 +89,7 @@ class Inet
 	}
 
 
-	public static function dtop()
+	public static function dtop($decimal)
 	{
 		// fallback since BC Math is something to add at compile time
 		$fallback = FALSE;
@@ -97,8 +97,6 @@ class Inet
 		if (!extension_loaded('bcmath'))
 		{
 			$fallback = TRUE;
-			$CI = & get_instance();
-			$CI->load->library('Math_BigInteger');
 		}
 
 		// IPv4 or IPv6 format
@@ -124,17 +122,17 @@ class Inet
 			$parts_big = array();
 			$parts_big_mul = array();
 
-			$decimal = new Math_BigInteger($decimal);
+			$decimal = new Math_Biginteger($decimal);
 
-			$parts_big_mul[1] = new Math_BigInteger('79228162514264337593543950336');
+			$parts_big_mul[1] = new Math_Biginteger('79228162514264337593543950336');
 			list($parts_big[1]) = $decimal->divide($parts_big_mul[1]);
 			$decimal = $decimal->subtract($parts_big[1]->multiply($parts_big_mul[1]));
 
-			$parts_big_mul[2] = new Math_BigInteger('18446744073709551616');
+			$parts_big_mul[2] = new Math_Biginteger('18446744073709551616');
 			list($parts_big[2]) = $decimal->divide($parts_big_mul[2]);
 			$decimal = $decimal->subtract($parts_big[2]->multiply($parts_big_mul[2]));
 
-			$parts_big_mul[3] = new Math_BigInteger('4294967296');
+			$parts_big_mul[3] = new Math_Biginteger('4294967296');
 			list($parts_big[3]) = $decimal->divide($parts_big_mul[3]);
 			$decimal = $decimal->subtract($parts_big[3]->multiply($parts_big_mul[3]));
 
@@ -157,7 +155,7 @@ class Inet
 			}
 			else
 			{
-				$part = new Math_BigInteger($part);
+				$part = new Math_Biginteger($part);
 				if ($part->compare($parts_big_mul[3]))
 				{
 					$part = $part->subtract($parts_big_mul[3]);

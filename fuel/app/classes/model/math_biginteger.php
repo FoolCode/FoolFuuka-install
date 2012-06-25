@@ -182,9 +182,6 @@ define('MATH_BIGINTEGER_MAX_DIGIT52', pow(2, 52));
 define('MATH_BIGINTEGER_KARATSUBA_CUTOFF', 25);
 
 
-namespace Library;
-
-
 /**
  * Pure-PHP arbitrary precision integer arithmetic library. Supports base-2, base-10, base-16, and base-256
  * numbers.

@@ -11,8 +11,8 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
-	'View' => APPPATH.'classes/override/view.php',
-	'Input' => APPPATH.'classes/override/input.php',
+	'View' => APPPATH.'classes/extend/view.php',
+	'Input' => APPPATH.'classes/extend/input.php',
 ));
 
 // Register the autoloader
@@ -27,8 +27,9 @@ Autoloader::register();
  * Fuel::PRODUCTION
  */
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
+
 Fuel::load(APPPATH.'config/constants.php');
-Autoloader::add_namespace('Library', APPPATH.'library/');
+Autoloader::alias_to_namespace('Model\\Inet');
 Autoloader::alias_to_namespace('Model\\Preferences');
 Autoloader::alias_to_namespace('Model\\Notices');
 

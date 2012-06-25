@@ -10,7 +10,7 @@
  * @package  app
  * @extends  Controller
  */
-class Controller_Chan extends Controller
+class Controller_Chan extends Controller_Common
 {
 
 

@@ -20,10 +20,11 @@ class Controller_Admin_Auth extends Controller_Admin
 			if ($auth->login())
 			{
 				// credentials ok, go right in
+				$id = Auth::get_user_id();
 				Cookie::set('autologin', Session::get('login_hash'));
 				DB::insert('user_autologin')->set(array(
-					'user_id' => Auth::get_id(),
-					'user_hash' => Session::get('login_hash'),
+					'user_id' => $id[1],
+					'login_hash' => Session::get('login_hash'),
 					'expiration' => time() + 604800, // 7 days
 					'last_ip' => Input::ip_decimal(),
 					'user_agent' => Input::user_agent(),
@@ -37,7 +38,7 @@ class Controller_Admin_Auth extends Controller_Admin
 				// Oops, no soup for you. try to login again. Set some values to
 				// repopulate the username field and give some error text back to the view
 				$data['username'] = Input::post('username');
-				Notice::set('error', __('Wrong username/password. Try again'));
+				Notices::set('error', __('Wrong username/password. Try again'));
 			}
 		}
 
@@ -63,12 +64,12 @@ class Controller_Admin_Auth extends Controller_Admin
 			if($val->run())
 			{
 				Auth::create_user(Input::post('username'), Input::post('password'), Input::post('email'));
-				Notice::set_flash('success', __('The registration was successful.'));
+				Notices::set_flash('success', __('The registration was successful.'));
 				Response::redirect('admin/auth/login');
 			}
 			else
 			{
-				Notice::set('error', $val->error());
+				Notices::set('error', $val->error());
 			}
 
 		}
