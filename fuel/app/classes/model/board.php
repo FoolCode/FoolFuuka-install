@@ -2511,5 +2511,4 @@ class Board extends \Model
 
 }
 
-/* End of file post_model.php */
-/* Location: ./application/models/post_model.php */
+/* end of file board.php */

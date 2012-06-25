@@ -546,5 +546,4 @@ class Theme extends \Model
 
 }
 
-/* End of file theme_model.php */
-/* Location: ./application/models/theme_model.php */
+/* end of file theme.php */
