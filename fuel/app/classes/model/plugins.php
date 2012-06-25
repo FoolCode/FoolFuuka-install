@@ -21,21 +21,21 @@ class Plugins extends \Model
 	/**
 	 * List of routes and callbacks
 	 *
-	 * @var array 
+	 * @var array
 	 */
 	private static $_controller_uris = array();
-	
+
 	/**
 	 * List of hooks with their associated classes, priority and callback
-	 * 
-	 * @var array 
+	 *
+	 * @var array
 	 */
 	private static $_hooks = array();
 
 
 	/**
-	 * The plugin slugs are the folder names 
-	 * 
+	 * The plugin slugs are the folder names
+	 *
 	 * @return array The directory names
 	 */
 	private static function lookup_plugins()
@@ -47,7 +47,7 @@ class Plugins extends \Model
 
 	/**
 	 * Grabs the info from the plugin _info.php file and returns it as object
-	 * 
+	 *
 	 * @param string $slug the directory of the plugin
 	 * @return object the config
 	 */
@@ -59,8 +59,8 @@ class Plugins extends \Model
 
 
 	/**
-	 * Retrieve all the available plugins and their status 
-	 *	
+	 * Retrieve all the available plugins and their status
+	 *
 	 * @return array Array of objects where $this[$x]->info contains the plugin info
 	 */
 	public static function get_all()
@@ -71,17 +71,17 @@ class Plugins extends \Model
 		if (count($slugs) > 0)
 		{
 			$slugs_to_sql = $slug;
-			
+
 			// we don't care if the database doesn't contain an entry for a plugin
 			// in that case, it means it was never installed
 			$query = DB::select('*')->from('plugins');
 			$query->where('slug', array_pop($slugs_to_sql));
-			
+
 			foreach ($slugs_to_sql as $key => $slug_to_sql)
 			{
 				$query->or_where('slug', $slug_to_sql);
 			}
-			
+
 			$result = $query->execute();
 		}
 
@@ -97,7 +97,7 @@ class Plugins extends \Model
 					$done = true;
 				}
 			}
-			
+
 			if($done === false) $slugs_with_data[$slug] = new stdClass();
 			$slugs_with_data[$slug]->info = $this->get_info_by_slug($slug);
 
@@ -113,18 +113,18 @@ class Plugins extends \Model
 
 	/**
 	 * Gets the enabled plugins from the database
-	 * 
-	 * @return array Array of objects, the rows or the active plugins 
+	 *
+	 * @return array Array of objects, the rows or the active plugins
 	 */
 	private static function get_enabled()
 	{
 		return DB::select('*')->from('plugins')->where('enabled', 1)->execute();
 	}
 
-	
+
 	/**
 	 * Gets the data of the plugin by slug
-	 * 
+	 *
 	 * @param string $slug the directory name of the plugin
 	 * @return object The database row of the plugin with extra ->info
 	 */
@@ -134,7 +134,7 @@ class Plugins extends \Model
 
 		if(!count($query))
 			return false;
-		
+
 		$query[0]->info = $this->get_info_by_slug($slug);
 
 		return $query[0];
@@ -155,7 +155,7 @@ class Plugins extends \Model
 		{
 			if(!is_null($select) && $plugin->slug != $select)
 				continue;
-			
+
 			$slug = $plugin->slug;
 			if (file_exists(DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php'))
 			{
@@ -173,11 +173,11 @@ class Plugins extends \Model
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Allows inserting a plugin by class name, and also include its file
-	 * 
+	 *
 	 * @param type $slug the slug
 	 * @param type $class_name the name of the class of the plugin
 	 * @param type $initialize if the initialize_plugin() function should be run
@@ -190,9 +190,9 @@ class Plugins extends \Model
 			// produce a fatal error if the file doesn't exist to help the plugin maker to debug
 			require_once $file;
 		}
-		
+
 		$this->$slug = new $class_name();
-		
+
 		if ($initialize && method_exists($this->$slug, 'initialize_plugin'))
 		{
 			$this->$slug->initialize_plugin();
@@ -202,7 +202,7 @@ class Plugins extends \Model
 
 	/**
 	 * Enables the plugin after running the upgrade function
-	 * 
+	 *
 	 * @param string $slug the directory name of the plugin
 	 * @return object The database row of the plugin with extra ->info
 	 */
@@ -211,9 +211,9 @@ class Plugins extends \Model
 		DB::insert('plugins')->set(array('slug' => $slug, 'enabled' => 1))->execute();
 
 		$this->upgrade($slug);
-		
+
 		$this->load_plugins($slug);
-		
+
 		if(method_exists($this->$slug, 'plugin_enable'))
 			$this->$slug->plugin_enable();
 
@@ -223,9 +223,9 @@ class Plugins extends \Model
 
 	/**
 	 * Disables plugin and runs plugin_disable()
-	 * 
+	 *
 	 * @param string $slug the directory name of the plugin
-	 * @return object database row for the plugin with extra ->info 
+	 * @return object database row for the plugin with extra ->info
 	 */
 	public function disable($slug)
 	{
@@ -233,14 +233,14 @@ class Plugins extends \Model
 
 		if(method_exists($this->$slug, 'plugin_disable'))
 			$this->$slug->plugin_disable();
-		
+
 		return $this->get_by_slug($slug);
 	}
 
 
 	/**
 	 * Deletes the plugin directory after running plugin_remove()
-	 * 
+	 *
 	 * @param string $slug the directory name of the plugin
 	 */
 	public function remove($slug)
@@ -320,7 +320,7 @@ class Plugins extends \Model
 
 	/**
 	 * Alias for is_controller_function
-	 * 
+	 *
 	 * @param array $uri the uri_array, basically $this->uri->segment_array()
 	 * @return bool|array FALSE if not found, else the item from $this->_controller_uris
 	 */
@@ -334,7 +334,7 @@ class Plugins extends \Model
 	 * Checks if there is a match with the segment_array() and eventually returns the data
 	 * necessary to run the controller function:
 	 * array('uri_array' => $uri_array, 'plugin' => $class, 'method' => $method)
-	 * 
+	 *
 	 * @param array $uri the uri_array, basically $this->uri->segment_array()
 	 * @return bool|array FALSE if not found, else the item from $this->_controller_uris
 	 */
@@ -343,8 +343,8 @@ class Plugins extends \Model
 		// codeigniter $this->uri->rsegment_uri sends weird indexes in the array with 1+ start
 		// this reindexes the array
 		$uri_array = array_values($uri_array);
-		
-	
+
+
 		foreach ($this->_controller_uris as $item)
 		{
 			// it must be contained by the entire URI
@@ -371,19 +371,19 @@ class Plugins extends \Model
 
 	/**
 	 * Send an array, if shorter than the URI it will trigger the class method requested
-	 * 
+	 *
 	 * @param type $controller_name
-	 * @param type $method 
+	 * @param type $method
 	 */
 	public static function register_controller_function(&$class, $uri_array, $method)
 	{
 		$this->_controller_uris[] = array('uri_array' => $uri_array, 'plugin' => $class, 'method' => $method);
 	}
-	
-	
+
+
 	/**
 	 * Adds a sidebar element when admin controller is accessed.
-	 * 
+	 *
 	 * @param string $section under which controller/section of the sidebar must this sidebar element appear
 	 * @param array $array the overriding array, comprehending only the additions and modifications to the sidebar
 	 */
@@ -396,38 +396,38 @@ class Plugins extends \Model
 			$array2[$section] = $array;
 			$array = $array2;
 		}
-		
+
 		$CI = & get_instance();
 		if($CI instanceof Admin_Controller)
 		{
 			$CI->add_sidebar_element($array);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Runs functions stored in the hook
-	 * 
+	 *
 	 * @param string $target the name of the hook
 	 * @param array $parameters parameters to pass to the hook
 	 * @param bool|string $type if FALSE it's a simple hook, 'before'/'after' if before or after a method
-	 * @return null 
+	 * @return null
 	 */
 	public static function run_hook($target, $parameters = array(), $modifier = '')
 	{
 		if(!isset($this->_hooks[$target]) && $modifier == 'simple')
 			return end($parameters);
-		
+
 		if(!isset($this->_hooks[$target]))
 			return NULL;
-		
+
 		$hook_array = $this->_hooks[$target];
-		
+
 		usort($hook_array, function($a, $b){ return $a['priority'] - $b['priority']; });
-		
+
 		// default return if nothing happens
 		$return = array('parameters' => $parameters, 'return' => NULL);
-		
+
 		foreach($hook_array as $hook)
 		{
 			// if this is 'after', we might already have an extra parameter in the array that is the previous result
@@ -453,7 +453,7 @@ class Plugins extends \Model
 				array_push($parameters, $return['return']);
 				continue;
 			}
-			
+
 			// in the most complex situation, we have array('parameters'=>array(...), 'return'=>'value')
 			if($modifier == 'simple' && !is_null($return_temp['return']))
 			{
@@ -472,14 +472,14 @@ class Plugins extends \Model
 				array_push($parameters, $return['return']);
 			}
 		}
-		
+
 		if($modifier == 'simple')
 			return $return['return'];
 
 		return $return;
 	}
-	
-	
+
+
 	/**
 	 * Registers a function to the hook targeted
 	 *
@@ -495,5 +495,4 @@ class Plugins extends \Model
 
 }
 
-/* End of file plugins_model.php */
-/* Location: ./application/models/plugins_model.php */
+/* end of file plugins.php */
