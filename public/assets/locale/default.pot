@@ -1,0 +1,3129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FoOlFuuka\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-10 22:47-0600\n"
+"PO-Revision-Date: 2012-06-10 22:47-0600\n"
+"Last-Translator: \n"
+"Language-Team:  <support@foolz.us>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_ngettext:1,2;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-SearchPath-0: ../..\n"
+
+#: ../../application/controllers/chan.php:513
+msgid "Page not found. You can use the search if you were looking for something!"
+msgstr ""
+
+#: ../../application/controllers/chan.php:571
+#: ../../application/controllers/chan.php:575
+msgid "Page"
+msgstr ""
+
+#: ../../application/controllers/chan.php:575
+msgid "Latest by Thread"
+msgstr ""
+
+#: ../../application/controllers/chan.php:634
+#: ../../application/controllers/chan.php:637
+msgid "Ghost Page"
+msgstr ""
+
+#: ../../application/controllers/chan.php:672
+msgid "Gallery"
+msgstr ""
+
+#: ../../application/controllers/chan.php:676
+msgid "Gallery: Showing Latest Submitted Images"
+msgstr ""
+
+#: ../../application/controllers/chan.php:678
+msgid "By Thread"
+msgstr ""
+
+#: ../../application/controllers/chan.php:682
+msgid "Gallery: Showing Latest Created Threads"
+msgstr ""
+
+#: ../../application/controllers/chan.php:684
+msgid "By Image"
+msgstr ""
+
+#: ../../application/controllers/chan.php:790
+#: ../../application/controllers/chan.php:909
+msgid "Thread"
+msgstr ""
+
+#: ../../application/controllers/chan.php:912
+msgid "Showing the last 50 posts for Thread No."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1057
+#: ../../application/controllers/chan.php:1247
+#: ../../application/controllers/chan.php:1350
+#: ../../application/controllers/chan.php:1643
+#: ../../application/controllers/chan.php:1693
+#: ../../application/controllers/chan.php:1730
+#: ../../application/controllers/chan.php:1755
+#: ../../application/controllers/chan.php:1788
+#: ../../application/controllers/chan.php:1813
+#: ../../application/controllers/chan.php:1838
+#: ../../application/controllers/chan.php:1878
+#: ../../application/controllers/chan.php:1906
+msgid "Error"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1060
+msgid "There is no record of the specified image in our database."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1071
+msgid "Image Pruned"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1074
+msgid "Error 404: The image has been pruned from the server."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1120
+msgid "Searched Text"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1256
+msgid "No posts to be deleted found."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1277
+msgid "The captcha expired. Try again."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1281
+msgid "The code inserted didn't match the captcha. Try again."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1287
+msgid "Posts removed"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1296
+msgid "Success!"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1297
+msgid "The posts have been successfully removed"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1324
+msgid "Enter the captcha"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1331
+#, php-format
+msgid "%s posts to be deleted found"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1331
+msgid "(If the posts are OP, this will delete entire threads)"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1373
+#, php-format
+msgid "that contain &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1377
+#, php-format
+msgid "with the subject &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1381
+#, php-format
+msgid "with the username &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1385
+#, php-format
+msgid "with the tripcode &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1389
+#, php-format
+msgid "with the filename &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1397
+#: ../../application/controllers/chan.php:1404
+#, php-format
+msgid "with the image hash &lsquo;%s&rsquo;"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1409
+msgid "that have been deleted"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1411
+msgid "that has not been deleted"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1413
+msgid "that are by ghosts"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1415
+msgid "that are not by ghosts"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1417
+msgid "that are only OP posts"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1419
+msgid "that are only non-OP posts"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1421
+msgid "that do not contain images"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1423
+msgid "that only contain images"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1425
+msgid "that were made by users"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1427
+msgid "that were made by mods"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1429
+msgid "that were made by admins"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1431
+#, php-format
+msgid "posts after %s"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1433
+#, php-format
+msgid "posts before %s"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1435
+msgid "in ascending order"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1438
+#, php-format
+msgid "Searching for posts %s."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1439
+msgid "and"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1443
+msgid "Displaying all posts with no filters applied."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1497
+msgid "Global Search"
+msgstr ""
+
+#: ../../application/controllers/chan.php:1687
+#: ../../application/controllers/chan.php:1696
+#: ../../application/controllers/chan.php:1726
+#: ../../application/controllers/chan.php:1733
+msgid "This thread does not exist."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1751
+#: ../../application/controllers/chan.php:1758
+msgid "This thread is closed."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1784
+#: ../../application/controllers/chan.php:1791
+msgid "You are required to upload an image when posting a new thread."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1809
+#: ../../application/controllers/chan.php:1816
+msgid "You are required to write a comment when no image upload is present."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1834
+#: ../../application/controllers/chan.php:1841
+msgid "The posting of images has been disabled for this thread."
+msgstr ""
+
+#: ../../application/controllers/chan.php:1924
+msgid "Your comment has been posted."
+msgstr ""
+
+#: ../../application/controllers/cli.php:17
+#, php-format
+msgid "Welcome to {{FOOL_NAME}} version %s"
+msgstr ""
+
+#: ../../application/controllers/cli.php:18
+msgid "Write \"php index.php cli help\" to display all the available command line functions."
+msgstr ""
+
+#: ../../application/controllers/cli.php:27
+msgid "Your request is missing parameters."
+msgstr ""
+
+#: ../../application/controllers/cli.php:30
+msgid "Your request is missing parameters: add the board shortname."
+msgstr ""
+
+#: ../../application/controllers/cli.php:33
+msgid "The board you selected doesn't exist."
+msgstr ""
+
+#: ../../application/controllers/cli.php:71
+msgid "Write \"php index.php cli database help\" for displaying the available commands for database manipulation."
+msgstr ""
+
+#: ../../application/controllers/cli.php:166
+msgid "Write \"php index.php cli boards help\" for displaying the available commands for board manipulation."
+msgstr ""
+
+#: ../../application/controllers/cli.php:203
+msgid "You must choose between 'archives', 'boards' or 'all'."
+msgstr ""
+
+#: ../../application/controllers/functions.php:19
+msgid "Changing Theme"
+msgstr ""
+
+#: ../../application/controllers/functions.php:32
+msgid "Changing Language"
+msgstr ""
+
+#: ../../application/controllers/install.php:18
+msgid "{{FOOL_NAME}} Installation"
+msgstr ""
+
+#: ../../application/controllers/install.php:44
+#: ../../application/controllers/install.php:162
+msgid "Database type"
+msgstr ""
+
+#: ../../application/controllers/install.php:48
+msgid "The type of database you're going to use. There's only one option currently."
+msgstr ""
+
+#: ../../application/controllers/install.php:52
+#: ../../application/controllers/install.php:163
+msgid "Database hostname"
+msgstr ""
+
+#: ../../application/controllers/install.php:57
+#, php-format
+msgid "The hostname of the server hosting the database. 99.8% of times is localhost"
+msgstr ""
+
+#: ../../application/controllers/install.php:61
+#: ../../application/controllers/install.php:164
+msgid "Database name"
+msgstr ""
+
+#: ../../application/controllers/install.php:65
+msgid "The name of the database"
+msgstr ""
+
+#: ../../application/controllers/install.php:69
+#: ../../application/controllers/install.php:165
+msgid "Database username"
+msgstr ""
+
+#: ../../application/controllers/install.php:74
+msgid "The username of the user with permissions to the database"
+msgstr ""
+
+#: ../../application/controllers/install.php:78
+#: ../../application/controllers/install.php:166
+msgid "Database password"
+msgstr ""
+
+#: ../../application/controllers/install.php:82
+msgid "The password of the user with permissions to the database"
+msgstr ""
+
+#: ../../application/controllers/install.php:86
+#: ../../application/controllers/install.php:167
+msgid "Database prefix"
+msgstr ""
+
+#: ../../application/controllers/install.php:89
+msgid "Add a database prefix to avoid collisions, in example if you have other software using the same database"
+msgstr ""
+
+#: ../../application/controllers/install.php:97
+#: ../../application/controllers/install.php:168
+msgid "Administrator username"
+msgstr ""
+
+#: ../../application/controllers/install.php:101
+msgid "The username of the administrator's account"
+msgstr ""
+
+#: ../../application/controllers/install.php:105
+#: ../../application/controllers/install.php:170
+msgid "Administrator password"
+msgstr ""
+
+#: ../../application/controllers/install.php:109
+msgid "The password of the administrator's account"
+msgstr ""
+
+#: ../../application/controllers/install.php:113
+#: ../../application/controllers/install.php:172
+msgid "Administrator email"
+msgstr ""
+
+#: ../../application/controllers/install.php:117
+msgid "The email of the administrator's account"
+msgstr ""
+
+#: ../../application/controllers/install.php:201
+msgid "Connection with database not established: check the database fields."
+msgstr ""
+
+#: ../../application/controllers/install.php:281
+msgid "{{FOOL_NAME}} has installed successfully. You can proceed logging in."
+msgstr ""
+
+#: ../../application/controllers/install.php:298
+msgid "You need at least PHP version {{FOOL_REQUIREMENT_PHP}} to run {{FOOL_NAME}}. This means you have a many years old version. It is suggested to upgrade to a more recent version of PHP to avoid security issues with your server in general."
+msgstr ""
+
+#: ../../application/controllers/install.php:306
+#, php-format
+msgid "The file %s was removed. The installation can't continue without that file. You can find it in the {{FOOL_NAME}} download."
+msgstr ""
+
+#: ../../application/controllers/install.php:315
+#, php-format
+msgid "The %s directory needs to be writable. Use this command in your shell if possible: %s or change its permissions recursively to 777 with your own FTP software. You won't be able to install or run {{FOOL_NAME}} without this."
+msgstr ""
+
+#: ../../application/controllers/install.php:325
+#, php-format
+msgid "The %s directory needs to be writable as well. Use this command in your shell if possible: %s or change its permissions recursively to 777 with your own FTP software. You won't be able to install or run {{FOOL_NAME}} without this."
+msgstr ""
+
+#: ../../application/controllers/install.php:354
+#, php-format
+msgid "The %s directory would be better if writable, in order to deliver automatic updates. Use this command in your shell if possible: %s"
+msgstr ""
+
+#: ../../application/controllers/install.php:358
+#, php-format
+msgid "The %s directory would be better if writable, in order to deliver automatic updates.<br/>It was impossible to determine the user running PHP. Use this command in your shell if possible: %s where www-data is an example (usually it's www-data or Apache)"
+msgstr ""
+
+#: ../../application/controllers/install.php:361
+msgid "If you can't do the above, after the installation you will be given a textfile to paste in config.php. More info after submitting."
+msgstr ""
+
+#: ../../application/controllers/install.php:369
+msgid "If you made any changes, just refresh this page to recheck the directory permissions."
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:26
+msgid "Authorization"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:33
+msgid "Message"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:112
+msgid "Login"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:211
+msgid "Register"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:249
+msgid "Resend activation email"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:311
+msgid "Forgot password"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:359
+msgid "Reset password"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:392
+msgid "Change password"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:431
+msgid "Change email"
+msgstr ""
+
+#: ../../application/controllers/admin/auth.php:484
+msgid "Unregister"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:20
+msgid "Boards"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:32
+msgid "Manage boards"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:60
+#: ../../application/controllers/admin/boards.php:130
+msgid "New board created!"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:66
+#: ../../application/controllers/admin/boards.php:71
+msgid "Board information updated."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:84
+msgid "Editing board:"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:93
+msgid "Create search table"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:94
+msgid "This board doesn't have the search table. You can create it by follwing this button."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:104
+msgid "Remove search table"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:105
+msgid "You are using Sphinx Search for this board, so you can remove the search table."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:139
+msgid "Creating a new board"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:164
+#, php-format
+msgid "Failed to create the search table for the board %s."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:170
+#, php-format
+msgid "The search table for the board %s has been created."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:178
+#, php-format
+msgid "Failed to remove the search table for the board %s."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:184
+#, php-format
+msgid "The search table for the board %s has been removed."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:194
+msgid "Creating search table for board:"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:197
+msgid "Do you want to create the search table for this board?"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:198
+msgid "Creating the search table can take time if you have a board with even just 100.000 entries."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:200
+msgid "Normally, even if the page times out, the database will keep building it."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:202
+msgid "To make sure your search table is fully created, you can execute the following via the command line of your server."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:206
+msgid "For very large boards, past a few millions of entries, this would could hours: you should use SphinxSearch instead, or anyway you should use the command line."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:214
+msgid "Removing search table for board:"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:217
+msgid "Do you want to remove the search table for this board?"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:218
+msgid "The search table can be created at any time, though it can take a while to create if the board is large."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:241
+#, php-format
+msgid "Failed to delete the board %s."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:246
+#, php-format
+msgid "The board %s has been deleted."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:255
+msgid "Removing board:"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:257
+msgid "Do you really want to remove the board and all its data?"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:259
+msgid "Notice: due to its size, you will have to remove the image directory manually. The directory will have the \"_removed\" suffix. You can remove all the leftover \"_removed\" directories with the following command:"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:272
+#: ../../application/controllers/admin/preferences.php:19
+#: ../../application/controllers/admin/system.php:54
+#: ../../application/controllers/admin/system.php:101
+msgid "Preferences"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:282
+msgid "Boards directory"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:284
+msgid "Overrides the default path to the boards directory (Example: /var/www/foolfuuka/boards)"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:289
+msgid "Boards URL"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:291
+msgid "Overrides the default url to the boards folder (Example: http://foolfuuka.site.com/there/boards)"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:296
+#: ../../application/controllers/admin/boards.php:303
+msgid "Boards database"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:298
+#: ../../application/controllers/admin/boards.php:305
+msgid "Overrides the default database. You should point it to your Asagi database if you have a separate one."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:310
+msgid "Media load balancers"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:312
+msgid "Facultative. One per line the URLs where your images are reachable."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:318
+msgid "HTTPS media load balancers"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:320
+msgid "Facultative. One per line the URLs where your images are reachable. This is used when the site is loaded via HTTPS protocol, and if empty it will fall back to HTTP media load balancers."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:330
+#: ../../application/controllers/admin/boards.php:562
+#: ../../application/controllers/admin/preferences.php:173
+#: ../../application/controllers/admin/preferences.php:243
+#: ../../application/controllers/admin/preferences.php:316
+#: ../../application/controllers/admin/system.php:93
+msgid "Submit"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:356
+msgid "Downloaded and installed the latest version of Asagi."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:362
+msgid "Asagi has been removed."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:368
+msgid "Settings updated."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:374
+msgid "Ran Asagi."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:380
+msgid "Stopped Asagi."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:386
+msgid "Enabled Asagi autorun."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:392
+msgid "Disabled Asagi autorun."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:397
+msgid "Asagi"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:405
+msgid "Asagi installation"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:428
+msgid "Activate Sphinx globally (enables crossboard search)"
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:436
+msgid "Set the address and port to your Sphinx instance."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:445
+#: ../../application/controllers/admin/boards.php:455
+msgid "The Sphinx listening address and port aren't formatted correctly."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:463
+msgid "The port specified isn't a valid number."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:476
+msgid "The Sphinx server couldn't be contacted at the specified address and port."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:490
+msgid "Set the address and port to your MySQL instance."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:500
+msgid "Set the MySQL client connection flags to enable compression, SSL, or secure connection."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:509
+msgid "Set the working directory to your Sphinx working directory."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:518
+msgid "Couldn't find the Sphinx working directory."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:531
+msgid "Set the minimum word length indexed by Sphinx."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:542
+msgid "Set the memory limit for the Sphinx instance in MegaBytes."
+msgstr ""
+
+#: ../../application/controllers/admin/boards.php:552
+msgid "Set the maximum number of children to fork for searchd."
+msgstr ""
+
+#: ../../application/controllers/admin/database.php:20
+msgid "Database"
+msgstr ""
+
+#: ../../application/controllers/admin/database.php:48
+#: ../../application/controllers/admin/system.php:136
+msgid "Upgrade"
+msgstr ""
+
+#: ../../application/controllers/admin/database.php:74
+msgid "Successfully updated the database."
+msgstr ""
+
+#: ../../application/controllers/admin/members.php:14
+msgid "Members"
+msgstr ""
+
+#: ../../application/controllers/admin/members.php:40
+#: ../../application/controllers/admin/plugins_admin.php:25
+msgid "Manage"
+msgstr ""
+
+#: ../../application/controllers/admin/members.php:69
+msgid "User profile saved!"
+msgstr ""
+
+#: ../../application/controllers/admin/members.php:80
+msgid "Editing user:"
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:17
+msgid "Plugins"
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:49
+msgid "The plugin couldn't be enabled."
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:54
+#, php-format
+msgid "The %s plugin is now enabled."
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:63
+msgid "The plugin couldn't be disabled."
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:68
+#, php-format
+msgid "The %s plugin is now disabled."
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:79
+#, php-format
+msgid "The %splugin couldn't be removed."
+msgstr ""
+
+#: ../../application/controllers/admin/plugins_admin.php:84
+#, php-format
+msgid "The %s plugin was removed."
+msgstr ""
+
+#: ../../application/controllers/admin/posts.php:18
+msgid "Posts"
+msgstr ""
+
+#: ../../application/controllers/admin/posts.php:38
+msgid "Reports"
+msgstr ""
+
+#: ../../application/controllers/admin/posts.php:67
+msgid "Access to reports outside the administrative panel is denied."
+msgstr ""
+
+#: ../../application/controllers/admin/posts.php:157
+msgid "Failed to remove the report from the database."
+msgstr ""
+
+#: ../../application/controllers/admin/posts.php:162
+msgid "The report has been removed from the database."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:39
+msgid "Theme"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:55
+msgid "Sets the title of your site."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:66
+msgid "Sets the title displayed in the index page."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:71
+msgid "Default language"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:72
+msgid "The language the users will see as they reach your site."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:91
+#, php-format
+msgid "Enable %s theme"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:101
+msgid "Active themes"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:102
+msgid "Choose the themes to make available to the users. Admins are able to access any of them even if disabled."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:115
+msgid "Default theme"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:116
+msgid "The theme the users will see as they reach your site."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:124
+msgid "Google Analytics code"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:127
+msgid "Insert your Google Analytics code to get statistics."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:137
+msgid "Header Text (\"notices\")"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:139
+msgid "Inserts the text above in the header, below the nagivation links."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:145
+msgid "Header Code"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:147
+msgid "This will insert the HTML code inside the &lt;HEAD&gt;."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:153
+msgid "Footer Text"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:155
+msgid "Credits in the footer and similar."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:161
+msgid "Footer Code"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:163
+msgid "This will insert the HTML code above after the &lt;BODY&gt;."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:199
+msgid "Advertising"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:209
+msgid "Top banner"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:210
+#: ../../application/controllers/admin/preferences.php:225
+msgid "Insert the HTML code provided by your advertiser."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:219
+msgid "Enable top banner"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:224
+msgid "Bottom banner"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:234
+msgid "Enable bottom banner"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:264
+msgid "Registration"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:275
+msgid "Disable New User Registrations"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:280
+msgid "Disable Email Activation"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:289
+msgid "In order to use reCAPTCHA&trade; you need to sign up for the service at <a href=\"http://www.google.com/recaptcha\">reCAPTCHA&trade;</a>, which will provide you with a public and a private key."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:294
+msgid "reCaptcha&trade; Public Key"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:296
+msgid "Insert the public key provided by reCAPTCHA&trade;."
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:303
+msgid "reCaptcha&trade; Secret Key"
+msgstr ""
+
+#: ../../application/controllers/admin/preferences.php:305
+msgid "Insert the private key provided by reCAPTCHA&trade;."
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:22
+msgid "System"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:40
+#: ../../application/controllers/admin/system.php:44
+msgid "Information"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:61
+msgid "Found and Working"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:67
+msgid "Not Available"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:67
+msgid "You must have Safe Mode turned off and the exec() function enabled to allow ImageMagick to process your images. Please check the information panel for more details."
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:67
+#: ../../application/controllers/admin/system.php:69
+#: ../../application/controllers/admin/system.php:72
+msgid "Disabled Functions"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:69
+msgid "Not Found"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:69
+msgid "You must provide the correct path to the \"convert\" binary on your system. This is typically located under /usr/bin (Linux), /opt/local/bin (Mac OSX) or the installation directory (Windows)."
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:71
+msgid "Not Working"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:71
+#, php-format
+msgid "There has been an error encountered when testing your ImageMagick installation. To manually check for errors, access your server via shell or command line and type: %s"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:81
+msgid "Path to ImageMagick"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:84
+msgid "The location of your ImageMagick \"convert\" executable"
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:126
+msgid "Upgrade failed: check file permissions."
+msgstr ""
+
+#: ../../application/controllers/admin/system.php:130
+msgid "Upgrade successful"
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:31
+#: ../../application/controllers/api/chan_api.php:98
+#: ../../application/controllers/api/chan_api.php:302
+msgid "Invalid value for 'page'."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:35
+#: ../../application/controllers/api/chan_api.php:102
+#: ../../application/controllers/api/chan_api.php:306
+msgid "Unable to return more than 500 pages."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:52
+#: ../../application/controllers/api/chan_api.php:119
+#: ../../application/controllers/api/chan_api.php:323
+msgid "Invalid value for 'per_page'."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:56
+#: ../../application/controllers/api/chan_api.php:123
+msgid "Unable to return more than 50 threads per page."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:78
+#: ../../application/controllers/api/chan_api.php:147
+msgid "Unable to locate any threads."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:165
+#: ../../application/controllers/api/chan_api.php:224
+#: ../../application/controllers/api/chan_api.php:258
+msgid "You are missing the 'num' parameter."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:170
+#: ../../application/controllers/api/chan_api.php:230
+#: ../../application/controllers/api/chan_api.php:264
+msgid "Invalid value for 'num'."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:182
+msgid "The value for 'latest_doc_id' is malformed."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:213
+#: ../../application/controllers/api/chan_api.php:289
+msgid "Thread could not be found."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:240
+#: ../../application/controllers/api/chan_api.php:244
+msgid "Post could not be found."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:327
+msgid "Can't return more than 50 ghosted threads per page."
+msgstr ""
+
+#: ../../application/controllers/api/chan_api.php:350
+msgid "Ghost Posts could not be found."
+msgstr ""
+
+#: ../../application/helpers/options_helper.php:193
+#: ../../application/helpers/options_helper.php:200
+msgid "The system is under maintenance. Be back later."
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:87
+msgid "Add board"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:88
+msgid "Sphinx Search"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:89
+msgid "Asagi Fetcher"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:104
+msgid "Account"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:108
+msgid "Change Email"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:109
+msgid "Change Password"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:120
+msgid "Member List"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:143
+msgid "New"
+msgstr ""
+
+#: ../../application/libraries/Admin_Controller.php:162
+msgid "Bug tracker"
+msgstr ""
+
+#: ../../application/libraries/API_Controller.php:38
+msgid "You didn't select a board"
+msgstr ""
+
+#: ../../application/libraries/API_Controller.php:46
+msgid "The board you selected doesn't exist"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:164
+msgid "Submitting"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:165
+msgid "This thread is being displayed in real time."
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:166
+msgid "Update now"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:179
+msgid "You're not allowed to perform this action"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:185
+msgid "Missing arguments"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:195
+msgid "Invalid action"
+msgstr ""
+
+#: ../../application/libraries/MY_Controller.php:207
+msgid "Post not found"
+msgstr ""
+
+#: ../../application/libraries/Public_Controller.php:49
+msgid "No themes enabled!"
+msgstr ""
+
+#: ../../application/models/asagi_model.php:88
+msgid "The Asagi ZIP file couldn't be downloaded."
+msgstr ""
+
+#: ../../application/models/post_model.php:637
+msgid "The file you submitted doesn't seem to be an image."
+msgstr ""
+
+#: ../../application/models/post_model.php:643
+msgid "The image you submitted is too small."
+msgstr ""
+
+#: ../../application/models/post_model.php:679
+msgid "This image has already been posted once. This board doesn't allow image reposting"
+msgstr ""
+
+#: ../../application/models/post_model.php:693
+#, php-format
+msgid "You must wait up to %s hours to repost this image."
+msgstr ""
+
+#: ../../application/models/post_model.php:1290
+msgid "Sorry, global search requires SphinxSearch."
+msgstr ""
+
+#: ../../application/models/post_model.php:1300
+msgid "The search backend is currently not online. Try later or contact us in case it's offline for too long."
+msgstr ""
+
+#: ../../application/models/post_model.php:2507
+msgid "Your IP has been identified as a spam proxy. Please try a different IP or remove the proxy to post."
+msgstr ""
+
+#: ../../application/models/post_model.php:2534
+msgid "You are banned from posting"
+msgstr ""
+
+#: ../../application/models/post_model.php:2554
+msgid "You must wait more time to make new threads!"
+msgstr ""
+
+#: ../../application/models/post_model.php:2576
+msgid "You're posting again the same comment as the last time!"
+msgstr ""
+
+#: ../../application/models/post_model.php:2663
+msgid "Your comment has contains words that aren't allowed."
+msgstr ""
+
+#: ../../application/models/post_model.php:2687
+msgid "Your comment would display as empty."
+msgstr ""
+
+#: ../../application/models/post_model.php:2714
+msgid "An image is required for creating threads."
+msgstr ""
+
+#: ../../application/models/post_model.php:2723
+msgid "The filetype you are attempting to upload is not allowed."
+msgstr ""
+
+#: ../../application/models/post_model.php:2729
+msgid "The image you are attempting to upload is larger than the permitted size."
+msgstr ""
+
+#: ../../application/models/post_model.php:2745
+msgid "Sorry, this thread has reached its maximum amount of image replies."
+msgstr ""
+
+#: ../../application/models/post_model.php:2756
+msgid "Your image upload is not a valid image file."
+msgstr ""
+
+#: ../../application/models/post_model.php:2773
+msgid "Your image upload has been flagged as inappropriate."
+msgstr ""
+
+#: ../../application/models/post_model.php:2780
+msgid "Your post contains contents that is marked as spam."
+msgstr ""
+
+#: ../../application/models/post_model.php:2786
+msgid "Your post was too long."
+msgstr ""
+
+#: ../../application/models/post_model.php:2792
+msgid "Your post had too many lines."
+msgstr ""
+
+#: ../../application/models/post_model.php:2830
+msgid "This post is already being processed..."
+msgstr ""
+
+#: ../../application/models/post_model.php:2908
+#: ../../application/models/post_model.php:3026
+msgid "You already posted this."
+msgstr ""
+
+#: ../../application/models/post_model.php:2929
+msgid "Your image was invalid."
+msgstr ""
+
+#: ../../application/models/post_model.php:3136
+msgid "There's no such a post to be deleted."
+msgstr ""
+
+#: ../../application/models/post_model.php:3151
+msgid "The password you inserted did not match the post's deletion password."
+msgstr ""
+
+#: ../../application/models/post_model.php:3158
+msgid "Unable to delete thumbnail for post."
+msgstr ""
+
+#: ../../application/models/post_model.php:3184
+msgid "Unable to delete post."
+msgstr ""
+
+#: ../../application/models/post_model.php:3208
+msgid "Unable to delete thumbnail for thread replies."
+msgstr ""
+
+#: ../../application/models/preferences_model.php:159
+msgid "Preferences updated."
+msgstr ""
+
+#: ../../application/models/profile_model.php:109
+msgid "User ID"
+msgstr ""
+
+#: ../../application/models/profile_model.php:110
+msgid "The ID of the user"
+msgstr ""
+
+#: ../../application/models/profile_model.php:122
+msgid "Non-admin user can't to change the data of another user."
+msgstr ""
+
+#: ../../application/models/profile_model.php:133
+msgid "Couldn't find the user with the submitted ID."
+msgstr ""
+
+#: ../../application/models/profile_model.php:150
+msgid "Group"
+msgstr ""
+
+#: ../../application/models/profile_model.php:151
+msgid "Choose the permission level of the member"
+msgstr ""
+
+#: ../../application/models/profile_model.php:153
+msgid "Administrator"
+msgstr ""
+
+#: ../../application/models/profile_model.php:154
+msgid "Moderator"
+msgstr ""
+
+#: ../../application/models/profile_model.php:155
+msgid "Member"
+msgstr ""
+
+#: ../../application/models/profile_model.php:164
+msgid "Display Name"
+msgstr ""
+
+#: ../../application/models/profile_model.php:165
+msgid "A name that is publicly shown beside the username"
+msgstr ""
+
+#: ../../application/models/profile_model.php:174
+msgid "Twitter"
+msgstr ""
+
+#: ../../application/models/profile_model.php:175
+msgid "The twitter nickname"
+msgstr ""
+
+#: ../../application/models/profile_model.php:184
+msgid "Bio"
+msgstr ""
+
+#: ../../application/models/profile_model.php:185
+msgid "A short description of the user"
+msgstr ""
+
+#: ../../application/models/radix_model.php:138
+#: ../../application/models/report_model.php:151
+msgid "Couldn't find the board with the submitted ID."
+msgstr ""
+
+#: ../../application/models/radix_model.php:149
+msgid "Name"
+msgstr ""
+
+#: ../../application/models/radix_model.php:150
+msgid "Insert the name of the board normally shown as title."
+msgstr ""
+
+#: ../../application/models/radix_model.php:151
+msgid "Required"
+msgstr ""
+
+#: ../../application/models/radix_model.php:158
+msgid "Shortname"
+msgstr ""
+
+#: ../../application/models/radix_model.php:159
+msgid "Insert the shorter name of the board. Reserved: \"api\", \"cli\", \"admin\"."
+msgstr ""
+
+#: ../../application/models/radix_model.php:160
+msgid "Req."
+msgstr ""
+
+#: ../../application/models/radix_model.php:175
+msgid "You can't use the protected shortnames unless you activate the system subdomain feature. The protected shortnames are:"
+msgstr ""
+
+#: ../../application/models/radix_model.php:201
+msgid "The shortname is already used for another board."
+msgstr ""
+
+#: ../../application/models/radix_model.php:210
+msgid "General rules"
+msgstr ""
+
+#: ../../application/models/radix_model.php:211
+msgid "Full board rules displayed in a separate page, in <a href=\"http://daringfireball.net/projects/markdown/basics\" target=\"_blank\">MarkDown</a> syntax. Will not display if left empty."
+msgstr ""
+
+#: ../../application/models/radix_model.php:213
+#: ../../application/models/radix_model.php:225
+msgid "MarkDown goes here"
+msgstr ""
+
+#: ../../application/models/radix_model.php:222
+msgid "Posting rules"
+msgstr ""
+
+#: ../../application/models/radix_model.php:223
+msgid "Posting rules displayed in the posting area, in <a href=\"http://daringfireball.net/projects/markdown/basics\" target=\"_blank\">MarkDown</a> syntax. Will not display if left empty."
+msgstr ""
+
+#: ../../application/models/radix_model.php:233
+msgid "Maximum number of threads to display in the index pages"
+msgstr ""
+
+#: ../../application/models/radix_model.php:242
+msgid "Is this a 4chan archiving board?"
+msgstr ""
+
+#: ../../application/models/radix_model.php:246
+msgid "Options for archive boards"
+msgstr ""
+
+#: ../../application/models/radix_model.php:252
+msgid "URL to the 4chan board (facultative)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:261
+msgid "URL to the board thumbnails (facultative)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:270
+msgid "URL to the board images (facultative)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:279
+msgid "Image fetching workers"
+msgstr ""
+
+#: ../../application/models/radix_model.php:280
+msgid "The number of workers that will fetch full images. Set to zero not to fetch them."
+msgstr ""
+
+#: ../../application/models/radix_model.php:290
+msgid "Thumbnail fetching workers"
+msgstr ""
+
+#: ../../application/models/radix_model.php:291
+msgid "The number of workers that will fetch thumbnails"
+msgstr ""
+
+#: ../../application/models/radix_model.php:301
+msgid "Thread fetching workers"
+msgstr ""
+
+#: ../../application/models/radix_model.php:302
+msgid "The number of workers that fetch new threads"
+msgstr ""
+
+#: ../../application/models/radix_model.php:313
+msgid "Minutes to refresh the thread"
+msgstr ""
+
+#: ../../application/models/radix_model.php:321
+msgid "Thread refresh rate"
+msgstr ""
+
+#: ../../application/models/radix_model.php:322
+msgid "Array of refresh rates in seconds per page in JSON format"
+msgstr ""
+
+#: ../../application/models/radix_model.php:335
+msgid "The JSON inputted is not valid."
+msgstr ""
+
+#: ../../application/models/radix_model.php:344
+msgid "Options for normal boards"
+msgstr ""
+
+#: ../../application/models/radix_model.php:349
+msgid "Opening post thumbnail maximum width after resizing"
+msgstr ""
+
+#: ../../application/models/radix_model.php:358
+msgid "Opening post thumbnail maximum height after resizing"
+msgstr ""
+
+#: ../../application/models/radix_model.php:367
+msgid "Reply thumbnail maximum width after resizing"
+msgstr ""
+
+#: ../../application/models/radix_model.php:376
+msgid "Reply thumbnail maximum height after resizing"
+msgstr ""
+
+#: ../../application/models/radix_model.php:385
+msgid "Full image maximum size in kilobytes"
+msgstr ""
+
+#: ../../application/models/radix_model.php:394
+msgid "Full image maximum width in pixels"
+msgstr ""
+
+#: ../../application/models/radix_model.php:403
+msgid "Full image maximum height in pixels"
+msgstr ""
+
+#: ../../application/models/radix_model.php:412
+msgid "The maximum amount of posts before a thread \"dies\""
+msgstr ""
+
+#: ../../application/models/radix_model.php:421
+msgid "The maximum amount of images in replies before posting more is prohibited"
+msgstr ""
+
+#: ../../application/models/radix_model.php:430
+msgid "The minimum time in hours to repost the same image (0 means no limit, -1 means never allowing a repost)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:441
+msgid "The default name when an user doesn't enter a name"
+msgstr ""
+
+#: ../../application/models/radix_model.php:450
+msgid "Should the image spoilers be semi-transparent? (mods and admins have it always on for moderation)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:457
+msgid "Show the EXIF data (EXIF data is saved in the database regardless)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:464
+msgid "Enable poster hashes, an IP-based code to temporarily distinguish Anonymous users"
+msgstr ""
+
+#: ../../application/models/radix_model.php:470
+msgid "Don't allow ghost posting (disallows infinite replying)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:476
+msgid "Hide the thumbnails?"
+msgstr ""
+
+#: ../../application/models/radix_model.php:482
+msgid "Hide the thumbnails for 24 hours? (for moderation purposes)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:487
+msgid "Use SphinxSearch as search engine?"
+msgstr ""
+
+#: ../../application/models/radix_model.php:492
+msgid "Hide the board from public access? (only admins and mods will be able to browse it)"
+msgstr ""
+
+#: ../../application/models/radix_model.php:1606
+msgid "Your MySQL installation doesn't support multibyte characters. Update MySQL to version 5.5 or higher."
+msgstr ""
+
+#: ../../application/models/radix_model.php:1623
+#, php-format
+msgid "Converting %s to utfmb4"
+msgstr ""
+
+#: ../../application/models/radix_model.php:1628
+msgid "The tables have all been converted to utf8mb4"
+msgstr ""
+
+#: ../../application/models/report_model.php:106
+msgid "Board shortname"
+msgstr ""
+
+#: ../../application/models/report_model.php:121
+msgid "Couldn't find the board with the submitted shortname."
+msgstr ""
+
+#: ../../application/models/report_model.php:128
+msgid "Board ID"
+msgstr ""
+
+#: ../../application/models/report_model.php:137
+msgid "You didn't send a board ID."
+msgstr ""
+
+#: ../../application/models/report_model.php:163
+msgid "Post number"
+msgstr ""
+
+#: ../../application/models/report_model.php:175
+msgid "Couldn't find the post with the submitted post number."
+msgstr ""
+
+#: ../../application/models/report_model.php:185
+msgid "Post ID"
+msgstr ""
+
+#: ../../application/models/report_model.php:194
+msgid "You didn't send a post ID."
+msgstr ""
+
+#: ../../application/models/report_model.php:207
+msgid "Couldn't find the post with the submitted doc_id."
+msgstr ""
+
+#: ../../application/models/report_model.php:221
+msgid "Reason"
+msgstr ""
+
+#: ../../application/models/upgrade2_model.php:74
+msgid "We're currently upgrading {{FOOL_NAME}}. This process usually takes few seconds or a couple minutes, check back soon!"
+msgstr ""
+
+#: ../../application/models/upgrade_model.php:36
+msgid "FoOlPod server could not be contacted: impossible to check for new versions."
+msgstr ""
+
+#: ../../application/models/upgrade_model.php:189
+msgid "Can't get the update file from FoOlPod. It might be a momentary problem, or a problem with your server security configuration. Browse <a href=\"http://foolrulez.com/pod/human\">http://foolrulez.com/pod/human</a> to check if it's a known issue."
+msgstr ""
+
+#: ../../application/models/upgrade_model.php:253
+#, php-format
+msgid "If you can't do the above, you can follow the manual upgrade instructons at %sthis link%s."
+msgstr ""
+
+#: ../../application/views/admin/confirm.php:12
+msgid "Confirm"
+msgstr ""
+
+#: ../../application/views/admin/confirm.php:15
+msgid "Go back"
+msgstr ""
+
+#: ../../application/views/admin/default.php:7
+#: ../../application/views/admin/navbar.php:10
+msgid "Control Panel"
+msgstr ""
+
+#: ../../application/views/admin/default.php:76
+msgid "New upgrade available:"
+msgstr ""
+
+#: ../../application/views/admin/navbar.php:34
+msgid "Your Profile"
+msgstr ""
+
+#: ../../application/views/admin/navbar.php:39
+msgid "Logout"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_email_form.php:19
+msgid "Password"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_email_form.php:25
+msgid "New email address"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_email_form.php:34
+msgid "Send confirmation email"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_password_form.php:27
+msgid "Old Password"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_password_form.php:31
+#: ../../application/views/admin/auth/reset_password_form.php:18
+msgid "New Password"
+msgstr ""
+
+#: ../../application/views/admin/auth/change_password_form.php:35
+#: ../../application/views/admin/auth/reset_password_form.php:22
+msgid "Confirm New Password"
+msgstr ""
+
+#: ../../application/views/admin/auth/forgot_password_form.php:13
+#: ../../application/views/admin/auth/login_form.php:13
+msgid "Email or username"
+msgstr ""
+
+#: ../../application/views/admin/auth/forgot_password_form.php:36
+msgid "Get a new password"
+msgstr ""
+
+#: ../../application/views/admin/auth/forgot_password_form.php:41
+#: ../../application/views/admin/auth/register_form.php:115
+msgid "Back to login"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:21
+msgid "Email"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:71
+#: ../../application/views/admin/auth/register_form.php:80
+msgid "Get another CAPTCHA"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:72
+#: ../../application/views/admin/auth/register_form.php:81
+msgid "Get an audio CAPTCHA"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:73
+#: ../../application/views/admin/auth/register_form.php:82
+msgid "Get an image CAPTCHA"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:76
+#: ../../application/views/admin/auth/register_form.php:85
+msgid "Enter the words above"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:77
+#: ../../application/views/admin/auth/register_form.php:86
+msgid "Enter the numbers you hear"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:92
+#: ../../application/views/admin/auth/register_form.php:101
+msgid "Enter the letters above"
+msgstr ""
+
+#: ../../application/views/admin/auth/login_form.php:103
+msgid "Remember me"
+msgstr ""
+
+#: ../../application/views/admin/auth/register_form.php:12
+#: ../../application/views/admin/auth/register_form.php:21
+#: ../../application/views/admin/auth/register_form.php:29
+#: ../../application/views/admin/auth/register_form.php:37
+#: ../../application/views/admin/auth/register_form.php:43
+msgid "required"
+msgstr ""
+
+#: ../../application/views/admin/auth/register_form.php:48
+msgid "Username"
+msgstr ""
+
+#: ../../application/views/admin/auth/register_form.php:55
+#: ../../application/views/admin/auth/send_again_form.php:13
+msgid "Email Address"
+msgstr ""
+
+#: ../../application/views/admin/auth/register_form.php:67
+msgid "Confirm Password"
+msgstr ""
+
+#: ../../application/views/admin/auth/send_again_form.php:24
+msgid "Send"
+msgstr ""
+
+#: ../../application/views/admin/auth/send_again_form.php:29
+msgid "Back to login (you must be activated)"
+msgstr ""
+
+#: ../../application/views/admin/auth/unregister_form.php:21
+msgid "Delete account"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:9
+msgid "Run"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:10
+msgid "Kill"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:12
+msgid "Enable autorun"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:14
+msgid "Disable autorun"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:16
+msgid "Upgrade/Reinstall"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:17
+#: ../../application/views/admin/plugins/manage.php:11
+#: ../../application/views/admin/plugins/manage.php:32
+msgid "Remove"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:22
+msgid "Running Asagi manually"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:23
+msgid "You can run it on your server by typing in your command line:"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:25
+msgid "But this would run it only once and would stop once you close the terminal. Use it to test if it's working fine."
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:29
+msgid ""
+"If you're on Linux, to have Asagi running as daemon (without your terminal needing to be open), you can use GNU Screen that creates a virtual terminal that will stay alive even if you close the window. \n"
+"You can usually install this on Debian/Ubuntu by typing <code>apt-get install screen</code> in your terminal. \n"
+"You can then type the following string in your terminal to have Asagi running under GNU Screen:"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:35
+msgid "Then press CTRL+A and then CTRL+D to detach the screen. You can go back to it by writing:"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:38
+msgid "License"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:39
+msgid "Asagi is released under the GNU General Public License, version 2, or later."
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi.php:39
+msgid "Click here to read the full license."
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi_install.php:5
+msgid ""
+"\n"
+"Asagi is the Open Source (GPLv3) 4chan data fetcher coded by Eksopl. It can dump the threads, images and thumbnails from the Yotsuba boards in 4chan into your server for easy consumption.\n"
+"\n"
+"If you're interested in using FoOlFuuka as a 4chan archive, you need to download, setup and run Asagi.\n"
+"\n"
+"We can do the downloading and the setup, and all that is left to you is running it since we can't reliably run it off the web interface. FoOlFuuka will keep the settings of Asagi updated for you, so you can manage your archives through the boards manager.\n"
+"\n"
+"Requirements: Java installed on your server.\n"
+msgstr ""
+
+#: ../../application/views/admin/boards/asagi_install.php:19
+msgid "Install"
+msgstr ""
+
+#: ../../application/views/admin/boards/manage.php:15
+msgid "Board"
+msgstr ""
+
+#: ../../application/views/admin/boards/manage.php:17
+msgid "Quick functions"
+msgstr ""
+
+#: ../../application/views/admin/boards/manage.php:34
+#: ../../application/views/admin/boards/manage.php:42
+msgid "Edit"
+msgstr ""
+
+#: ../../application/views/admin/boards/manage.php:48
+msgid "Delete"
+msgstr ""
+
+#: ../../application/views/admin/database/upgrade.php:6
+msgid "Update database"
+msgstr ""
+
+#: ../../application/views/admin/database/upgrade.php:8
+msgid "There's a newer version of the database available. Just update it by clicking on the update button."
+msgstr ""
+
+#: ../../application/views/admin/database/upgrade.php:10
+#, php-format
+msgid "In case you're using a very large installation of {{FOOL_NAME}}, to avoid timeouts while updating the database, you can use the command line, and enter this: %s"
+msgstr ""
+
+#: ../../application/views/admin/database/upgrade.php:16
+msgid "Do you really want to upgrade your database?"
+msgstr ""
+
+#: ../../application/views/admin/members/manage.php:6
+msgid "ID"
+msgstr ""
+
+#: ../../application/views/admin/members/manage.php:8
+msgid "Display name"
+msgstr ""
+
+#: ../../application/views/admin/members/manage.php:11
+msgid "Last seen"
+msgstr ""
+
+#: ../../application/views/admin/plugins/manage.php:8
+msgid "Plugin name"
+msgstr ""
+
+#: ../../application/views/admin/plugins/manage.php:9
+msgid "Description"
+msgstr ""
+
+#: ../../application/views/admin/plugins/manage.php:10
+msgid "Status"
+msgstr ""
+
+#: ../../application/views/admin/plugins/manage.php:24
+msgid "Disable"
+msgstr ""
+
+#: ../../application/views/admin/plugins/manage.php:25
+msgid "Enable"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:11
+msgid "Server Information"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:15
+msgid "Web Server Software"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:17
+msgid "The web server that is currently running to serve your content."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:21
+msgid "PHP Version"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:23
+msgid "The version of the currently running PHP parser."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:26
+msgid "Old PHP version"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:27
+msgid "To run {{FOOL_NAME}}, you need at least PHP  version 5.2.0."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:27
+#: ../../application/views/admin/system/information.php:57
+#: ../../application/views/admin/system/information.php:89
+#: ../../application/views/admin/system/information.php:101
+#: ../../application/views/admin/system/information.php:113
+#: ../../application/views/admin/system/information.php:125
+#: ../../application/views/admin/system/information.php:137
+#: ../../application/views/admin/system/information.php:149
+#: ../../application/views/admin/system/information.php:161
+msgid "Suggested"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:38
+msgid "Nginx Upload Size"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:39
+msgid "This value cannot be checked via PHP."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:40
+msgid "The Nginx web server has its own internal upload limit variable. If you are receiving upload errors, and your PHP configuration looks fine, check this variable in your Nginx configuration file."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:40
+#: ../../application/views/admin/system/information.php:85
+#: ../../application/views/admin/system/information.php:97
+#: ../../application/views/admin/system/information.php:109
+#: ../../application/views/admin/system/information.php:121
+#: ../../application/views/admin/system/information.php:133
+#: ../../application/views/admin/system/information.php:145
+#: ../../application/views/admin/system/information.php:157
+msgid "Variable"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:46
+msgid "Software Information"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:50
+msgid "{{FOOL_NAME}} Version"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:52
+msgid "The version of {{FOOL_NAME}} that you are currently running on your server."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:55
+#: ../../application/views/admin/system/information.php:56
+msgid "New Version Available"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:57
+msgid "Upgrading {{FOOL_NAME}} ensures that you have the most secure, stable and feature enhanced release."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:63
+msgid "Environment"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:65
+msgid "The environment {{FOOL_NAME}} is currently running as on the server."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:72
+msgid "PHP Configuration"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:73
+msgid "PHP settings can be easily changed by editing your php.ini file."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:77
+msgid "php.ini Location"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:79
+msgid "This is the location of the file to edit to change the following variables."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:83
+#: ../../application/views/admin/system/information.php:88
+msgid "Safe Mode"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:84
+#: ../../application/views/admin/system/information.php:96
+msgid "On"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:84
+#: ../../application/views/admin/system/information.php:96
+msgid "Off"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:85
+msgid "The PHP safe mode is an attempt to solve the shared-server security problems and disables many important PHP functions. This is mainly used by shared hosting services to avoid implementing correct security fixes for shared-server environments."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:89
+msgid "Safe Mode has been enabled on your PHP installation. This setting has nothing to do with security, and it's used by shared server hosts to limit your actions. This variable should be turned off for {{FOOL_NAME}} to function correctly."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:95
+msgid "Allow URL fopen"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:97
+msgid "This function allows PHP to use URL-aware fopen wrappers to access remote files via FTP or HTTP protocol."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:100
+#: ../../application/views/admin/system/information.php:120
+#: ../../application/views/admin/system/information.php:124
+msgid "Disabled"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:101
+msgid "Your PHP configuration currently has URL-aware fopen wrappers disabled. This affects {{FOOL_NAME}} functions that require accessing remote files in case cURL is not installed on the system. If it is possible, this variable should be enabled with cURL installed as well."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:107
+msgid "Max Execution Time"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:109
+msgid "This is the maximum time in seconds a script is allowed to run before it is terminated by the parser."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:112
+#: ../../application/views/admin/system/information.php:136
+#: ../../application/views/admin/system/information.php:148
+#: ../../application/views/admin/system/information.php:160
+msgid "Low Value"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:113
+msgid "Your current value for max execution time is low. This option affects functions that require large amounts of processing time, such as processing images. If your server doesn't have a powerful processor or you're processing large amounts of images, this value must be set as high as the total processing time taken to complete the function."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:119
+msgid "File Uploads"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:120
+msgid "Enabled"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:121
+msgid "This states whether or not to allow HTTP file uploads."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:125
+msgid "Your PHP configuration currently has file uploads disabled. This variable must be enabled or {{FOOL_NAME}} will not operate correctly."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:131
+msgid "Max POST Size"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:133
+msgid "This is max size of post data allowed."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:137
+msgid "Your current value for POST size is low. This variable should generally be set at a higher value to accomodate and ensure that all of your chapters will be uploaded."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:143
+msgid "Max Upload Size"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:145
+msgid "This is the maximum size allowed for an uploaded file."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:149
+msgid "Your current value for max upload size is low. This variable should generally be set at a higher value to accommodate and allow your largest chapter to be uploaded."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:155
+msgid "Max File Uploads"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:157
+msgid "This is the maximum number of files allowed to be uploaded simultaneously."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:161
+msgid "Your current value for max file uploads is low. This variable should generally be set at a higher value than the number of pages your chapters may have."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:171
+msgid "Extensions"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:176
+#: ../../application/views/admin/system/information.php:181
+#: ../../application/views/admin/system/information.php:187
+msgid "Installed"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:176
+#: ../../application/views/admin/system/information.php:187
+msgid "Not Installed"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:177
+msgid "This is a library used to communicate with different types of servers with many types of protocols."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:181
+msgid "Missing"
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:182
+msgid "This is a library used to dynamically create images and thumbnails."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:188
+msgid "This is a library used to dynamically create, edit, compose or convert images."
+msgstr ""
+
+#: ../../application/views/admin/system/information.php:188
+msgid "Optional"
+msgstr ""
+
+#: ../../application/views/admin/system/upgrade.php:7
+msgid "Current Version"
+msgstr ""
+
+#: ../../application/views/admin/system/upgrade.php:8
+msgid "Latest Version Available"
+msgstr ""
+
+#: ../../application/views/admin/system/upgrade.php:8
+msgid "You have the latest version of {{FOOL_NAME}}."
+msgstr ""
+
+#: ../../application/views/admin/system/upgrade.php:16
+msgid "Upgrade or reinstall"
+msgstr ""
+
+#: ../../application/views/admin/system/upgrade.php:29
+msgid "Changelog"
+msgstr ""
+
+#: ../../application/views/install/default.php:7
+msgid "{{FOOL_NAME}}"
+msgstr ""
+
+#: ../../application/views/install/index.php:5
+msgid "This is all the needed information to install and run {{FOOL_NAME}}. Don't worry: you can change this information later in case you need it changed."
+msgstr ""
+
+#: ../../application/views/install/manual_config.php:6
+#, php-format
+msgid "The installation was unable to automatically create the config.php file. You'll have to create %s and paste all the following inside the file. When done, just press on the button on the bottom to be redirected to your {{FOOL_NAME}} installation."
+msgstr ""
+
+#: ../../application/views/install/manual_config.php:28
+msgid "Done"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:26
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:162
+msgid "GeoIP Region Lock"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:45
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:55
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:182
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:193
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:204
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:215
+msgid "Comma separated list of GeoIP 2-letter nation codes."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:94
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:109
+msgid "Your nation has been blocked from posting."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:172
+msgid "You can add board-specific locks by browsing the board preferences."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:176
+msgid "Countries allowed to post"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:182
+msgid "If you allow a nation, all other nations won't be able to comment."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:187
+msgid "Countries disallowed to post"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:193
+msgid "Disallowed nations won't be able to comment."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:198
+msgid "Countries allowed to view the site"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:204
+msgid "If you allow a nation, all other nations won't be able to reach the interface."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:209
+msgid "Countries disallowed to view the site."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:215
+msgid "Disallowed nations won't be able to reach the interface."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:224
+msgid "Allow logged in users to post regardless."
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock.php:227
+msgid "Allow all logged in users to post regardless of region lock? (Mods and Admins are always allowed to post)"
+msgstr ""
+
+#: ../../content/plugins/FF_GeoIP_Region_Lock/FF_GeoIP_Region_Lock_info.php:15
+msgid "Allow or disallow nations to reach the board or post comments. Requires the GeoIP PECL module."
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:56
+msgid "SSL Tools"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:65
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:74
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:83
+msgid "SSL"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:94
+msgid "Does the server have SSL available (does your site support https:// protocol)?"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:99
+msgid "Redirect the logged in users to the SSL version of the site"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:104
+msgid "Redirect every user to the SSL version of the site"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:109
+msgid "Set a cookie for users that browsed the site with https:// so they get redirected to the https:// version of the site"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:114
+msgid "Show a link to SSL in the header if the user is browsing in http://"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools.php:119
+msgid "Show a link to SSL in the footer if the user is browsing in http://"
+msgstr ""
+
+#: ../../content/plugins/FF_SSL_Tools/FF_SSL_Tools_info.php:15
+msgid "Adds a panel to control useful tools if you have SSL available"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:40
+msgid "Couldn't find the article with the submitted ID."
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:52
+msgid "The title of your article"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:60
+msgid "Slug"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:61
+msgid "Insert the short name of the article to use in the url. Only alphanumeric and dashes."
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:90
+msgid "The slug is already used for another board."
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:100
+msgid "If you set this, the article link will actually be an outlink."
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:107
+#: ../../content/plugins/FS_Articles/FS_Articles.php:276
+msgid "Article"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:108
+msgid "The content of your article, in MarkDown"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:116
+#: ../../content/plugins/FS_Articles/FS_Articles.php:117
+msgid "Display the article link on the top of the page"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:122
+#: ../../content/plugins/FS_Articles/FS_Articles.php:123
+msgid "Display the article link on the bottom of the page"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:160
+#: ../../content/plugins/FS_Articles/FS_Articles.php:168
+#: ../../content/plugins/FS_Articles/FS_Articles.php:186
+#: ../../content/plugins/FS_Articles/FS_Articles.php:283
+#: ../../content/plugins/FS_Articles/FS_Articles.php:362
+#: ../../content/plugins/FS_Articles/FS_Articles.php:464
+msgid "Articles"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:194
+#: ../../content/plugins/FS_Articles/FS_Articles.php:280
+msgid "New article"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:252
+msgid "New article created!"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:258
+#: ../../content/plugins/FS_Articles/FS_Articles.php:263
+msgid "Article information updated."
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:358
+msgid "The article was removed"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:363
+msgid "Removing article:"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles.php:365
+msgid "Do you really want to remove the article?"
+msgstr ""
+
+#: ../../content/plugins/FS_Articles/FS_Articles_info.php:15
+msgid "Enable support for custom pages in MarkDown and custom links."
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:38
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:139
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:142
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:182
+msgid "Statistics"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:45
+msgid "Stats"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:78
+msgid "Select the statistics to enable. Some might be too slow to process, so you should disable them. Some statistics don't use extra processing power so they are enabled by default."
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:99
+#, php-format
+msgid "Enable %s statistics"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:111
+msgid "Board Statistics"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:186
+#, php-format
+msgid "Statistics: %s (Next Update in %s)"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:193
+#, php-format
+msgid "Statistics: %s"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:228
+#: ../../content/plugins/FU_Board_Statistics/views/availability.php:11
+msgid "Availability"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:229
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:236
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:259
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:282
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:306
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:312
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:335
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:341
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:364
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:370
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:376
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:382
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:388
+msgid "Posts in last month by name and availability by time of day."
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:235
+msgid "Daily Activity"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:258
+msgid "Daily Activity \"Archive\""
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:281
+msgid "Daily Activity \"Hourly\""
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:305
+msgid "Image Reposts"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:311
+msgid "Karma"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:334
+msgid "New Users"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:340
+msgid "Population"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:363
+msgid "Post Count"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:369
+msgid "Post Rate"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:375
+msgid "Post Rate \"Archive\""
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:381
+msgid "Users Online"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics.php:387
+msgid "Users Posting in Archive"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/FU_Board_Statistics_info.php:15
+msgid "Statistics for the boards, to keep live with a php daemon."
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/availability.php:9
+#: ../../content/plugins/FU_Board_Statistics/views/new_users.php:18
+#: ../../content/plugins/FU_Board_Statistics/views/post_count.php:9
+msgid "Poster"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/availability.php:10
+#: ../../content/plugins/FU_Board_Statistics/views/new_users.php:20
+#: ../../content/plugins/FU_Board_Statistics/views/post_count.php:10
+msgid "Total Posts"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/new_users.php:19
+msgid "First Seen"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/post_rate.php:10
+msgid "Posts within Last Hour"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/post_rate.php:11
+msgid "Posts per Minute"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/users_online.php:11
+msgid "Last Seen"
+msgstr ""
+
+#: ../../content/plugins/FU_Board_Statistics/views/users_online.php:12
+msgid "Latest Post"
+msgstr ""
+
+#: ../../content/plugins/FU_Dice_Roll/FU_Dice_Roll.php:26
+msgid "Enable dice roll?"
+msgstr ""
+
+#: ../../content/plugins/FU_Dice_Roll/FU_Dice_Roll_info.php:15
+msgid "This adds support for dice rolling on certain boards."
+msgstr ""
+
+#: ../../content/plugins/FU_Gifsicle/FU_Gifsicle_info.php:15
+msgid "Adds support for gifsicle for creating better optimized animated GIF thumbnails"
+msgstr ""
+
+#: ../../content/plugins/FU_Nginx_Cache_Purge/FU_Nginx_Cache_Purge.php:25
+msgid "Cache cleaning URLs"
+msgstr ""
+
+#: ../../content/plugins/FU_Nginx_Cache_Purge/FU_Nginx_Cache_Purge.php:26
+msgid "Insert the URLs that Nginx Cache Purge will have to contact and their eventual Basic Auth passwords. Make sure you \"allow\" only the IP from this server on the Nginx Cache Purge configuration block. The following is the format:"
+msgstr ""
+
+#: ../../content/plugins/FU_Nginx_Cache_Purge/FU_Nginx_Cache_Purge.php:55
+#: ../../content/plugins/FU_Nginx_Cache_Purge/FU_Nginx_Cache_Purge.php:66
+msgid "Nginx Cache Purge"
+msgstr ""
+
+#: ../../content/plugins/FU_Nginx_Cache_Purge/FU_Nginx_Cache_Purge_info.php:16
+#, php-format
+msgid "Remove deleted images from the Nginx proxy cache when deleted locally. Requires Nginx compiled with %s to work."
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:15
+#: ../../content/themes/default/views/board_comment.php:41
+#: ../../content/themes/default/views/gallery.php:33
+msgid "Spoiler"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:15
+#: ../../content/themes/default/views/board_comment.php:41
+#: ../../content/themes/default/views/gallery.php:33
+msgid "Click to view"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:27
+#: ../../content/themes/default/views/board_comment.php:18
+#: ../../content/themes/default/views/gallery.php:40
+msgid "View Same"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:47
+#: ../../content/themes/default/views/board.php:73
+#: ../../content/themes/default/views/board_comment.php:68
+#: ../../content/themes/default/views/board_comment.php:101
+#: ../../content/themes/default/views/gallery.php:20
+msgid "Mod"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:50
+#: ../../content/themes/default/views/board_comment.php:71
+#: ../../content/themes/default/views/gallery.php:23
+msgid "Admin"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:55
+#: ../../content/themes/default/views/board_comment.php:76
+msgid "4chan Time"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:61
+#: ../../content/themes/default/views/board_comment.php:82
+#: ../../content/themes/default/views/gallery.php:27
+msgid "View"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:61
+#: ../../content/themes/default/views/gallery.php:27
+msgid "Reply"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:61
+#: ../../content/themes/default/views/gallery.php:27
+msgid "Last 50"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:61
+#: ../../content/themes/default/views/gallery.php:27
+msgid "Original"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:61
+#: ../../content/themes/default/views/board_comment.php:82
+#: ../../content/themes/default/views/gallery.php:27
+msgid "Report"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:64
+#: ../../content/themes/default/views/board_comment.php:85
+msgid "This post was deleted from 4chan manually."
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:65
+#: ../../content/themes/default/views/board_comment.php:86
+msgid "This post contains a spoiler image."
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:68
+#: ../../content/themes/default/views/board_comment.php:92
+msgid "Quoted By:"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:76
+#: ../../content/themes/default/views/board_comment.php:104
+msgid "Delete Post"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:78
+#: ../../content/themes/default/views/board_comment.php:106
+msgid "Delete Image"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:79
+#: ../../content/themes/default/views/board_comment.php:107
+msgid "Ban Image"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:82
+#: ../../content/themes/default/views/board_comment.php:110
+msgid "Ban IP:"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:83
+#: ../../content/themes/default/views/board_comment.php:111
+msgid "Search IP"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:85
+#: ../../content/themes/default/views/board_comment.php:113
+msgid "Search IP Globally"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:89
+#: ../../content/themes/default/views/board_comment.php:117
+msgid "Delete Report"
+msgstr ""
+
+#: ../../content/themes/default/views/board.php:102
+msgid "post"
+msgid_plural "posts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../content/themes/default/views/board.php:104
+msgid "image"
+msgid_plural "images"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../content/themes/default/views/board.php:106
+msgid "omitted"
+msgid_plural "omitted"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../content/themes/default/views/board.php:112
+#: ../../content/themes/default/views/board_comment.php:122
+msgid "Reported Reason:"
+msgstr ""
+
+#: ../../content/themes/default/views/board_comment.php:87
+msgid "This post was made in the archive."
+msgstr ""
+
+#: ../../content/themes/default/views/captcha_confirm.php:7
+msgid "Enter the captcha to complete the action:"
+msgstr ""
+
+#: ../../content/themes/default/views/error.php:7
+msgid "Error!"
+msgstr ""
+
+#: ../../content/themes/default/views/gallery.php:45
+msgid "Replies"
+msgstr ""
+
+#: ../../content/themes/default/views/gallery.php:45
+msgid "Images"
+msgstr ""
+
+#: ../../content/themes/default/views/gallery.php:47
+msgid "This post was deleted from 4chan manually"
+msgstr ""
+
+#: ../../content/themes/default/views/gallery.php:48
+msgid "This post contains a spoiler image"
+msgstr ""
+
+#: ../../content/themes/default/views/index.php:15
+msgid "Archives"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_modal.php:25
+msgid "Cancel"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:15
+#: ../../content/themes/default/views/tools_search.php:252
+#: ../../content/themes/fuuka/views/tools_reply_box.php:28
+#: ../../content/themes/fuuka/views/tools_reply_box.php:109
+#: ../../content/themes/fuuka/views/tools_search.php:53
+msgid "Subject"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:24
+#: ../../content/themes/fuuka/views/tools_reply_box.php:32
+#: ../../content/themes/fuuka/views/tools_reply_box.php:113
+msgid "Comment"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:45
+#: ../../content/themes/default/views/tools_search.php:264
+#: ../../content/themes/fuuka/views/tools_reply_box.php:24
+#: ../../content/themes/fuuka/views/tools_reply_box.php:105
+#: ../../content/themes/fuuka/views/tools_search.php:71
+msgid "E-mail"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:63
+#: ../../content/themes/fuuka/views/tools_reply_box.php:36
+#: ../../content/themes/fuuka/views/tools_reply_box.php:118
+msgid "File"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:80
+#: ../../content/themes/fuuka/views/tools_reply_box.php:49
+#: ../../content/themes/fuuka/views/tools_reply_box.php:132
+msgid "Post As"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:81
+#: ../../content/themes/fuuka/views/tools_reply_box.php:51
+#: ../../content/themes/fuuka/views/tools_reply_box.php:135
+msgid "User"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:104
+#: ../../content/themes/fuuka/views/tools_reply_box.php:97
+msgid "This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index."
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:130
+msgid "Submit Spoilered"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_reply_box.php:141
+msgid "Reset"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:30
+msgid "Search or Insert Post No. or Thread URL"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:39
+msgid "Undefined"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:48
+msgid "Search"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:66
+msgid "Go to Post"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:75
+msgid "Deletion Mode"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:87
+msgid "Filters:"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:93
+#: ../../content/themes/default/views/tools_search.php:120
+#: ../../content/themes/default/views/tools_search.php:147
+#: ../../content/themes/default/views/tools_search.php:174
+#: ../../content/themes/default/views/tools_search.php:201
+msgid "All"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:101
+#: ../../content/themes/fuuka/views/tools_search.php:147
+msgid "Only Deleted Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:109
+#: ../../content/themes/fuuka/views/tools_search.php:151
+msgid "Only Non-Deleted Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:128
+#: ../../content/themes/fuuka/views/tools_search.php:164
+msgid "Only Ghost Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:136
+#: ../../content/themes/fuuka/views/tools_search.php:168
+msgid "Only Non-Ghost Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:155
+msgid "Only Containing Images"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:163
+msgid "Only Containing Text"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:182
+#: ../../content/themes/fuuka/views/tools_search.php:181
+msgid "Only OP Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:190
+#: ../../content/themes/fuuka/views/tools_search.php:177
+msgid "Only Reply Posts"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:210
+#: ../../content/themes/fuuka/views/tools_search.php:126
+msgid "Only by Users"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:218
+#: ../../content/themes/fuuka/views/tools_search.php:130
+msgid "Only by Mods"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:226
+#: ../../content/themes/fuuka/views/tools_search.php:134
+msgid "Only by Admins"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:237
+#: ../../content/themes/fuuka/views/tools_search.php:190
+msgid "New Posts First"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:245
+#: ../../content/themes/fuuka/views/tools_search.php:194
+msgid "Old Posts First"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:260
+#: ../../content/themes/fuuka/views/tools_search.php:65
+msgid "Tripcode"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:268
+#: ../../content/themes/fuuka/views/tools_search.php:77
+msgid "Filename"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:272
+#: ../../content/themes/fuuka/views/tools_search.php:89
+msgid "From Date"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:287
+#: ../../content/themes/fuuka/views/tools_search.php:103
+msgid "To Date"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:302
+msgid "IP Address"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:308
+#: ../../content/themes/fuuka/views/tools_search.php:83
+msgid "Image Hash"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:312
+msgid "You can drag-and-drop an image onto the field above."
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:315
+msgid "Your 5 Latest Searches:"
+msgstr ""
+
+#: ../../content/themes/default/views/tools_search.php:316
+msgid "Clear"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:45
+#, php-format
+msgid "Archives: [ %s ]"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:61
+#, php-format
+msgid "Boards: [ %s ]"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:76
+#: ../../content/themes/default/views/layouts/chan.php:115
+#: ../../content/themes/fuuka/views/layouts/chan.php:38
+msgid "Index"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:124
+msgid "By Post"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:141
+msgid "Ghost"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:180
+#: ../../content/themes/default/views/layouts/chan.php:182
+msgid "Previous"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:223
+#: ../../content/themes/default/views/layouts/chan.php:225
+#: ../../content/themes/fuuka/views/layouts/chan.php:149
+#: ../../content/themes/fuuka/views/layouts/chan.php:151
+msgid "Next"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:241
+msgid "Change Theme"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:261
+msgid "Change Language"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/chan.php:272
+msgid "Add a Translation"
+msgstr ""
+
+#: ../../content/themes/default/views/layouts/redirect.php:13
+#, php-format
+msgid "Attempting to redirect to %s."
+msgstr ""
+
+#: ../../content/themes/fuuka/theme_plugin.php:372
+#: ../../content/themes/fuuka/theme_plugin.php:401
+#: ../../content/themes/fuuka/theme_plugin.php:431
+msgid "Redirecting..."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/board.php:20
+#: ../../content/themes/fuuka/views/board_comment.php:43
+msgid "File:"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/board.php:54
+#: ../../content/themes/fuuka/views/board_comment.php:34
+msgid "This post was deleted before its lifetime has expired."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/board.php:55
+#: ../../content/themes/fuuka/views/board_comment.php:35
+msgid "The image in this post is marked as spoiler."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/board_comment.php:36
+msgid "This post is not an archived reply."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/index.php:7
+msgid "Welcome to {{FOOL_NAME}}"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/index.php:8
+msgid "Choose a Board:"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_reply_box.php:12
+msgid "Create New Thread"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_reply_box.php:44
+#: ../../content/themes/fuuka/views/tools_reply_box.php:127
+msgid "This is used for file and post deletion."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_reply_box.php:61
+#: ../../content/themes/fuuka/views/tools_reply_box.php:145
+#: ../../content/themes/fuuka/views/tools_search.php:199
+msgid "Action"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_reply_box.php:92
+msgid "Reply to Thread"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_reply_box.php:92
+msgid "Don't expect anything heroic. This post will not be posted to any other board."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:17
+#: ../../content/themes/fuuka/views/tools_search.php:47
+msgid "Text Search"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:34
+msgid "Advanced"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:44
+msgid "Advanced Search"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:59
+msgid "Search for an <b>exact</b> username. Leave empty for any username."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:65
+msgid "Search for an <b>exact</b> tripcode. Leave empty for any tripcode."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:89
+msgid "Enter the starting date for your search."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:89
+#: ../../content/themes/fuuka/views/tools_search.php:103
+msgid "Format: YYYY-MM-DD"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:103
+msgid "Enter the ending date for your search."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:118
+msgid "Capcode"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:122
+#: ../../content/themes/fuuka/views/tools_search.php:143
+#: ../../content/themes/fuuka/views/tools_search.php:160
+msgid "Show All Posts"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:139
+msgid "Deleted Posts"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:156
+msgid "Ghost Posts"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:173
+msgid "Results"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:186
+msgid "Order"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:214
+msgid "Simple"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:226
+msgid "View Post"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:248
+msgid "View Page"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/tools_search.php:266
+msgid "In Ghost Mode, only threads that contain ghost posts will be listed."
+msgstr ""
+
+#: ../../content/themes/fuuka/views/layouts/chan.php:41
+msgid "Top"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/layouts/chan.php:44
+msgid "Report Bug"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/layouts/chan.php:92
+msgid "Navigation"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/layouts/chan.php:95
+msgid "View Posts"
+msgstr ""
+
+#: ../../content/themes/fuuka/views/layouts/chan.php:98
+#: ../../content/themes/fuuka/views/layouts/chan.php:100
+msgid "Prev"
+msgstr ""
+
+#: ../../content/themes/yotsuba/views/index.php:7
+msgid "Welcome on the 4chan Archiver \"FoOlFuuka\""
+msgstr ""
+
+#: ../../content/themes/yotsuba/views/index.php:8
+msgid "We are hosting these boards:"
+msgstr ""
+
