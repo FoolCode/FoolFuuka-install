@@ -48,17 +48,17 @@ return array(
 	'groups' => array(
 		0    => array('name' => 'Guests', 'roles' => array()),
 		1    => array('name' => 'Users', 'roles' => array('user')),
-		50   => array('name' => 'Moderators', 'roles' => array('user', 'moderator')),
-		100  => array('name' => 'Administrators', 'roles' => array('user', 'moderator', 'admin')),
+		50   => array('name' => 'Moderators', 'roles' => array('mod')),
+		100  => array('name' => 'Administrators', 'roles' => array('admin')),
 	),
 
 	/**
 	 * Roles as name => array(location => rights)
 	 */
 	'roles' => array(
-		'user' => array('admin' => array('logged')),
-		'moderator' => array('admin' => array('logged')),
-		'admin' => array('admin' => array('logged')),
+		'user' => array('access' => array('user', 'member'), 'maccess' => array('user')),
+		'mod' => array('access' => array('mod'), 'maccess' => array('user', 'mod')),
+		'admin' => array('access' => array('admin'), 'maccess' => array('user', 'mod', 'admin')),
 		/**
 		 * Examples
 		 * ---

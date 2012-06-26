@@ -28,7 +28,7 @@ class Notices extends \Model
 		return self::$_notices;
 	}
 
-	public static function set()
+	public static function set($level, $message)
 	{
 		self::$_notices[] = array('level' => $level, 'message' => $message);
 	}

@@ -1,12 +1,14 @@
 <?php
 
+
 class Controller_Common extends Controller
 {
+
 
 	public function before()
 	{
 		$hash = FALSE;
-		if(Session::get('login_hash') !== null)
+		if (Session::get('login_hash') !== null)
 		{
 			$hash = Session::get('login_hash');
 		}
@@ -15,22 +17,22 @@ class Controller_Common extends Controller
 			$hash = Cookie::get('autologin');
 		}
 
-		if($hash !== FALSE)
+		if ($hash !== FALSE)
 		{
 			$query = DB::select('*')->from('user_autologin')
-				->where('login_hash', $hash)->and_where('expiration', '>', time())->execute();
+					->where('login_hash', $hash)->and_where('expiration', '>', time())->execute();
 
-			if(count($query))
+			if (count($query))
 			{
 				Auth::force_login($query[0]->user_id);
 			}
-
 		}
 
 		// login garbage collection
-		if(time() % 25 == 0)
+		if (time() % 25 == 0)
 		{
 			DB::delete('user_autologin')->where('expiration', '<', time())->execute();
 		}
 	}
+
 }

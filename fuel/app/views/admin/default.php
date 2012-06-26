@@ -59,7 +59,7 @@
 							$notices = array_merge(Notices::get(), Notices::flash());
 							foreach($notices as $notice) : ?>
 							<div class="alert alert-"<?= $notice['level'] ?>">
-								<?= htmlentities($notice, ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+								<?= htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
 							</div>
 						<?php endforeach ?>
 					</div>
