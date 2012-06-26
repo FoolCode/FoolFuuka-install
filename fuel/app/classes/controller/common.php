@@ -20,11 +20,12 @@ class Controller_Common extends Controller
 		if ($hash !== false)
 		{
 			$query = DB::select('*')->from('user_autologin')
-					->where('login_hash', $hash)->and_where('expiration', '>', time())->execute();
+				->where('login_hash', $hash)->and_where('expiration', '>', time())
+				->as_object()->execute();
 
 			if (count($query))
 			{
-				Auth::force_login($query[0]->user_id);
+				\Auth::force_login($query[0]->user_id);
 			}
 		}
 

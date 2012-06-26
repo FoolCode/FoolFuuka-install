@@ -13,6 +13,7 @@ Autoloader::add_classes(array(
 	// Example: 'View' => APPPATH.'classes/view.php',
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
+	'Uri' => APPPATH.'classes/extend/uri.php',
 ));
 
 // Register the autoloader
@@ -29,12 +30,6 @@ Autoloader::register();
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 
 Fuel::load(APPPATH.'config/constants.php');
-Autoloader::alias_to_namespace('Model\\Inet');
-Autoloader::alias_to_namespace('Model\\Preferences');
-Autoloader::alias_to_namespace('Model\\Notices');
-Autoloader::alias_to_namespace('Model\\Plugins');
-Autoloader::alias_to_namespace('Model\\Theme');
-Autoloader::alias_to_namespace('Model\\Radix');
 
 function __($string)
 {
@@ -43,3 +38,11 @@ function __($string)
 
 // Initialize the framework with the config file.
 Fuel::init('config.php');
+//Autoloader::alias_to_namespace('Fuel\\Core\\URI');
+
+Autoloader::alias_to_namespace('Model\\Inet');
+Autoloader::alias_to_namespace('Model\\Preferences');
+Autoloader::alias_to_namespace('Model\\Notices');
+Autoloader::alias_to_namespace('Model\\Plugins');
+Autoloader::alias_to_namespace('Model\\Theme');
+Autoloader::alias_to_namespace('Model\\Radix');

@@ -88,20 +88,20 @@ class Theme extends \Model
 	 *
 	 * @return array array with the theme name as index, and their config as value
 	 */
-	public static function get_all()
+	public function get_all()
 	{
-		if (static::$_is_all_loaded)
-			return static::$_loaded;
+		if ($this->_is_all_loaded)
+			return $this->_loaded;
 
 		$array = array();
 
-		foreach (static::get_all_names() as $name)
+		foreach ($this->get_all_names() as $name)
 		{
-			$array[$name] = static::load_config($name);
+			$array[$name] = $this->load_config($name);
 		}
 
-		static::$_is_all_loaded = true;
-		static::$_loaded = $array;
+		$this->_is_all_loaded = true;
+		$this->_loaded = $array;
 
 		return $array;
 	}
@@ -127,7 +127,7 @@ class Theme extends \Model
 	/**
 	 * Returns an array of key => value of the available themes
 	 */
-	public static function get_available_themes()
+	public function get_available_themes()
 	{
 		if (\Auth::has_access('maccess.mod'))
 		{
@@ -219,7 +219,7 @@ class Theme extends \Model
 	 *
 	 * @return type
 	 */
-	public static function get_all_names()
+	public function get_all_names()
 	{
 		$array = array();
 
@@ -248,7 +248,7 @@ class Theme extends \Model
 	 * @param string $name the folder name of the theme
 	 * @return array the config array or FALSE if not found
 	 */
-	private static function load_config($name)
+	private function load_config($name)
 	{
 		if (file_exists(DOCROOT.'content/themes/'.$name.'/theme_config.php'))
 		{

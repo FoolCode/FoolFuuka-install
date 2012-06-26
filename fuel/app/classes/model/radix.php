@@ -2,7 +2,6 @@
 
 namespace Model;
 
-
 class Radix extends \Model
 {
 
@@ -562,13 +561,13 @@ class Radix extends \Model
 	 */
 	function p_clear_cache()
 	{
-		$all = $this->get_all();
+		$all = self::get_all();
 
-		\Cache::delete('model/radix/preload');
+		\Cache::delete('mode.radix.preload');
 
 		foreach ($all as $a)
 		{
-			\Cache::delete('model/radix/load_preferences/'.$a->id);
+			\Cache::delete('model.radix.load_preferences.'.$a->id);
 		}
 	}
 
@@ -582,7 +581,7 @@ class Radix extends \Model
 	private static function p_save($data)
 	{
 		// filter _boards data from _boards_preferences data
-		$structure = $this->structure();
+		$structure = self::structure();
 		$data_boards = array();
 		$data_boards_preferences = array();
 
@@ -616,7 +615,7 @@ class Radix extends \Model
 		// data must be already sanitized through the form array
 		if (isset($data['id']))
 		{
-			if (!$radix = $this->get_by_id($data['id']))
+			if (!$radix = self::get_by_id($data['id']))
 			{
 				show_404();
 			}
@@ -642,8 +641,8 @@ class Radix extends \Model
 				}
 			}
 
-			$this->clear_cache();
-			$this->preload(TRUE);
+			self::clear_cache();
+			self::preload(TRUE);
 		}
 		else
 		{
@@ -667,20 +666,20 @@ class Radix extends \Model
 				}
 			}
 
-			$this->clear_cache();
-			$this->preload(TRUE);
-			$board = $this->get_by_shortname($data['shortname']);
+			self::clear_cache();
+			self::preload(TRUE);
+			$board = self::get_by_shortname($data['shortname']);
 
 			// remove the triggers just to be safe
-			$this->mysql_remove_triggers($board);
-			$this->mysql_create_tables($board);
-			$this->mysql_create_extra($board);
-			$this->mysql_create_triggers($board);
+			self::mysql_remove_triggers($board);
+			self::mysql_create_tables($board);
+			self::mysql_create_extra($board);
+			self::mysql_create_triggers($board);
 
 			// if the user didn't select sphinx for search, enable the table _search silently
 			if (!$board->sphinx)
 			{
-				$this->mysql_create_search($board);
+				self::mysql_create_search($board);
 			}
 		}
 	}
@@ -695,10 +694,10 @@ class Radix extends \Model
 	 */
 	private static function p_remove($id)
 	{
-		$board = $this->get_by_id($id);
+		$board = self::get_by_id($id);
 
 		// always remove the triggers first
-		$this->mysql_remove_triggers($board);
+		self::mysql_remove_triggers($board);
 		\DB::delete('boards_preferences')->where('board_id', $id)->execute();
 		\DB::delete('boards')->where('id', $id)->execute();
 
@@ -722,9 +721,9 @@ class Radix extends \Model
 		rename($base, $rename_to);
 
 		// for huge boards, this may time out with PHP, while MySQL will keep going
-		$this->mysql_remove_tables($board);
+		self::mysql_remove_tables($board);
 
-		$this->clear_cache();
+		self::clear_cache();
 
 		return true;
 	}
@@ -738,7 +737,7 @@ class Radix extends \Model
 	 */
 	private static function p_remove_leftover_dirs($echo = FALSE)
 	{
-		$all = $this->get_all();
+		$all = self::get_all();
 
 		$array = array();
 
@@ -759,13 +758,13 @@ class Radix extends \Model
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 
 		// make sure it's a removed folder
 		foreach ($array as $key => $dir)
 		{
-			if (strpos($dir, '_removed') === FALSE)
+			if (strpos($dir, '_removed') === false)
 			{
 				unset($array[$key]);
 			}
@@ -795,7 +794,7 @@ class Radix extends \Model
 			}
 		}
 
-		return TRUE;
+		return true;
 	}
 
 
@@ -807,20 +806,25 @@ class Radix extends \Model
 	 */
 	private static function p_preload($preferences = false)
 	{
-		if (\Auth::has_access('maccess.user') || (!$object = Cache::get('model/radix/preload')))
+		if (!\Auth::has_access('maccess.mod'))
 		{
-			$query = \DB::select()->from('boards')->as_object();
-
-			if (!\Auth::has_access('maccess.mod'))
+			try
 			{
-				$query->where('hidden', 0);
+				$object = \Cache::get('model.radix.preload');
 			}
-
-			$query->order_by('shortname', 'asc');
-			$object = $query->as_object()->execute()->as_array('id');
-
-			\Cache::set('model.radix.preload', $object, 900);
+			catch (\CacheNotFoundException $e)
+			{
+				$object = \DB::select()->from('boards')->where('hidden', 0)->order_by('shortname', 'asc')
+					->as_object()->execute()->as_array('id');
+				\Cache::set('model.radix.preload', $object, 900);
+			}
 		}
+		else
+		{
+			$object = \DB::select()->from('boards')->where('hidden', 0)->order_by('shortname', 'asc')
+				->as_object()->execute()->as_array('id');
+		}
+
 
 		if (!is_array($object) || empty($object))
 		{
@@ -838,11 +842,11 @@ class Radix extends \Model
 
 			if ($item->archive == 1)
 			{
-				$result_object[$item->id]->href = \URI::create(array('@archive', $item->shortname));
+				$result_object[$item->id]->href = \Uri::create(array('@archive', $item->shortname));
 			}
 			else
 			{
-				$result_object[$item->id]->href = \URI::create(array('@board', $item->shortname));
+				$result_object[$item->id]->href = \Uri::create(array('@board', $item->shortname));
 			}
 
 			// load the basic value of the preferences
@@ -878,7 +882,7 @@ class Radix extends \Model
 		self::$preloaded_radixes = $result_object;
 
 		if ($preferences == true)
-			$this->load_preferences();
+			self::load_preferences();
 
 		return false;
 	}
@@ -894,7 +898,7 @@ class Radix extends \Model
 	{
 		if (is_null($board))
 		{
-			$ids = array_keys($this->preloaded_radixes);
+			$ids = array_keys(self::$preloaded_radixes);
 		}
 		else if (is_array($board))
 		{
@@ -912,11 +916,11 @@ class Radix extends \Model
 		$selected = false;
 		foreach ($ids as $id)
 		{
-			if (!$result = Cache::get('model/radix/load_preferences/'.$id))
+			if (!$result = \Cache::get('model.radix.load_preferences.'.$id))
 			{
-				$query = $this->db->where('board_id', $id)->get('boards_preferences');
-				$result = $query->result();
-				Cache::set('model/radix/load_preferences/'.$id, $result, 900);
+				$result = \DB::select()->where('boards_preferences')->where('board_id', $id)
+					->as_object()->execute->as_array();
+				\Cache::set('model.radix.load_preferences.'.$id, $result, 900);
 			}
 
 			foreach ($result as $value)

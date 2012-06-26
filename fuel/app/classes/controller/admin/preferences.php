@@ -7,7 +7,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 	{
 		parent::before();
 		// set controller title
-		$this->_views['controller_title'] = '<a href="' . URI::Create("admin/preferences") . '">' . __("Preferences") . '</a>';
+		$this->_views['controller_title'] = '<a href="' . Uri::Create("admin/preferences") . '">' . __("Preferences") . '</a>';
 	}
 
 

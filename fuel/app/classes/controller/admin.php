@@ -9,7 +9,7 @@ class Controller_Admin extends Controller_Common
 
     public function before()
     {
-		if( ! Auth::has_access('admin.logged') && \URI::segment(2) != 'auth')
+		if( ! Auth::has_access('admin.logged') && \Uri::segment(2) != 'auth')
 			return Response::redirect('admin/auth/login');
 
 		// returns the static sidebar array (can't use functions in )
@@ -279,7 +279,7 @@ class Controller_Admin extends Controller_Common
 				$subresult = $item;
 
 				// segment 2 contains what's currently active so we can set it lighted up
-				if (URI::segment(2) == $key)
+				if (Uri::segment(2) == $key)
 				{
 					$subresult['active'] = TRUE;
 				}
@@ -311,7 +311,7 @@ class Controller_Admin extends Controller_Common
 						$default_uri = $item['default'];
 					}
 					array_unshift($default_uri, 'admin', $key);
-					$subresult['href'] = URI::create(implode('/', $default_uri));
+					$subresult['href'] = Uri::create(implode('/', $default_uri));
 				}
 
 				$subresult['content'] = array();
@@ -323,10 +323,10 @@ class Controller_Admin extends Controller_Common
 					$subsubresult = $subitem;
 					if (\Auth::has_access('maccess.' . $subitem['level']))
 					{
-						if ($subresult['active'] && (URI::segment(3) == $subkey ||
+						if ($subresult['active'] && (Uri::segment(3) == $subkey ||
 							(
 							isset($subitem['alt_highlight']) &&
-							in_array(URI::segment(3), $subitem['alt_highlight'])
+							in_array(Uri::segment(3), $subitem['alt_highlight'])
 							)
 							))
 						{
@@ -357,7 +357,7 @@ class Controller_Admin extends Controller_Common
 								$default_uri = $subkey;
 							}
 							array_unshift($default_uri, 'admin', $key);
-							$subsubresult['href'] = URI::create(implode('/', $default_uri));
+							$subsubresult['href'] = Uri::create(implode('/', $default_uri));
 						}
 
 						$subresult['content'][] = $subsubresult;

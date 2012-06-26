@@ -13,13 +13,16 @@
 class Controller_Chan extends Controller_Common
 {
 
+	protected $_theme;
+
+
 	public function before()
 	{
+		parent::before();
+		
 		header('X-UA-Compatible: IE=edge,chrome=1');
 		header('imagetoolbar: false');
 		$this->_theme = new \Theme();
-
-
 
 		$this->_theme->set_theme('default');
 		$this->_theme->set_layout('chan');
@@ -37,7 +40,7 @@ class Controller_Chan extends Controller_Common
 		$this->_theme->bind('disable_headers', FALSE);
 		$this->_theme->bind('is_statistics', FALSE);
 		$this->_theme->bind('enabled_tools_modal', FALSE);
-		return $this->_theme->build('index');//Response::forge('herez');
+		return $this->_theme->build('index');
 	}
 
 
