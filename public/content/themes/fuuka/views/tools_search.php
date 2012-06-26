@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 if (!isset($board))
@@ -12,7 +12,7 @@ if (!isset($board))
 
 <div style="overflow:hidden;">
 	<!--- Search Input -->
-	<?php echo form_open(site_url(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')); ?>
+	<?php echo form_open(URI::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')); ?>
 	<div id="simple-search" class="postspan" style="float:left">
 		<?= __('Text Search') ?>
 		[<a class="tooltip" href="#">?<span>Place a <tt>|</tt> in between expressions to get one of them in results, e.g. <tt>tripcode|email</tt> to locate posts that contain either the word tripcode or email in them.<br />Place a <tt>-</tt> before a word to exclude posts containing the word: <tt>-tripcode</tt><br />Place quotes around phrases to find pages containing the phrase: <tt>"I am a filthy tripcode user"</tt></span></a>]
@@ -31,12 +31,12 @@ if (!isset($board))
 			'value' => 'Go'
 		));
 		?>
-		<a href="<?php echo site_url(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search') ?>" onclick="javascript:toggle('advanced-search');toggle('simple-search');return false;">[ <?= __('Advanced') ?> ]</a>
+		<a href="<?php echo URI::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search') ?>" onclick="javascript:toggle('advanced-search');toggle('simple-search');return false;">[ <?= __('Advanced') ?> ]</a>
 	</div>
 	<?php echo form_close(); ?>
 
 	<!--- Advanced Search Input -->
-	<?php echo form_open(site_url(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')); ?>
+	<?php echo form_open(URI::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')); ?>
 	<div id="advanced-search" class="postspan" style="float:left;display:none">
 		<table style="float:left">
 			<tbody>
@@ -242,9 +242,9 @@ if (!isset($board))
 	</div>
 	<?php echo form_close(); ?>
 
-<?php if(get_selected_radix()) : ?>
+<?php if(Radix::get_selected()) : ?>
 	<!--- Post Input -->
-	<?php echo form_open(get_selected_radix()->shortname . '/post'); ?>
+	<?php echo form_open(Radix::get_selected()->shortname . '/post'); ?>
 	<div class="postspan" style="float:left">
 		<?= __('View Post') ?>
 
@@ -266,7 +266,7 @@ if (!isset($board))
 	<?php echo form_close(); ?>
 
 	<!--- Page Input -->
-	<?php echo form_open(get_selected_radix()->shortname . '/page'); ?>
+	<?php echo form_open(Radix::get_selected()->shortname . '/page'); ?>
 	<div class="postspan" style="float:left">
 		<?= __('View Page') ?>
 
@@ -282,13 +282,13 @@ if (!isset($board))
 		<?php
 		echo form_submit(array(
 			'value' => 'View',
-			'onclick' => 'location.href=\'' . site_url(get_selected_radix()->shortname . '/page/') . '\' + this.form.page.value + \'/\'; return false;'
+			'onclick' => 'location.href=\'' . URI::create(Radix::get_selected()->shortname . '/page/') . '\' + this.form.page.value + \'/\'; return false;'
 		));
 		?>
 
 		<a class="tooltip" href="#">[?]<span><?= __('In Ghost Mode, only threads that contain ghost posts will be listed.') ?></span></a>
 
-		<input type="button" value="View in Ghost Mode" onclick="location.href='<?php echo site_url(get_selected_radix()->shortname . '/ghost') ?>' + this.form.page.value + '/'; return false;" />
+		<input type="button" value="View in Ghost Mode" onclick="location.href='<?php echo URI::create(Radix::get_selected()->shortname . '/ghost') ?>' + this.form.page.value + '/'; return false;" />
 	</div>
 	<?php echo form_close(); ?>
 <?php endif; ?>

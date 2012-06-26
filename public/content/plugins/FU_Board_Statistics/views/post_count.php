@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 ?>
 
@@ -16,13 +16,13 @@ if (!defined('BASEPATH'))
 	<tr>
 		<td>
 			<?php
-			$params = array(get_selected_radix()->shortname, 'search');
+			$params = array(Radix::get_selected()->shortname, 'search');
 			if ($d['name'])
 				array_push($params, 'username/' . urlencode($d['name']));
 			if ($d['trip'])
 				array_push($params, 'tripcode/' . urlencode($d['trip']));
 
-			$poster_link = site_url($params);
+			$poster_link = URI::create($params);
 			?>
 			<a href="<?php echo $poster_link ?>">
 				<span class="poster_name"><?php echo $d['name'] ?></span> <span class="poster_trip"><?php echo $d['trip'] ?></span>

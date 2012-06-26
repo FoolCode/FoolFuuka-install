@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
@@ -8,16 +8,16 @@
 
 		<title><?= $template['title'] ?></title>
 		<?php
-		foreach($this->theme->fallback_override('style.css', $this->theme->get_config('extends_css')) as $css)
+		foreach($this->fallback_override('style.css', $this->get_config('extends_css')) as $css)
 		{
 			echo link_tag($css);
 		}
 		?>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script src="<?= site_url() . $this->theme->fallback_asset('plugins.js') ?>" type="text/javascript"></script>
+		<script src="<?= URI::base() . $this->fallback_asset('plugins.js') ?>" type="text/javascript"></script>
 		<?php if (get_setting('fs_sphinx_global')) : ?>
-			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= site_url('@system/functions/opensearch') ?>" />
+			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= URI::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
 		<?= get_setting('fs_theme_header_code') ?>
 	</head>
@@ -25,7 +25,7 @@
 <?php if ($disable_headers !== TRUE) : ?>
 		<div><?php
 			$board_urls = array();
-			foreach ($this->radix->get_all() as $key => $item)
+			foreach (Radix::get_all() as $key => $item)
 			{
 				$board_urls[] = '<a href="' . $item->href . '">' . $item->shortname . '</a>';
 			}
@@ -39,11 +39,11 @@
 		<?php
 			$board_urls = array();
 
-			$board_urls[] = '<a href="' . site_url() . '">' . strtolower(__('Index')) . '</a>';
-			if (get_selected_radix())
+			$board_urls[] = '<a href="' . URI::base() . '">' . strtolower(__('Index')) . '</a>';
+			if (Radix::get_selected())
 			{
-				$board_urls[] = '<a href="' . site_url(get_selected_radix()->shortname) . '">' . strtolower(__('Top')) . '</a>';
-				$board_urls[] = '<a href="' . site_url(array(get_selected_radix()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
+				$board_urls[] = '<a href="' . URI::create(Radix::get_selected()->shortname) . '">' . strtolower(__('Top')) . '</a>';
+				$board_urls[] = '<a href="' . URI::create(array(Radix::get_selected()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
 			}
 			$board_urls[] = '<a href="https://github.com/FoOlRulez/FoOlFuuka/issues">' . strtolower(__('Report Bug')) . '</a>';
 
@@ -52,8 +52,8 @@
 
 		<?php
 			$top_nav = array();
-			$top_nav = $this->plugins->run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
-			$top_nav = $this->plugins->run_hook('fu_themes_fuuka_top_nav_buttons', array($top_nav), 'simple');
+			$top_nav = Plugins::run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
+			$top_nav = Plugins::run_hook('fu_themes_fuuka_top_nav_buttons', array($top_nav), 'simple');
 
 			if (!empty($top_nav))
 			{
@@ -71,7 +71,7 @@
 		?></div>
 
 		<div style="min-height: 30px;">
-			<h1><?= (get_selected_radix()) ? get_selected_radix()->formatted_title : '' ?></h1>
+			<h1><?= (Radix::get_selected()) ? Radix::get_selected()->formatted_title : '' ?></h1>
 			<?php if (isset($section_title)) : ?>
 				<h2><?= $section_title ?></h2>
 			<?php elseif (get_setting('fs_theme_header_text')) : ?>
@@ -163,8 +163,8 @@
 			<div style="float: right;">
 				<?php
 					$bottom_nav = array();
-					$bottom_nav = $this->plugins->run_hook('fu_themes_generic_bottom_nav_buttons', array($bottom_nav), 'simple');
-					$bottom_nav = $this->plugins->run_hook('fu_themes_fuuka_bottom_nav_buttons', array($bottom_nav), 'simple');
+					$bottom_nav = Plugins::run_hook('fu_themes_generic_bottom_nav_buttons', array($bottom_nav), 'simple');
+					$bottom_nav = Plugins::run_hook('fu_themes_fuuka_bottom_nav_buttons', array($bottom_nav), 'simple');
 
 					if (!empty($bottom_nav))
 					{
@@ -183,11 +183,11 @@
 
 				<?php
 					$theme_links = array();
-					foreach ($this->theme->get_available_themes() as $theme)
+					foreach ($this->get_available_themes() as $theme)
 					{
-						if (($theme = $this->theme->get_by_name($theme)))
+						if (($theme = $this->get_by_name($theme)))
 						{
-							$theme_links[] = '<a href="' . site_url(array('@system', 'functions', 'theme', $theme['directory'])) . '" onclick="changeTheme(\'' . $theme['directory'] . '\'); return false;">' . $theme['name'] . '</a>';
+							$theme_links[] = '<a href="' . URI::create(array('@system', 'functions', 'theme', $theme['directory'])) . '" onclick="changeTheme(\'' . $theme['directory'] . '\'); return false;">' . $theme['name'] . '</a>';
 						}
 					}
 					echo 'Theme [ ' . implode(' / ', $theme_links) . ' ]';

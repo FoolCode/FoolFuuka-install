@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -136,18 +136,18 @@ class FS_Articles extends Plugins_model
 		if ($this->auth->is_admin())
 		{
 			
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'articles'), 'manage');
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'articles', 'manage'), 'manage');
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'articles', 'edit'), 'edit');
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'articles', 'edit', '(:any)'), 'edit');
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'articles', 'remove', '(:any)'), 'remove');
 
-			$this->plugins->register_admin_sidebar_element('articles',
+			Plugins::register_admin_sidebar_element('articles',
 				array(
 					"name" => __("Articles"),
 					"default" => "manage",
@@ -163,20 +163,20 @@ class FS_Articles extends Plugins_model
 			);
 		}
 
-		$this->plugins->register_controller_function($this,
+		Plugins::register_controller_function($this,
 			array('chan', 'articles'), 'article');
-		$this->plugins->register_controller_function($this,
+		Plugins::register_controller_function($this,
 			array('chan', 'articles', '(:any)'), 'article');
 		
-		$this->plugins->register_hook($this, 'fu_themes_generic_top_nav_buttons', 3, 'get_top');
-		$this->plugins->register_hook($this, 'fu_themes_generic_bottom_nav_buttons', 3, 'get_bottom');
-		$this->plugins->register_hook($this, 'fu_themes_generic_index_nav_elements', 3, 'get_index');
+		Plugins::register_hook($this, 'fu_themes_generic_top_nav_buttons', 3, 'get_top');
+		Plugins::register_hook($this, 'fu_themes_generic_bottom_nav_buttons', 3, 'get_bottom');
+		Plugins::register_hook($this, 'fu_themes_generic_index_nav_elements', 3, 'get_index');
 	}
 
 
 	function manage()
 	{
-		$this->viewdata['controller_title'] = '<a href="' . site_url("admin/articles/manage") . '">' . __("Articles") . '</a>';
+		$this->viewdata['controller_title'] = '<a href="' . URI::create("admin/articles/manage") . '">' . __("Articles") . '</a>';
 		$this->viewdata['function_title'] = __('Manage');
 
 		$articles = $this->get_all();
@@ -184,7 +184,7 @@ class FS_Articles extends Plugins_model
 		ob_start();
 		?>
 
-			<a href="<?php echo site_url('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo __('New article') ?></a>
+			<a href="<?php echo URI::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo __('New article') ?></a>
 
 			<table class="table table-bordered table-striped table-condensed">
 				<thead>
@@ -203,13 +203,13 @@ class FS_Articles extends Plugins_model
 							<?php echo htmlentities($article->title) ?>
 						</td>
 						<td>
-							<a href="<?php echo site_url('@board/articles/' . $article->slug) ?>" target="_blank"><?php echo $article->slug ?></a>
+							<a href="<?php echo URI::create('@board/articles/' . $article->slug) ?>" target="_blank"><?php echo $article->slug ?></a>
 						</td>
 						<td>
-							<a href="<?php echo site_url('admin/articles/edit/'.$article->slug) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
+							<a href="<?php echo URI::create('admin/articles/edit/'.$article->slug) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
 						</td>
 						<td>
-							<a href="<?php echo site_url('admin/articles/remove/'.$article->id) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
+							<a href="<?php echo URI::create('admin/articles/remove/'.$article->id) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
 						</td>
 					</tr>
 					<?php endforeach; ?>
@@ -273,7 +273,7 @@ class FS_Articles extends Plugins_model
 			$this->viewdata["function_title"] = __('New article') ;
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . site_url('admin/articles') . '">' . __('Articles') . '</a>';
+		$this->viewdata["controller_title"] = '<a href="' . URI::create('admin/articles') . '">' . __('Articles') . '</a>';
 		
 		$this->viewdata["main_content_view"] = $this->load->view("admin/form_creator.php", $data, TRUE);
 		$this->load->view("admin/default.php", $this->viewdata);
@@ -353,7 +353,7 @@ class FS_Articles extends Plugins_model
 			redirect('admin/articles/manage');
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . site_url('admin/articles') . '">' . __('Articles') . '</a>';
+		$this->viewdata["controller_title"] = '<a href="' . URI::create('admin/articles') . '">' . __('Articles') . '</a>';
 		$this->viewdata["function_title"] = __('Removing article:') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
@@ -379,7 +379,7 @@ class FS_Articles extends Plugins_model
 		$query = $this->db->query('
 			SELECT *
 			FROM `' . $this->db->dbprefix('plugin_fs-articles') . '`
-			' . (($this->auth->is_mod_admin())?'':'WHERE top = 1 OR bottom = 1 ') . '
+			' . ((Auth::has_access('maccess.mod'))?'':'WHERE top = 1 OR bottom = 1 ') . '
 		');
 
 		if($query->num_rows() == 0)
@@ -394,7 +394,7 @@ class FS_Articles extends Plugins_model
 		$query = $this->db->query('
 			SELECT *
 			FROM `' . $this->db->dbprefix('plugin_fs-articles') . '`
-			WHERE slug = ? ' . (($this->auth->is_mod_admin())?'':'AND (top = 1 OR bottom = 1) ') . '
+			WHERE slug = ? ' . ((Auth::has_access('maccess.mod'))?'':'AND (top = 1 OR bottom = 1) ') . '
 		',
 			array($slug));
 		
@@ -410,7 +410,7 @@ class FS_Articles extends Plugins_model
 		$query = $this->db->query('
 			SELECT *
 			FROM `' . $this->db->dbprefix('plugin_fs-articles') . '`
-			WHERE id = ? ' . (($this->auth->is_mod_admin())?'':'AND (top = 1 OR bottom = 1) ') . '
+			WHERE id = ? ' . ((Auth::has_access('maccess.mod'))?'':'AND (top = 1 OR bottom = 1) ') . '
 		',
 			array($id));
 		
@@ -456,7 +456,7 @@ class FS_Articles extends Plugins_model
 
 		foreach($result as $article)
 		{
-			$nav[] = array('href' => site_url('articles/' . $article->slug), 'text' => fuuka_htmlescape($article->title));
+			$nav[] = array('href' => URI::create('articles/' . $article->slug), 'text' => fuuka_htmlescape($article->title));
 		}
 		
 		return array('return' => $nav);
@@ -478,7 +478,7 @@ class FS_Articles extends Plugins_model
 		foreach($query->result() as $article)
 		{
 			$nav['articles']['elements'][] = array(
-				'href' => site_url('articles/' . $article->slug), 
+				'href' => URI::create('articles/' . $article->slug), 
 				'text' => fuuka_htmlescape($article->title)
 			);
 		}

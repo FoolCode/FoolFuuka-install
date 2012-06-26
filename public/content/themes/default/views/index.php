@@ -1,22 +1,22 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 ?>
 
 	<nav class="index_nav clearfix">
-	<h1><?= get_setting('fs_gen_index_title', FOOL_PREF_GEN_INDEX_TITLE); ?></h1>
+	<h1><?= Preferences::get('fs_gen_index_title', FOOL_PREF_GEN_INDEX_TITLE); ?></h1>
 	<?php
 
 		$index_nav = array();
 
-		if ($this->radix->get_archives())
+		if (Radix::get_archives())
 		{
 			$index_nav['archives'] = array(
 				'title' => __('Archives'),
 				'elements' => array()
 			);
 
-			foreach ($this->radix->get_archives() as $key => $item)
+			foreach (Radix::get_archives() as $key => $item)
 			{
 				$index_nav['archives']['elements'][] = array(
 					'href' => $item->href,
@@ -25,14 +25,14 @@ if (!defined('BASEPATH'))
 			}
 		}
 
-		if ($this->radix->get_boards())
+		if (Radix::get_boards())
 		{
 			$index_nav['boards'] = array(
 				'title' => __('Boards'),
 				'elements' => array()
 			);
 
-			foreach ($this->radix->get_boards() as $key => $item)
+			foreach (Radix::get_boards() as $key => $item)
 			{
 				$index_nav['boards']['elements'][] = array(
 					'href' => $item->href,
@@ -41,8 +41,8 @@ if (!defined('BASEPATH'))
 			}
 		}
 
-		$index_nav = $this->plugins->run_hook('fu_themes_generic_index_nav_elements', array($index_nav), 'simple');
-		$index_nav = $this->plugins->run_hook('fu_themes_default_index_nav_elements', array($index_nav), 'simple');
+		$index_nav = Plugins::run_hook('fu_themes_generic_index_nav_elements', array($index_nav), 'simple');
+		$index_nav = Plugins::run_hook('fu_themes_default_index_nav_elements', array($index_nav), 'simple');
 
 		foreach($index_nav as $item) : ?>
 			<ul class="pull-left clearfix">

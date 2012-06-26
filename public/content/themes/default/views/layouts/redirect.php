@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
 <html>
 	<head>

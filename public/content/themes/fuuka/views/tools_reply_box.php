@@ -1,9 +1,9 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-if (!isset($thread_id) && isset($is_page) && get_selected_radix() && !get_selected_radix()->archive) : ?>
-<?= form_open_multipart(get_selected_radix()->shortname .'/sending', array('id' => 'postform')) ?>
+if (!isset($thread_id) && isset($is_page) && Radix::get_selected() && !Radix::get_selected()->archive) : ?>
+<?= form_open_multipart(Radix::get_selected()->shortname .'/sending', array('id' => 'postform')) ?>
 <table style="margin-left: auto; margin-right: auto">
 	<tbody>
 		<tr>
@@ -44,7 +44,7 @@ if (!isset($thread_id) && isset($is_page) && get_selected_radix() && !get_select
 							<td class="postblock"><?= __('Password') ?> <a class="tooltip" href="#">[?] <span><?= __('This is used for file and post deletion.') ?></span></a></td>
 							<td><?php echo form_password(array('name' => 'delpass', 'size' => 24, 'value' => $this->fu->reply_password)) ?></td>
 						</tr>
-						<?php if ($this->auth->is_mod_admin()) : ?>
+						<?php if (Auth::has_access('maccess.mod')) : ?>
 						<tr>
 							<td class="postblock"><?= __('Post As') ?></td>
 							<td><?php
@@ -94,7 +94,7 @@ if (!isset($thread_id) && isset($is_page) && get_selected_radix() && !get_select
 				<?php if (isset($reply_errors)) : ?>
 				<span style="color:red"><?= $reply_errors ?></span>
 				<?php endif; ?>
-				<span><?= (!get_selected_radix()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '' ?></span>
+				<span><?= (!Radix::get_selected()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '' ?></span>
 				<table>
 					<tbody>
 						<tr>
@@ -113,7 +113,7 @@ if (!isset($thread_id) && isset($is_page) && get_selected_radix() && !get_select
 							<td class="postblock"><?= __('Comment') ?></td>
 							<td><?php echo form_textarea(array('name' => 'KOMENTO', 'cols' => 48, 'rows' => 4)); ?></td>
 						</tr>
-						<?php if (!get_selected_radix()->archive) : ?>
+						<?php if (!Radix::get_selected()->archive) : ?>
 						<tr>
 							<td class="postblock"><?= __('File') ?></td>
 							<td><?php echo form_upload(array('name' => 'file_image', 'id' => 'file_image')); ?></td>
@@ -127,7 +127,7 @@ if (!isset($thread_id) && isset($is_page) && get_selected_radix() && !get_select
 							<td class="postblock"><?= __('Password') ?> <a class="tooltip" href="#">[?] <span><?= __('This is used for file and post deletion.') ?></span></a></td>
 							<td><?php echo form_password(array('name' => 'delpass', 'size' => 24, 'value' => $this->fu->reply_password)); ?></td>
 						</tr>
-						<?php if ($this->auth->is_mod_admin()) : ?>
+						<?php if (Auth::has_access('maccess.mod')) : ?>
 						<tr>
 							<td class="postblock"><?= __('Post As') ?></td>
 							<td>

@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 ?>
 
@@ -9,7 +9,7 @@ if (!defined('BASEPATH'))
 	<p>
 		<?php
 		$board_urls = array();
-		foreach ($this->radix->get_all() as $key => $item)
+		foreach (Radix::get_all() as $key => $item)
 		{
 			array_push($board_urls, '<a href="' . $item->href . '" title="' . $item->name . '">/' . $item->shortname . '/</a>');
 		}

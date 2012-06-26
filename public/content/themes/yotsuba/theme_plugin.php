@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -16,17 +16,17 @@ class Theme_Plugin_yotsuba extends Plugins_model
 	function initialize_plugin()
 	{
 		// use hooks for manipulating comments
-		$this->plugins->register_hook($this, 'fu_post_model_process_comment_greentext_result', 8, '_greentext');
-		$this->plugins->register_hook($this, 'fu_post_model_process_internal_links_html_result', 8,
+		Plugins::register_hook($this, 'fu_post_model_process_comment_greentext_result', 8, '_greentext');
+		Plugins::register_hook($this, 'fu_post_model_process_internal_links_html_result', 8,
 			'_process_internal_links_html');
 
-		$this->plugins->register_hook($this, 'fu_post_model_process_crossboard_links_html_result', 8,
+		Plugins::register_hook($this, 'fu_post_model_process_crossboard_links_html_result', 8,
 			'_process_crossboard_links_html');
 
-		$this->plugins->register_hook($this, 'fu_chan_controller_before_page', 3, 'page');
-		$this->plugins->register_hook($this, 'fu_chan_controller_before_gallery', 3, function(){ show_404(); });
+		Plugins::register_hook($this, 'fu_chan_controller_before_page', 3, 'page');
+		Plugins::register_hook($this, 'fu_chan_controller_before_gallery', 3, function(){ show_404(); });
 
-		$this->plugins->register_controller_function($this, array('chan', '(:any)', 'board'), 'board');
+		Plugins::register_controller_function($this, array('chan', '(:any)', 'board'), 'board');
 	}
 
 
@@ -87,7 +87,7 @@ class Theme_Plugin_yotsuba extends Plugins_model
 				case 'Delete':
 					foreach ($this->input->post('post') as $idx => $doc_id)
 					{
-						$this->post->delete(get_selected_radix(),
+						$this->post->delete(Radix::get_selected(),
 							array(
 								'doc_id' => $doc_id,
 								'password' => $this->input->post('pwd')
@@ -101,7 +101,7 @@ class Theme_Plugin_yotsuba extends Plugins_model
 					foreach ($this->input->post('post') as $idx => $doc_id)
 					{
 						$this->report->add(array(
-							'board' => get_selected_radix()->id,
+							'board' => Radix::get_selected()->id,
 							'doc_id' => $doc_id,
 							'reason' => $this->input->post('reason')
 						));
@@ -112,15 +112,15 @@ class Theme_Plugin_yotsuba extends Plugins_model
 					show_404();
 			}
 
-			$this->theme->set_layout('redirect');
-			$this->theme->set_title(__('Redirecting...'));
+			$this->set_layout('redirect');
+			$this->set_title(__('Redirecting...'));
 			Chan::_set_parameters(
 				array(
 					'title' => __('Redirecting...'),
-					'url' => site_url(get_selected_radix()->shortname)
+					'url' => URI::create(Radix::get_selected()->shortname)
 				)
 			);
-			$this->theme->build('redirection');
+			$this->build('redirection');
 			return TRUE;
 		}
 

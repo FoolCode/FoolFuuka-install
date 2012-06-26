@@ -415,13 +415,13 @@ class Plugins extends \Model
 	 */
 	public static function run_hook($target, $parameters = array(), $modifier = '')
 	{
-		if(!isset($this->_hooks[$target]) && $modifier == 'simple')
+		if(!isset(self::$_hooks[$target]) && $modifier == 'simple')
 			return end($parameters);
 
-		if(!isset($this->_hooks[$target]))
+		if(!isset(self::$_hooks[$target]))
 			return NULL;
 
-		$hook_array = $this->_hooks[$target];
+		$hook_array = self::$_hooks[$target];
 
 		usort($hook_array, function($a, $b){ return $a['priority'] - $b['priority']; });
 
@@ -490,7 +490,7 @@ class Plugins extends \Model
 	 */
 	public static function register_hook(&$class, $target, $priority, $method)
 	{
-		$this->_hooks[$target][] = array('plugin' => $class, 'priority' => $priority, 'method' => $method);
+		self::$_hooks[$target][] = array('plugin' => $class, 'priority' => $priority, 'method' => $method);
 	}
 
 }

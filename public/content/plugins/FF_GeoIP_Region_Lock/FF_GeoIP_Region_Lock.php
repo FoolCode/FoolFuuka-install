@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -13,10 +13,10 @@ class FF_GeoIP_Region_Lock extends Plugins_model
 		// don't add the admin panels if the user is not an admin
 		if ($this->auth->is_admin())
 		{
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'plugins', 'geoip_region_lock'), 'manage');
 
-			$this->plugins->register_admin_sidebar_element('plugins',
+			Plugins::register_admin_sidebar_element('plugins',
 				array(
 					"content" => array(
 						"geoip_region_lock" => array(
@@ -30,13 +30,13 @@ class FF_GeoIP_Region_Lock extends Plugins_model
 		}
 
 		if (!(get_setting('ff_plugins_geoip_region_lock_allow_logged_in') && $this->auth->is_logged_in())
-			|| !$this->auth->is_mod_admin())
+			|| !Auth::has_access('maccess.mod'))
 		{
-			$this->plugins->register_hook($this, 'ff_my_controller_after_load_settings', 1, 'block_country_view');
-			$this->plugins->register_hook($this, 'fu_post_model_replace_comment', 5, 'block_country_comment');
+			Plugins::register_hook($this, 'ff_my_controller_after_load_settings', 1, 'block_country_view');
+			Plugins::register_hook($this, 'fu_post_model_replace_comment', 5, 'block_country_comment');
 		}
 
-		$this->plugins->register_hook($this, 'fu_radix_model_structure_alter', 8, function($structure){
+		Plugins::register_hook($this, 'fu_radix_model_structure_alter', 8, function($structure){
 			$structure['plugin_geo_ip_region_lock_allow_comment'] = array(
 				'database' => TRUE,
 				'boards_preferences' => TRUE,

@@ -1,8 +1,8 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 ?>
 
 <?php if (!empty($data)) : ?>
-	<img src="<?php echo site_url(array('content', 'statistics', get_selected_radix()->shortname)) . $info['location'] . '.png' ?>"/>
+	<img src="<?php echo URI::create(array('content', 'statistics', Radix::get_selected()->shortname)) . $info['location'] . '.png' ?>"/>
 <?php endif; ?>

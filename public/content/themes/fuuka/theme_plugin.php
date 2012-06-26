@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -25,20 +25,20 @@ class Theme_Plugin_fuuka extends Plugins_model
 	function initialize_plugin()
 	{
 		// use hooks for manipulating comments
-		$this->plugins->register_hook($this, 'fu_post_model_process_comment_greentext_result', 8, '_greentext');
-		$this->plugins->register_hook($this, 'fu_post_model_process_internal_links_html_result', 8,
+		Plugins::register_hook($this, 'fu_post_model_process_comment_greentext_result', 8, '_greentext');
+		Plugins::register_hook($this, 'fu_post_model_process_internal_links_html_result', 8,
 			'_process_internal_links_html');
 
-		$this->plugins->register_hook($this, 'fu_post_model_process_crossboard_links_html_result', 8,
+		Plugins::register_hook($this, 'fu_post_model_process_crossboard_links_html_result', 8,
 			'_process_crossboard_links_html');
 
-		$this->plugins->register_hook($this, 'fu_chan_controller_before_page', 3, 'page');
-		$this->plugins->register_hook($this, 'fu_chan_controller_before_gallery', 3, function(){ show_404(); });
+		Plugins::register_hook($this, 'fu_chan_controller_before_page', 3, 'page');
+		Plugins::register_hook($this, 'fu_chan_controller_before_gallery', 3, function(){ show_404(); });
 		// for safety, force 404
-		$this->plugins->register_hook($this, 'fu_chan_controller_before_submit', 3, function(){ show_404(); });
+		Plugins::register_hook($this, 'fu_chan_controller_before_submit', 3, function(){ show_404(); });
 
 		// if we have to outright change the name of the function, we need to register a new controller function
-		$this->plugins->register_controller_function($this, array('chan', '(:any)', 'sending'), 'sending');
+		Plugins::register_controller_function($this, array('chan', '(:any)', 'sending'), 'sending');
 	}
 
 
@@ -115,7 +115,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			}
 			$this->form_validation->set_rules('delpass', 'Password', 'required|min_length[3]|max_length[32]|xss_clean');
 
-			if ($this->auth->is_mod_admin())
+			if (Auth::has_access('maccess.mod'))
 			{
 				$this->form_validation->set_rules('reply_postas', 'Post as',
 					'required|callback__is_valid_allowed_level|xss_clean');
@@ -130,7 +130,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 				/**
 				 * Display a default/standard output for NON-AJAX REQUESTS.
 				 */
-				$this->theme->set_title(__('Error'));
+				$this->set_title(__('Error'));
 				Chan::_set_parameters(
 					array(
 					'error' => validation_errors()
@@ -138,7 +138,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'tools_search' => TRUE
 					)
 				);
-				$this->theme->build('error');
+				$this->build('error');
 				return FALSE;
 			}
 
@@ -153,7 +153,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 				'comment' => $this->input->post('KOMENTO'),
 				'spoiler' => $this->input->post('reply_spoiler'),
 				'password' => $this->input->post('delpass'),
-				'postas' => (($this->auth->is_mod_admin()) ? $this->input->post('reply_postas') : 'N'),
+				'postas' => ((Auth::has_access('maccess.mod')) ? $this->input->post('reply_postas') : 'N'),
 				'media' => '',
 				'ghost' => FALSE
 			);
@@ -161,7 +161,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			/**
 			 * CHECK #1: Verify the TYPE of POST passing through and insert the data correctly.
 			 */
-			if (get_selected_radix()->archive)
+			if (Radix::get_selected()->archive)
 			{
 				/**
 				 * This POST is located in the ARCHIVE and MUST BE A GHOST POST.
@@ -172,11 +172,11 @@ class Theme_Plugin_fuuka extends Plugins_model
 				 * Check the $num to ensure that the thread actually exists in the database and that
 				 * $num is actually the OP of the thread.
 				 */
-				$check = $this->post->check_thread(get_selected_radix(), $data['num']);
+				$check = $this->post->check_thread(Radix::get_selected(), $data['num']);
 
 				if (isset($check['invalid_thread']) && $check['invalid_thread'] == TRUE)
 				{
-					$this->theme->set_title(__('Error'));
+					$this->set_title(__('Error'));
 					Chan::_set_parameters(
 						array(
 						'error' => __('This thread does not exist.')
@@ -184,7 +184,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 						'tools_search' => TRUE
 						)
 					);
-					$this->theme->build('error');
+					$this->build('error');
 					return FALSE;
 				}
 			}
@@ -204,11 +204,11 @@ class Theme_Plugin_fuuka extends Plugins_model
 					 * Check the $num to ensure that the thread actually exists in the database and that
 					 * $num is actually the OP of the thread.
 					 */
-					$check = $this->post->check_thread(get_selected_radix(), $data['num']);
+					$check = $this->post->check_thread(Radix::get_selected(), $data['num']);
 
 					if (isset($check['invalid_thread']) && $check['invalid_thread'] == TRUE)
 					{
-						$this->theme->set_title(__('Error'));
+						$this->set_title(__('Error'));
 						Chan::_set_parameters(
 							array(
 							'error' => __('This thread does not exist.')
@@ -216,13 +216,13 @@ class Theme_Plugin_fuuka extends Plugins_model
 							'tools_search' => TRUE
 							)
 						);
-						$this->theme->build('error');
+						$this->build('error');
 						return FALSE;
 					}
 
 					if (isset($check['ghost_disabled']) && $check['ghost_disabled'] == TRUE)
 					{
-						$this->theme->set_title(__('Error'));
+						$this->set_title(__('Error'));
 						Chan::_set_parameters(
 							array(
 							'error' => __('This thread is closed.')
@@ -230,7 +230,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 							'tools_search' => TRUE
 							)
 						);
-						$this->theme->build('error');
+						$this->build('error');
 						return FALSE;
 					}
 
@@ -247,7 +247,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			if ($data['num'] == 0
 				&& (isset($_FILES['file_image']) && $_FILES['file_image']['error'] == 4))
 			{
-				$this->theme->set_title(__('Error'));
+				$this->set_title(__('Error'));
 				Chan::_set_parameters(
 					array(
 					'error' => __('You are required to upload an image when posting a new thread.')
@@ -255,7 +255,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'tools_search' => TRUE
 					)
 				);
-				$this->theme->build('error');
+				$this->build('error');
 				return FALSE;
 			}
 
@@ -265,7 +265,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			if (mb_strlen($data['comment']) < 3
 				&& (!isset($_FILES['file_image']) || $_FILES['file_image']['error'] == 4))
 			{
-				$this->theme->set_title(__('Error'));
+				$this->set_title(__('Error'));
 				Chan::_set_parameters(
 					array(
 					'error' => __('You are required to write a comment when no image upload is present.')
@@ -273,7 +273,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'tools_search' => TRUE
 					)
 				);
-				$this->theme->build('error');
+				$this->build('error');
 				return FALSE;
 			}
 
@@ -283,7 +283,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			if ((isset($check['disable_image_upload']) || $data['ghost'])
 				&& (isset($_FILES['file_image']) && $_FILES['file_image']['error'] != 4))
 			{
-				$this->theme->set_title(__('Error'));
+				$this->set_title(__('Error'));
 				Chan::_set_parameters(
 					array(
 					'error' => __('The posting of images has been disabled for this thread.')
@@ -291,7 +291,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'tools_search' => TRUE
 					)
 				);
-				$this->theme->build('error');
+				$this->build('error');
 				return FALSE;
 			}
 
@@ -303,9 +303,9 @@ class Theme_Plugin_fuuka extends Plugins_model
 				// Initialize the MEDIA CONFIG and load the UPLOAD library.
 				$media_config['upload_path'] = 'content/cache/';
 				$media_config['allowed_types'] = 'jpg|jpeg|png|gif';
-				$media_config['max_size'] = get_selected_radix()->max_image_size_kilobytes;
-				$media_config['max_width'] = get_selected_radix()->max_image_size_width;
-				$media_config['max_height'] = get_selected_radix()->max_image_size_height;
+				$media_config['max_size'] = Radix::get_selected()->max_image_size_kilobytes;
+				$media_config['max_width'] = Radix::get_selected()->max_image_size_width;
+				$media_config['max_height'] = Radix::get_selected()->max_image_size_height;
 				$media_config['overwrite'] = TRUE;
 
 				$this->load->library('upload', $media_config);
@@ -316,7 +316,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 				}
 				else
 				{
-					$this->theme->set_title(__('Error'));
+					$this->set_title(__('Error'));
 					Chan::_set_parameters(
 						array(
 						'error' => $this->upload->display_errors()
@@ -324,7 +324,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 						'tools_search' => TRUE
 						)
 					);
-					$this->theme->build('error');
+					$this->build('error');
 					return FALSE;
 				}
 			}
@@ -332,14 +332,14 @@ class Theme_Plugin_fuuka extends Plugins_model
 			/**
 			 * SEND: Process the entire post and insert the information appropriately.
 			 */
-			$result = $this->post->comment(get_selected_radix(), $data);
+			$result = $this->post->comment(Radix::get_selected(), $data);
 
 			/**
 			 * RESULT: Output all errors, messages, etc.
 			 */
 			if (isset($result['error']))
 			{
-				$this->theme->set_title(__('Error'));
+				$this->set_title(__('Error'));
 				Chan::_set_parameters(
 					array(
 					'error' => $result['error']
@@ -347,7 +347,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'tools_search' => TRUE
 					)
 				);
-				$this->theme->build('error');
+				$this->build('error');
 				return FALSE;
 			}
 			else if (isset($result['success']))
@@ -357,25 +357,25 @@ class Theme_Plugin_fuuka extends Plugins_model
 				 */
 				if ($result['posted']->thread_num == 0)
 				{
-					$callback = site_url(array(get_selected_radix()->shortname, 'thread',
+					$callback = URI::create(array(Radix::get_selected()->shortname, 'thread',
 							$result['posted']->num)) . '#' . $result['posted']->num;
 				}
 				else
 				{
-					$callback = site_url(array(get_selected_radix()->shortname, 'thread',
+					$callback = URI::create(array(Radix::get_selected()->shortname, 'thread',
 							$result['posted']->thread_num)) . '#' . $result['posted']->num .
 						(($result['posted']->subnum > 0) ? '_' . $result['posted']->subnum : '');
 				}
 
-				$this->theme->set_layout('redirect');
-				$this->theme->set_title(__('Redirecting...'));
+				$this->set_layout('redirect');
+				$this->set_title(__('Redirecting...'));
 				Chan::_set_parameters(
 					array(
 						'title' => fuuka_title(0),
 						'url' => $callback
 					)
 				);
-				$this->theme->build('redirection');
+				$this->build('redirection');
 				return TRUE;
 			}
 		}
@@ -393,18 +393,18 @@ class Theme_Plugin_fuuka extends Plugins_model
 					'password' => $this->input->post('delpass')
 				);
 
-				$this->post->delete(get_selected_radix(), $post);
+				$this->post->delete(Radix::get_selected(), $post);
 			}
 
-			$this->theme->set_layout('redirect');
-			$this->theme->set_title(__('Redirecting...'));
+			$this->set_layout('redirect');
+			$this->set_title(__('Redirecting...'));
 			Chan::_set_parameters(
 				array(
 					'title' => fuuka_title(0),
-					'url' => site_url(get_selected_radix()->shortname)
+					'url' => URI::create(Radix::get_selected()->shortname)
 				)
 			);
-			$this->theme->build('redirection');
+			$this->build('redirection');
 			return TRUE;
 		}
 
@@ -418,7 +418,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			foreach ($this->input->post('delete') as $idx => $doc_id)
 			{
 				$post = array(
-					'board' => get_selected_radix()->id,
+					'board' => Radix::get_selected()->id,
 					'doc_id' => $doc_id,
 					'reason' => $this->input->post('KOMENTO')
 				);
@@ -426,16 +426,16 @@ class Theme_Plugin_fuuka extends Plugins_model
 				$this->report->add($post);
 			}
 
-			$this->theme->set_layout('redirect');
-			$this->theme->set_title(__('Redirecting...'));
+			$this->set_layout('redirect');
+			$this->set_title(__('Redirecting...'));
 			Chan::_set_parameters(
 				array(
 					'title' => fuuka_title(0),
-					'url' => site_url(get_selected_radix()->shortname . '/thread/' .
+					'url' => URI::create(Radix::get_selected()->shortname . '/thread/' .
 						$this->input->post('parent'))
 				)
 			);
-			$this->theme->build('redirection');
+			$this->build('redirection');
 			return TRUE;
 		}
 

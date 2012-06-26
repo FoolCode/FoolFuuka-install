@@ -24,63 +24,63 @@ class Theme extends \Model
 	 *
 	 * @var array associative array('theme_dir' => array('item' => 'value'));
 	 */
-	private static $_loaded = array();
+	private $_loaded = array();
 
 	/**
 	 * If get_all() was used, this will be true and themes won't be checked again
 	 *
 	 * @var array
 	 */
-	private static $_is_all_loaded = FALSE;
+	private $_is_all_loaded = FALSE;
 
 	/**
 	 * The name of the selected theme
 	 *
 	 * @var string|bool the folder name of the theme or FALSE if not set
 	 */
-	private static $_selected_theme = FALSE;
+	private $_selected_theme = FALSE;
 
 	/**
 	 * The selected layout
 	 *
 	 * @var string|bool FALSE when not choosen
 	 */
-	private static $_selected_layout = FALSE;
+	private $_selected_layout = FALSE;
 
 	/**
 	 * The selected partials
 	 *
 	 * @var array keys as the name of the partial and the value an array of set variables
 	 */
-	private static $_selected_partials = array();
+	private $_selected_partials = array();
 
 	/**
 	 * Variables available to all views
 	 *
 	 * @var array
 	 */
-	private static $_view_variables = array();
+	private $_view_variables = array();
 
 	/**
 	 * The string separating pieces of the <title>
 	 *
 	 * @var string
 	 */
-	private static $_title_separator = '»';
+	private $_title_separator = '»';
 
 	/**
 	 * The breadcrumbs of which the title is composed
 	 *
 	 * @var array
 	 */
-	private static $_title = array();
+	private $_title = array();
 
 	/**
 	 * The lines of metadata to print
 	 *
 	 * @var array
 	 */
-	private static $_metadata = array();
+	private $_metadata = array();
 
 
 	/**
@@ -129,14 +129,14 @@ class Theme extends \Model
 	 */
 	public static function get_available_themes()
 	{
-		if (Auth::member('mod'))
+		if (\Auth::has_access('maccess.mod'))
 		{
 			// admins get all the themes
 			return array_keys($this->get_all());
 		}
 		else
 		{
-			$active_themes = get_setting('fs_theme_active_themes');
+			$active_themes = Preferences::get('ff.theme_active_themes');
 			if (!$active_themes || !$active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
@@ -487,7 +487,7 @@ class Theme extends \Model
 		if ($return)
 			return $html;
 
-		return new Response($html, 200);
+		return \Response::forge($html, 200);
 	}
 
 
@@ -531,7 +531,7 @@ class Theme extends \Model
 		ob_start();
 
 		// rewrite short tags from CodeIgniter 2.1
-		if (version_compare(phpversion(), '5.4.0') < 0 && (bool) @ini_get('short_open_tag') === FALSE && config_item('rewrite_short_tags') == TRUE)
+		if (version_compare(phpversion(), '5.4.0') < 0 && (bool) @ini_get('short_open_tag') === FALSE)
 		{
 			echo eval('?>'.preg_replace("/;*\s*\?>/", "; ?>", str_replace('<?=', '<?php echo ', file_get_contents($_location))));
 		}

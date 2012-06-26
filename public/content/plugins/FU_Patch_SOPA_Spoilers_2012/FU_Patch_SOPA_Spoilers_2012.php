@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 /**
@@ -19,7 +19,7 @@ class FU_Patch_SOPA_Spoilers_2012 extends Plugins_model
 	
 	function initialize_plugin()
 	{
-		$this->plugins->register_hook($this, 'fu_post_model_before_process_comment', 5, function($board, $post){
+		Plugins::register_hook($this, 'fu_post_model_before_process_comment', 5, function($board, $post){
 
 			// the comment checker may be running and timestamp may not be set, otherwise do the check
 			if (isset($post->timestamp) && $post->timestamp > 1326840000 && $post->timestamp < 1326955000)

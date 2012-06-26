@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 if (!isset($board) && get_setting('fs_sphinx_global'))
@@ -16,7 +16,7 @@ if (isset($board)) :
 	<li class="search-dropdown">
 		<?php
 		echo form_open(
-			site_url(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search'),
+			URI::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search'),
 			array(
 				'class' => 'navbar-search pull-right',
 				'method' => 'GET'
@@ -69,7 +69,7 @@ if (isset($board)) :
 					?>
 
 					<?php
-					if ($this->auth->is_mod_admin()) :
+					if (Auth::has_access('maccess.mod')) :
 						echo form_submit(array(
 							'class' => 'btn btn-danger btn-mini',
 							'value' => __('Deletion Mode'),
@@ -298,7 +298,7 @@ if (isset($board)) :
 					echo form_input($date_array);
 				?></li>
 
-				<?php if ($this->auth->is_mod_admin()) : ?>
+				<?php if (Auth::has_access('maccess.mod')) : ?>
 				<li class="input-prepend"><label for="poster_ip" class="add-on"><?= __('IP Address') ?></label><?php
 					echo form_input(array('name' => 'poster_ip', 'id' => 'poster_ip', 'value' => (isset($search["poster_ip"]))
 						? rawurldecode($search["poster_ip"]) : ''))
@@ -354,7 +354,7 @@ if (isset($board)) :
 								$extra_text_br .= '<br/><span class="options">[' . fuuka_htmlescape($k) . '] ' . fuuka_htmlescape(urldecode($i)) . ' </span>';
 							}
 
-							echo '<li title="' . form_prep($text . $extra_text_br) . '" class="latest_search"><a href="' . site_url($uri) . '">' . $text . ' ' . $extra_text . '</a></li>';
+							echo '<li title="' . form_prep($text . $extra_text_br) . '" class="latest_search"><a href="' . URI::create($uri) . '">' . $text . ' ' . $extra_text . '</a></li>';
 						}
 					}
 				?>

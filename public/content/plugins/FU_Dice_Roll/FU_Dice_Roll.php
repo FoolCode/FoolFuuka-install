@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -10,8 +10,8 @@ class FU_Dice_Roll extends Plugins_model
 
 	function initialize_plugin()
 	{
-		$this->plugins->register_hook($this, 'fu_post_model_comment_alter_input', 4, 'roll');
-		$this->plugins->register_hook($this, 'fu_radix_model_structure_alter', 4, function($structure){
+		Plugins::register_hook($this, 'fu_post_model_comment_alter_input', 4, 'roll');
+		Plugins::register_hook($this, 'fu_radix_model_structure_alter', 4, function($structure){
 			$structure['plugin_dice_roll_enable'] = array(
 				'database' => TRUE,
 				'boards_preferences' => TRUE,

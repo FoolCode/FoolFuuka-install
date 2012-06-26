@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -10,7 +10,7 @@ class FU_Gifsicle extends Plugins_model
 	
 	function initialize_plugin()
 	{
-		$this->plugins->register_hook($this, 'fu_post_model_process_media_switch_resize', 4, 'gifsicle');
+		Plugins::register_hook($this, 'fu_post_model_process_media_switch_resize', 4, 'gifsicle');
 	}
 	
 	

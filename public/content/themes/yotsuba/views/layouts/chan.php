@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -25,14 +25,14 @@
 		<title><?= $template['title'] ?></title>
 
 		<?php
-		foreach($this->theme->fallback_override('style.css', $this->theme->get_config('extends_css')) as $css)
+		foreach($this->fallback_override('style.css', $this->get_config('extends_css')) as $css)
 		{
 			echo link_tag($css);
 		}
 		?>
 
 		<?php if (get_setting('fs_sphinx_global')) : ?>
-			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= site_url('@system/functions/opensearch') ?>" />
+			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= URI::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
 	</head>
 	<body>
@@ -41,7 +41,7 @@
 			<div id="boardNavDesktop" class="desktop">
 				<?php
 					$board_urls = array();
-					foreach ($this->radix->get_all() as $key => $item)
+					foreach (Radix::get_all() as $key => $item)
 					{
 						$board_urls[] = '<a href="' . $item->href . '">' . $item->shortname . '</a>';
 					}
@@ -55,11 +55,11 @@
 				<?php
 					$board_urls = array();
 
-					$board_urls[] = '<a href="' . site_url() . '">' . strtolower(__('Index')) . '</a>';
-					if (get_selected_radix())
+					$board_urls[] = '<a href="' . URI::base() . '">' . strtolower(__('Index')) . '</a>';
+					if (Radix::get_selected())
 					{
-						$board_urls[] = '<a href="' . site_url(get_selected_radix()->shortname) . '">' . strtolower(__('Top')) . '</a>';
-						$board_urls[] = '<a href="' . site_url(array(get_selected_radix()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
+						$board_urls[] = '<a href="' . URI::create(Radix::get_selected()->shortname) . '">' . strtolower(__('Top')) . '</a>';
+						$board_urls[] = '<a href="' . URI::create(array(Radix::get_selected()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
 					}
 					$board_urls[] = '<a href="https://github.com/FoOlRulez/FoOlFuuka/issues">' . strtolower(__('Report Bug')) . '</a>';
 
@@ -68,8 +68,8 @@
 
 				<?php
 					$top_nav = array();
-					$top_nav = $this->plugins->run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
-					$top_nav = $this->plugins->run_hook('fu_themes_yotsuba_top_nav_buttons', array($top_nav), 'simple');
+					$top_nav = Plugins::run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
+					$top_nav = Plugins::run_hook('fu_themes_yotsuba_top_nav_buttons', array($top_nav), 'simple');
 
 					if (!empty($top_nav))
 					{
@@ -91,8 +91,8 @@
 				<div class="boardSelect">
 					<strong>Board:</strong>
 					<select id="boardSelectMobile">
-						<?php foreach($this->radix->get_all() as $board) : ?>
-							<option value="<?= $board->shortname ?>"<?= (get_selected_radix() && $board->shortname == get_selected_radix()->shortname ? ' selected="selected"' : '' ) ?>></option>
+						<?php foreach(Radix::get_all() as $board) : ?>
+							<option value="<?= $board->shortname ?>"<?= (Radix::get_selected() && $board->shortname == Radix::get_selected()->shortname ? ' selected="selected"' : '' ) ?>></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -100,7 +100,7 @@
 
 			<div class="boardBanner">
 				<img src="" class="title" alt=""/>
-				<?php if (get_selected_radix()) : ?><div class="boardTitle"><?= get_selected_radix()->formatted_title ?></div><?php endif; ?>
+				<?php if (Radix::get_selected()) : ?><div class="boardTitle"><?= Radix::get_selected()->formatted_title ?></div><?php endif; ?>
 			</div>
 
 			<?= $template['partials']['tools_reply_box'] ?>
@@ -113,7 +113,7 @@
 			<hr/>
 			<?php endif; ?>
 
-			<?= form_open_multipart(get_selected_radix()->shortname . '/board', array('name' => 'delform', 'id' => 'delform')) ?>
+			<?= form_open_multipart(Radix::get_selected()->shortname . '/board', array('name' => 'delform', 'id' => 'delform')) ?>
 		<?php endif; ?>
 
 
@@ -130,9 +130,9 @@
 					Style
 					<select onchange="setActiveStyleSheet(this.value); return false;">
 						<?php
-							foreach ($this->theme->get_available_themes() as $theme)
+							foreach ($this->get_available_themes() as $theme)
 							{
-								if (($theme = $this->theme->get_by_name($theme)))
+								if (($theme = $this->get_by_name($theme)))
 								{
 									echo '<option value="' . $theme['directory'] . '" >' . $theme['name'] . '</option>';
 								}
@@ -229,7 +229,7 @@
 		<div id="boardNavDesktopFoot" class="desktop">
 			<?php
 				$board_urls = array();
-				foreach ($this->radix->get_all() as $key => $item)
+				foreach (Radix::get_all() as $key => $item)
 				{
 					$board_urls[] = '<a href="' . $item->href . '">' . $item->shortname . '</a>';
 				}
@@ -243,11 +243,11 @@
 			<?php
 				$board_urls = array();
 
-				$board_urls[] = '<a href="' . site_url() . '">' . strtolower(__('Index')) . '</a>';
-				if (get_selected_radix())
+				$board_urls[] = '<a href="' . URI::base() . '">' . strtolower(__('Index')) . '</a>';
+				if (Radix::get_selected())
 				{
-					$board_urls[] = '<a href="' . site_url(get_selected_radix()->shortname) . '">' . strtolower(__('Top')) . '</a>';
-					$board_urls[] = '<a href="' . site_url(array(get_selected_radix()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
+					$board_urls[] = '<a href="' . URI::create(Radix::get_selected()->shortname) . '">' . strtolower(__('Top')) . '</a>';
+					$board_urls[] = '<a href="' . URI::create(array(Radix::get_selected()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
 				}
 				$board_urls[] = '<a href="https://github.com/FoOlRulez/FoOlFuuka/issues">' . strtolower(__('Report Bug')) . '</a>';
 
@@ -256,8 +256,8 @@
 
 			<?php
 				$top_nav = array();
-				$top_nav = $this->plugins->run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
-				$top_nav = $this->plugins->run_hook('fu_themes_yotsuba_top_nav_buttons', array($top_nav), 'simple');
+				$top_nav = Plugins::run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
+				$top_nav = Plugins::run_hook('fu_themes_yotsuba_top_nav_buttons', array($top_nav), 'simple');
 
 				if (!empty($top_nav))
 				{

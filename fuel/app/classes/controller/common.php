@@ -7,7 +7,7 @@ class Controller_Common extends Controller
 
 	public function before()
 	{
-		$hash = FALSE;
+		$hash = false;
 		if (Session::get('login_hash') !== null)
 		{
 			$hash = Session::get('login_hash');
@@ -17,7 +17,7 @@ class Controller_Common extends Controller
 			$hash = Cookie::get('autologin');
 		}
 
-		if ($hash !== FALSE)
+		if ($hash !== false)
 		{
 			$query = DB::select('*')->from('user_autologin')
 					->where('login_hash', $hash)->and_where('expiration', '>', time())->execute();

@@ -1,12 +1,12 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed');
 
-if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selected_radix()->archive) || (isset($thread_id))) :
+if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_selected()->archive) || (isset($thread_id))) :
 ?>
 
-<?= form_open_multipart(get_selected_radix()->shortname . '/submit') ?>
+<?= form_open_multipart(Radix::get_selected()->shortname . '/submit') ?>
 <?= form_hidden('reply_numero', isset($thread_id)?$thread_id:0) ?>
 <?php if (!isset($disable_image_upload) || !$disable_image_upload) : ?>
-<?= form_hidden('MAX_FILE_SIZE', get_selected_radix()->max_image_size_kilobytes * 1024) ?>
+<?= form_hidden('MAX_FILE_SIZE', Radix::get_selected()->max_image_size_kilobytes * 1024) ?>
 <?php endif; ?>
 
 <table id="reply">
@@ -82,7 +82,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 				echo form_textarea(array(
 					'name' => 'reply_chennodiscursus',
 					'id' => 'reply_chennodiscursus',
-					'placeholder' => (!get_selected_radix()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
+					'placeholder' => (!Radix::get_selected()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
 				));
 			?></td>
 		</tr>
@@ -111,7 +111,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 				?> <span style="font-size: smaller;">(Password used for file deletion)</span>
 			</td>
 		</tr>
-		<?php if ($this->auth->is_mod_admin()) : ?>
+		<?php if (Auth::has_access('maccess.mod')) : ?>
 		<tr>
 			<td><?= __('Post as') ?></td>
 			<td>
@@ -126,13 +126,13 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 			</td>
 		</tr>
 		<?php endif; ?>
-		<?php if (get_selected_radix()->posting_rules) : ?>
+		<?php if (Radix::get_selected()->posting_rules) : ?>
 		<tr class="rules">
 			<td></td>
 			<td>
 				<?php
 					$this->load->library('Markdown_Parser');
-					echo Markdown(get_selected_radix()->posting_rules);
+					echo Markdown(Radix::get_selected()->posting_rules);
 				?>
 			</td>
 		</tr>

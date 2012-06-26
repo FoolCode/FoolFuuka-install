@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
 
 <div class="board">
 
@@ -6,7 +6,7 @@
 	foreach ($posts as $key => $post) :
 		if (isset($post['op'])) :
 			$op = $post['op'];
-			$selected_radix = isset($op->board)?$op->board:get_selected_radix();
+			$selected_radix = isset($op->board)?$op->board:Radix::get_selected();
 
 			$num =  $op->num . ( $op->subnum ? '_' . $op->subnum : '' );
 			$quote_mode = 'thread';
@@ -53,15 +53,15 @@
 						<?php if ($op->trip) : ?><span class="postertrip"><?= $op->trip ?></span><?php endif; ?>
 						<?php if (in_array($op->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($op->capcode == 'M') ? 'Mod':'') . (($op->capcode == 'A') ? 'Admin':'') ?>"></strong>
-							<?php if ($op->capcode == 'M') : ?><img src="<?= site_url('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
-							<?php if ($op->capcode == 'A') : ?><img src="<?= site_url('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($op->capcode == 'M') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($op->capcode == 'A') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
 						<?php endif; ?>
 					</span>
 					<span class="dateTime"><?= gmdate('D M d H:i:s Y', $op->original_timestamp) ?></span>
 					<span class="postNum">
-						<a href="<?= site_url(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>#<?= $num ?>" title="Highlight this post">No.</a><a href="<?= site_url(array($selected_radix->shortname, $quote_mode, $op->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= $num ?></a>
+						<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>#<?= $num ?>" title="Highlight this post">No.</a><a href="<?= URI::create(array($selected_radix->shortname, $quote_mode, $op->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= $num ?></a>
 
-						[<a href="<?= site_url(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="replylink">Reply</a>]
+						[<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="replylink">Reply</a>]
 					</span>
 				</div>
 				<blockquote class="postMessage" id="m<?= $num ?>"><?= $op->comment_processed ?></blockquote>
@@ -72,7 +72,7 @@
 					<strong>9 posts omitted.</strong><br/><em>(9 have images)</em>
 					<?php endif; ?>
 				</span>
-				<a href="<?= site_url(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="quotelink button">View Thread</a>
+				<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="quotelink button">View Thread</a>
 			</div>
 		</div>
 		<?php if (isset($post['omitted']) && $post['omitted'] > 0) : ?>
@@ -99,7 +99,7 @@
 				if ($p->thread_num == 0)
 					$p->thread_num = $p->num;
 
-				echo $this->theme->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
+				echo $this->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
 			}
 		}
 	?>

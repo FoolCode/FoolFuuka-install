@@ -1,13 +1,13 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selected_radix()->archive) || (isset($thread_id))) :
+if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_selected()->archive) || (isset($thread_id))) :
 ?>
 
 <div id="reply" class="thread_form_wrap clearfix">
 <section class="thread_form clearfix">
-<?= form_open_multipart(get_selected_radix()->shortname . '/submit') ?>
+<?= form_open_multipart(Radix::get_selected()->shortname . '/submit') ?>
 <?= form_hidden('reply_numero', isset($thread_id)?$thread_id:0) ?>
 <fieldset>
 
@@ -61,7 +61,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 		<?php if (!isset($disable_image_upload) || !$disable_image_upload) : ?>
 		<div class="input-prepend">
 			<label class="add-on" for="file_image"><?= __('File') ?></label><input type="file" name="file_image" id="file_image" />
-			<?= form_hidden('MAX_FILE_SIZE', get_selected_radix()->max_image_size_kilobytes) ?>
+			<?= form_hidden('MAX_FILE_SIZE', Radix::get_selected()->max_image_size_kilobytes) ?>
 		</div>
 		<?php endif; ?>
 
@@ -75,7 +75,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 			));
 			?>
 		</div>
-		<?php if ($this->auth->is_mod_admin()) : ?>
+		<?php if (Auth::has_access('maccess.mod')) : ?>
 		<div class="input-prepend">
 			<label class="add-on" for="reply_postas"><?= __('Post As') ?></label><?php
 			$postas = array('user' => __('User'), 'mod' => __('Moderator'));
@@ -101,7 +101,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 		echo form_textarea(array(
 			'name' => 'reply_chennodiscursus',
 			'id' => 'reply_chennodiscursus',
-			'placeholder' => (!get_selected_radix()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
+			'placeholder' => (!Radix::get_selected()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
 			'rows' => 3,
 			'style' => 'height:132px; width:320px;'
 		));
@@ -143,10 +143,10 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !get_selecte
 		</div>
 
 		<?php
-			if (get_selected_radix()->posting_rules)
+			if (Radix::get_selected()->posting_rules)
 			{
 				$this->load->library('Markdown_Parser');
-				echo Markdown(get_selected_radix()->posting_rules);
+				echo Markdown(Radix::get_selected()->posting_rules);
 			}
 		?>
 	</div>

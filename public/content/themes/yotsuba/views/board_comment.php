@@ -1,7 +1,7 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
 
 <?php
-$selected_radix = isset($p->board)?$p->board:get_selected_radix();
+$selected_radix = isset($p->board)?$p->board:Radix::get_selected();
 
 $num =  $p->num . ( $p->subnum ? '_' . $p->subnum : '' );
 $quote_mode = 'thread';
@@ -19,17 +19,17 @@ $quote_mode = 'thread';
 						<?php if ($p->trip) : ?><span class="postertrip"><?= $p->trip ?></span><?php endif; ?>
 						<?php if (in_array($p->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($p->capcode == 'M') ? 'Mod':'') . (($p->capcode == 'A') ? 'Admin':'') ?></strong>
-							<?php if ($p->capcode == 'M') : ?><img src="<?= site_url('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
-							<?php if ($p->capcode == 'A') : ?><img src="<?= site_url('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($p->capcode == 'M') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($p->capcode == 'A') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
 						<?php endif; ?>
 					</span>
 					<span class="postNum mobile">
-						<a href="<?= site_url(array($selected_radix->shortname, 'thread', $p->thread_num)) ?>#p<?= $num ?>" title="Highlight this post">No.</a><a href="<?= site_url(array($selected_radix->shortname, $quote_mode, $p->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= str_replace('_', ',', $num) ?></a>
+						<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $p->thread_num)) ?>#p<?= $num ?>" title="Highlight this post">No.</a><a href="<?= URI::create(array($selected_radix->shortname, $quote_mode, $p->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= str_replace('_', ',', $num) ?></a>
 					</span>
 				</span>
 				<span class="dateTime"><?= gmdate('D M d H:i:s Y', $p->original_timestamp) ?></span>
 				<span class="postNum desktop">
-					<a href="<?= site_url(array($selected_radix->shortname, 'thread', $p->thread_num)) ?>#p<?= $num ?>" title="Highlight this post">No.</a><a href="<?= site_url(array($selected_radix->shortname, $quote_mode, $p->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= str_replace('_', ',', $num) ?></a>
+					<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $p->thread_num)) ?>#p<?= $num ?>" title="Highlight this post">No.</a><a href="<?= URI::create(array($selected_radix->shortname, $quote_mode, $p->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= str_replace('_', ',', $num) ?></a>
 				</span>
 			</div>
 

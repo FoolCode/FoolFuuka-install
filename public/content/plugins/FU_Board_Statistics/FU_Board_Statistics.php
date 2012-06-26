@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -12,10 +12,10 @@ class FU_Board_Statistics extends Plugins_model
 		// don't add the admin panels if the user is not an admin
 		if ($this->auth->is_admin())
 		{
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('admin', 'plugins', 'board_statistics'), 'manage');
 
-			$this->plugins->register_admin_sidebar_element('plugins',
+			Plugins::register_admin_sidebar_element('plugins',
 				array(
 					"content" => array(
 						"board_statistics" => array(
@@ -27,32 +27,32 @@ class FU_Board_Statistics extends Plugins_model
 				)
 			);
 
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('cli', 'board_stats', 'help'), 'cli_help');
 
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('cli', 'board_stats', 'cron'), 'cli_cron');
 
-			$this->plugins->register_controller_function($this,
+			Plugins::register_controller_function($this,
 				array('cli', 'board_stats', 'cron', '(:any)'), 'cli_cron');
 		}
 
-		$this->plugins->register_controller_function($this,
+		Plugins::register_controller_function($this,
 			array('chan', '(:any)', 'statistics'), 'chan_statistics');
 		
-		$this->plugins->register_controller_function($this,
+		Plugins::register_controller_function($this,
 			array('chan', '(:any)', 'statistics', '(:any)'), 'chan_statistics');
 
 		
 		
-		$this->plugins->register_hook($this, 'fu_themes_generic_top_nav_buttons', 3, function($top_nav){
-			if(get_selected_radix())
-				$top_nav[] = array('href' => site_url(array(get_selected_radix()->shortname, 'statistics')), 'text' => __('Stats'));
+		Plugins::register_hook($this, 'fu_themes_generic_top_nav_buttons', 3, function($top_nav){
+			if(Radix::get_selected())
+				$top_nav[] = array('href' => URI::create(array(Radix::get_selected()->shortname, 'statistics')), 'text' => __('Stats'));
 				return array('return' => $top_nav);
 		});
 
 		
-		$this->plugins->register_hook($this, 'fu_cli_controller_after_help', 5, function(){ 
+		Plugins::register_hook($this, 'fu_cli_controller_after_help', 5, function(){ 
 			cli_notice('notice', '    board_stats [help]   Run processes relative to the creation of statistics');
 			return NULL;
 		});
@@ -113,7 +113,7 @@ class FU_Board_Statistics extends Plugins_model
 	
 	function manage()
 	{
-		$this->viewdata['controller_title'] = '<a href="' . site_url("admin/plugins/board_statistics") . '">' . __("Board Statistics") . '</a>';
+		$this->viewdata['controller_title'] = '<a href="' . URI::create("admin/plugins/board_statistics") . '">' . __("Board Statistics") . '</a>';
 		$this->viewdata['function_title'] = __('Manage');
 
 		if($this->input->post())
@@ -141,7 +141,7 @@ class FU_Board_Statistics extends Plugins_model
 			$stats = $this->get_available_stats();
 
 			// Set template variables required to build the HTML.
-			$this->theme->set_title(get_selected_radix()->formatted_title . ' &raquo; ' . __('Statistics'));
+			$this->theme->set_title(Radix::get_selected()->formatted_title . ' &raquo; ' . __('Statistics'));
 			Chan::_set_parameters(
 				array(
 					'section_title' => __('Statistics'),
@@ -161,7 +161,7 @@ class FU_Board_Statistics extends Plugins_model
 					<ul>
 						<?php foreach ($stats as $key => $stat) : ?>
 						<li>
-							<a href="<?php echo site_url(array(get_selected_radix()->shortname, 'statistics', $key)) ?>" title="<?php echo form_prep($stat['name']) ?>" ><?php echo $stat['name'] ?></a>
+							<a href="<?php echo URI::create(array(Radix::get_selected()->shortname, 'statistics', $key)) ?>" title="<?php echo form_prep($stat['name']) ?>" ><?php echo $stat['name'] ?></a>
 						</li>
 						<?php endforeach; ?>
 					</ul>
@@ -174,7 +174,7 @@ class FU_Board_Statistics extends Plugins_model
 		}
 		else
 		{
-			$stats = $this->check_available_stats($report, get_selected_radix());
+			$stats = $this->check_available_stats($report, Radix::get_selected());
 
 			if (!is_array($stats))
 			{
@@ -183,7 +183,7 @@ class FU_Board_Statistics extends Plugins_model
 
 			// Set template variables required to build the HTML.
 			$this->load->helper('date');
-			$this->theme->set_title(get_selected_radix()->formatted_title . ' &raquo; '
+			$this->theme->set_title(Radix::get_selected()->formatted_title . ' &raquo; '
 				. __('Statistics') . ': ' . $stats['info']['name']);
 
 			if (isset($stats['info']['frequency']))
@@ -529,7 +529,7 @@ class FU_Board_Statistics extends Plugins_model
 					STDDEV_POP(timestamp%86400) AS std1,
 					(AVG((timestamp+43200)%86400)+43200)%86400 avg2,
 					STDDEV_POP((timestamp+43200)%86400) AS std2
-				FROM ' . $this->radix->get_table($board) . '
+				FROM ' . Radix::get_table($board) . '
 				FORCE INDEX(fullname_index)
 				WHERE timestamp > ?
 				GROUP BY name, trip
@@ -550,7 +550,7 @@ class FU_Board_Statistics extends Plugins_model
 			SELECT
 				(FLOOR(timestamp/300)%288)*300 AS time, COUNT(timestamp), COUNT(media_hash),
 				COUNT(CASE email WHEN \'sage\' THEN 1 ELSE NULL END)
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			USE INDEX(timestamp_index)
 			WHERE timestamp > ?
 			GROUP BY FLOOR(timestamp/300)%288
@@ -570,7 +570,7 @@ class FU_Board_Statistics extends Plugins_model
 			SELECT
 				((FLOOR(timestamp/3600)%24)*3600)+1800 AS time, COUNT(timestamp),
 				COUNT(CASE email WHEN \'sage\' THEN 1 ELSE NULL END)
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			USE INDEX(timestamp_index)
 			WHERE timestamp> ? AND subnum != 0
 			GROUP BY FLOOR(timestamp/3600)%24
@@ -590,7 +590,7 @@ class FU_Board_Statistics extends Plugins_model
 			SELECT
 				((FLOOR(timestamp/3600)%24)*3600)+1800 AS time, COUNT(timestamp), COUNT(media_hash),
 				COUNT(CASE email WHEN \'sage\' THEN 1 ELSE NULL END)
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			USE INDEX(timestamp_index)
 			WHERE timestamp > ?
 			GROUP BY FLOOR(timestamp/3600)%24
@@ -608,7 +608,7 @@ class FU_Board_Statistics extends Plugins_model
 	{
 		$query = $this->db->query('
 			SELECT *
-			FROM ' . $this->radix->get_table($board, '_images') . '
+			FROM ' . Radix::get_table($board, '_images') . '
 			ORDER BY total DESC
 			LIMIT 0, 200;
 		');
@@ -624,7 +624,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				day AS time, posts, images, sage
-			FROM ' . $this->radix->get_table($board, '_daily') . '
+			FROM ' . Radix::get_table($board, '_daily') . '
 			WHERE day > floor((?-31536000)/86400)*86400
 			GROUP BY day
 			ORDER BY day
@@ -642,7 +642,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				name, trip, firstseen, postcount
-			FROM ' . $this->radix->get_table($board, '_users') . '
+			FROM ' . Radix::get_table($board, '_users') . '
 			WHERE postcount > 30
 			ORDER BY firstseen DESC;
 		');
@@ -658,7 +658,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				day AS time, trips, names, anons
-			FROM ' . $this->radix->get_table($board, '_daily') . '
+			FROM ' . Radix::get_table($board, '_daily') . '
 			WHERE day > floor((?-31536000)/86400)*86400
 			GROUP BY day
 			ORDER BY day
@@ -677,7 +677,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				name, trip, postcount
-			FROM ' . $this->radix->get_table($board, '_users') . '
+			FROM ' . Radix::get_table($board, '_users') . '
 			ORDER BY postcount DESC
 			LIMIT 512
 		');
@@ -693,7 +693,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				COUNT(timestamp), COUNT(timestamp)/60
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			WHERE timestamp > ?
 		',
 			array(time() - 3600));
@@ -709,7 +709,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				COUNT(timestamp), COUNT(timestamp)/60
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			WHERE timestamp > ? AND subnum != 0
 		',
 			array(time() - 3600));
@@ -724,7 +724,7 @@ class FU_Board_Statistics extends Plugins_model
 	{
 		$query = $this->db->query('
 			SELECT name, trip, MAX(timestamp), num, subnum
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			WHERE timestamp > ?
 			GROUP BY name, trip
 			ORDER BY MAX(timestamp) DESC
@@ -742,7 +742,7 @@ class FU_Board_Statistics extends Plugins_model
 		$query = $this->db->query('
 			SELECT
 				name, trip, MAX(timestamp), num, subnum
-			FROM ' . $this->radix->get_table($board) . '
+			FROM ' . Radix::get_table($board) . '
 			WHERE poster_ip <> 0 AND timestamp > ?
 			GROUP BY name, trip
 			ORDER BY MAX(timestamp) DESC
@@ -864,7 +864,7 @@ class FU_Board_Statistics extends Plugins_model
 	 */
 	function cli_cron($shortname = NULL)
 	{
-		$boards = $this->radix->get_all();
+		$boards = Radix::get_all();
 
 		$available = $this->get_available_stats();
 

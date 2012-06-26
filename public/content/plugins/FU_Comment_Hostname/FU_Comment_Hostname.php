@@ -1,5 +1,5 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
@@ -7,7 +7,7 @@ class FU_Comment_Hostname extends Plugins_model
 {
 	function initialize_plugin()
 	{
-		$this->plugins->register_hook($this, 'model/post/comment/extra_json', 3, 'comment_hostname');
+		Plugins::register_hook($this, 'model/post/comment/extra_json', 3, 'comment_hostname');
 	}
 	
 	function comment_hostname($comment, $prev_result = NULL){

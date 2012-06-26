@@ -11,23 +11,22 @@ class Radix extends \Model
 	 *
 	 * @var null|array
 	 */
-	private $preloaded_radixes = null;
+	private static $preloaded_radixes = null;
 
 	/**
 	 * The currently selected radix to use with get_selected_radix()
 	 *
 	 * @var object
 	 */
-	private $selected_radix = null;
+	private static $selected_radix = null;
 
 
 	/**
 	 * Preload on construct
 	 */
-	function __construct()
+	public static function _init()
 	{
-		parent::__construct();
-		$this->preload();
+		self::preload();
 	}
 
 
@@ -96,13 +95,73 @@ class Radix extends \Model
 	}
 
 
+	public static function __callStatic($name, $parameters)
+	{
+		$before = Plugins::run_hook('model/radix/call/before/'.$name, $parameters);
+
+		if (is_array($before))
+		{
+			// if the value returned is an Array, a plugin was active
+			$parameters = $before['parameters'];
+		}
+
+		// if the replace is anything else than NULL for all the functions ran here, the
+		// replaced function wont' be run
+		$replace = Plugins::run_hook('model/radix/call/replace/'.$name, $parameters, array($parameters));
+
+		if ($replace['return'] !== NULL)
+		{
+			$return = $replace['return'];
+		}
+		else
+		{
+			$pname = 'p_'.$name;
+			switch (count($parameters))
+			{
+				case 0:
+					$return = self::$pname();
+					break;
+				case 1:
+					$return = self::$pname($parameters[0]);
+					break;
+				case 2:
+					$return = self::$pname($parameters[0], $parameters[1]);
+					break;
+				case 3:
+					$return = self::$pname($parameters[0], $parameters[1], $parameters[2]);
+					break;
+				case 4:
+					$return = self::$pname($parameters[0], $parameters[1], $parameters[2], $parameters[3]);
+					break;
+				case 5:
+					$return = self::$pname($parameters[0], $parameters[1], $parameters[2], $parameters[3], $parameters[4]);
+					break;
+				default:
+					$return = call_user_func_array(array(&$this, $pname), $parameters);
+					break;
+			}
+		}
+
+		// in the after, the last parameter passed will be the result
+		array_push($parameters, $return);
+		$after = Plugins::run_hook('model/radix/call/after/'.$name, $parameters);
+
+		if (is_array($after))
+		{
+			return $after['return'];
+		}
+
+		return $return;
+	}
+
+
 	/**
 	 * The structure of the radix table to be used with validation and form creator
 	 *
 	 * @param Object $radix If available insert to customize the
 	 * @return array the structure
 	 */
-	private function p_structure($radix = NULL)
+	private static function p_structure($radix = NULL)
 	{
 		$structure = array(
 			'open' => array(
@@ -301,7 +360,7 @@ class Radix extends \Model
 						'type' => 'textarea',
 						'label' => __('Thread refresh rate'),
 						'help' => __('Array of refresh rates in seconds per page in JSON format'),
-						'placeholder' => form_prep('[{"delay": 30, "pages": [0, 1, 2]},'.
+						'placeholder' => htmlspecialchars('[{"delay": 30, "pages": [0, 1, 2]},'.
 							'{"delay": 120, "pages": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]},'.
 							'{"delay": 30, "pages": [13, 14, 15]}]'),
 						'class' => 'span4',
@@ -520,7 +579,7 @@ class Radix extends \Model
 	 *
 	 * @param type $data
 	 */
-	private function p_save($data)
+	private static function p_save($data)
 	{
 		// filter _boards data from _boards_preferences data
 		$structure = $this->structure();
@@ -634,7 +693,7 @@ class Radix extends \Model
 	 * @param type $id the ID of the board
 	 * @return boolean TRUE on success, FALSE on failure
 	 */
-	private function p_remove($id)
+	private static function p_remove($id)
 	{
 		$board = $this->get_by_id($id);
 
@@ -677,7 +736,7 @@ class Radix extends \Model
 	 * @param type $echo echo CLI output
 	 * @return boolean TRUE on success, FALSE on failure
 	 */
-	private function p_remove_leftover_dirs($echo = FALSE)
+	private static function p_remove_leftover_dirs($echo = FALSE)
 	{
 		$all = $this->get_all();
 
@@ -746,32 +805,32 @@ class Radix extends \Model
 	 * @param bool $preferences if TRUE it loads all the extra preferences for all the boards
 	 * @return FALSE if there is no boards, TRUE otherwise
 	 */
-	private function p_preload($preferences = false)
+	private static function p_preload($preferences = false)
 	{
-		if (Auth::has_access('maccess.user') || (!$object = Cache::get('model/radix/preload')))
+		if (\Auth::has_access('maccess.user') || (!$object = Cache::get('model/radix/preload')))
 		{
 			$query = \DB::select()->from('boards')->as_object();
 
-			if (!Auth::has_access('maccess.mod'))
+			if (!\Auth::has_access('maccess.mod'))
 			{
 				$query->where('hidden', 0);
 			}
 
-			$query->order_by('shortname', 'ASC');
-			$object = $query->as_object()->execute();
+			$query->order_by('shortname', 'asc');
+			$object = $query->as_object()->execute()->as_array('id');
 
-			Cache::set('model/radix/preload', $object, 900);
+			\Cache::set('model.radix.preload', $object, 900);
 		}
 
 		if (!is_array($object) || empty($object))
 		{
-			$this->preloaded_radixes = array();
+			self::$preloaded_radixes = array();
 			return false;
 		}
 
 		foreach ($object as $item)
 		{
-			$structure = $this->structure($item);
+			$structure = self::structure($item);
 
 			$result_object[$item->id] = $item;
 			$result_object[$item->id]->formatted_title = ($item->name) ?
@@ -779,11 +838,11 @@ class Radix extends \Model
 
 			if ($item->archive == 1)
 			{
-				$result_object[$item->id]->href = URI::create(array('@archive', $item->shortname));
+				$result_object[$item->id]->href = \URI::create(array('@archive', $item->shortname));
 			}
 			else
 			{
-				$result_object[$item->id]->href = URI::create(array('@board', $item->shortname));
+				$result_object[$item->id]->href = \URI::create(array('@board', $item->shortname));
 			}
 
 			// load the basic value of the preferences
@@ -816,7 +875,7 @@ class Radix extends \Model
 			}
 		}
 
-		$this->preloaded_radixes = $result_object;
+		self::$preloaded_radixes = $result_object;
 
 		if ($preferences == true)
 			$this->load_preferences();
@@ -831,7 +890,7 @@ class Radix extends \Model
 	 * @param null|int|array|object $board null/array of IDs/ID/board object
 	 * @return object the object of the board chosen
 	 */
-	private function p_load_preferences($board = null)
+	private static function p_load_preferences($board = null)
 	{
 		if (is_null($board))
 		{
@@ -880,7 +939,7 @@ class Radix extends \Model
 	 * @param string $suffix board suffix like _images
 	 * @return string the table name with protected identifiers
 	 */
-	private function p_get_table($shortname, $suffix = '')
+	private static function p_get_table($shortname, $suffix = '')
 	{
 		if (is_object($shortname))
 			$shortname = $shortname->shortname;
@@ -902,16 +961,16 @@ class Radix extends \Model
 	 * @param type $shortname the board shortname
 	 * @return bool|object FALSE on failure, else the board object
 	 */
-	private function p_set_selected_by_shortname($shortname)
+	private static function p_set_selected_by_shortname($shortname)
 	{
-		if (false != ($val = $this->get_by_shortname($shortname)))
+		if (false != ($val = self::get_by_shortname($shortname)))
 		{
-			$val = $this->load_preferences($val);
-			$this->selected_radix = $val;
+			$val = self::load_preferences($val);
+			self::$selected_radix = $val;
 			return $val;
 		}
 
-		$this->selected_radix = false;
+		self::$selected_radix = false;
 
 		return false;
 	}
@@ -922,14 +981,14 @@ class Radix extends \Model
 	 *
 	 * @return bool|object FALSE if not set, else the board object
 	 */
-	private function p_get_selected()
+	private static function p_get_selected()
 	{
-		if (is_null($this->selected_radix))
+		if (is_null(self::$selected_radix))
 		{
 			return false;
 		}
 
-		return $this->selected_radix;
+		return self::$selected_radix;
 	}
 
 
@@ -938,9 +997,9 @@ class Radix extends \Model
 	 *
 	 * @return array the objects of the preloaded radixes
 	 */
-	private function p_get_all()
+	private static function p_get_all()
 	{
-		return $this->preloaded_radixes;
+		return self::$preloaded_radixes;
 	}
 
 
@@ -950,9 +1009,9 @@ class Radix extends \Model
 	 * @param int $radix_id the ID of the board
 	 * @return object the board object
 	 */
-	private function p_get_by_id($radix_id)
+	private static function p_get_by_id($radix_id)
 	{
-		$items = $this->get_all();
+		$items = self::get_all();
 
 		if (isset($items[$radix_id]))
 			return $items[$radix_id];
@@ -969,9 +1028,9 @@ class Radix extends \Model
 	 * @param bool $switch TRUE if it must be equal or FALSE if not equal
 	 * @return bool|object FALSE if not found or the board object
 	 */
-	private function p_get_by_type($value, $type, $switch = true)
+	private static function p_get_by_type($value, $type, $switch = true)
 	{
-		$items = $this->get_all();
+		$items = self::get_all();
 
 		foreach ($items as $item)
 		{
@@ -990,7 +1049,7 @@ class Radix extends \Model
 	 *
 	 * @return object the board with the shortname
 	 */
-	private function p_get_by_shortname($shortname)
+	private static function p_get_by_shortname($shortname)
 	{
 		return $this->get_by_type($shortname, 'shortname');
 	}
@@ -1003,9 +1062,9 @@ class Radix extends \Model
 	 * @param boolean $switch the value to match
 	 * @return array the board objects
 	 */
-	private function p_filter_by_type($type, $switch)
+	private static function p_filter_by_type($type, $switch)
 	{
-		$items = $this->get_all();
+		$items = self::get_all();
 
 		foreach ($items as $key => $item)
 		{
@@ -1022,9 +1081,9 @@ class Radix extends \Model
 	 *
 	 * @return array the board objects that are archives
 	 */
-	private function p_get_archives()
+	private static function p_get_archives()
 	{
-		return $this->filter_by_type('archive', true);
+		return self::filter_by_type('archive', true);
 	}
 
 
@@ -1033,9 +1092,9 @@ class Radix extends \Model
 	 *
 	 * @return array the board objects that are boards
 	 */
-	private function p_get_boards()
+	private static function p_get_boards()
 	{
-		return $this->filter_by_type('archive', false);
+		return self::filter_by_type('archive', false);
 	}
 
 
@@ -1045,7 +1104,7 @@ class Radix extends \Model
 	 * @param bool $as_string if TRUE it returns the strong as in utf8 or utf8mb4
 	 * @return bool|string TRUE or FALSE, or the compatibe charset depending on $as_string
 	 */
-	private function p_mysql_check_multibyte($as_string = false)
+	private static function p_mysql_check_multibyte($as_string = false)
 	{
 		$query = \DB::query("SHOW CHARACTER SET WHERE Charset = 'utf8mb4';")->execute();
 
@@ -1065,7 +1124,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board the board object
 	 */
-	private function p_mysql_create_tables($board)
+	private static function p_mysql_create_tables($board)
 	{
 		// with true it gives the charset string directly
 		$charset = $this->mysql_check_multibyte(true);
@@ -1205,7 +1264,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board the board object
 	 */
-	private function p_mysql_create_extra($board)
+	private static function p_mysql_create_extra($board)
 	{
 		// with true it gives the charset string directly
 		$charset = $this->mysql_check_multibyte(TRUE);
@@ -1228,7 +1287,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board the board object
 	 */
-	private function p_mysql_create_triggers($board)
+	private static function p_mysql_create_triggers($board)
 	{
 		// triggers fail if we try to send it from the other database, so switch it for a moment
 		// the alternative would be adding a database prefix to the trigger name which would be messy
@@ -1450,7 +1509,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board the board object
 	 */
-	private function p_mysql_remove_tables($board)
+	private static function p_mysql_remove_tables($board)
 	{
 		$tables = array(
 			'',
@@ -1472,7 +1531,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board the board object
 	 */
-	private function p_mysql_remove_triggers($board)
+	private static function p_mysql_remove_triggers($board)
 	{
 		if (Preferences::get('fu.boards_db'))
 			\DB::query('USE '.Preferences::get('fs_fuuka_boards_db'))->execute();
@@ -1509,7 +1568,7 @@ class Radix extends \Model
 	 *
 	 * @return int the fulltext min word length
 	 */
-	private function p_mysql_get_min_word_length()
+	private static function p_mysql_get_min_word_length()
 	{
 		// get the length of the word so we can get rid of a lot of rows
 		$length_res = \DB::query("SHOW VARIABLES WHERE Variable_name = 'ft_min_word_len'")
@@ -1525,7 +1584,7 @@ class Radix extends \Model
 	 * @param object $board board object
 	 * @return
 	 */
-	private function p_create_search($board)
+	private static function p_create_search($board)
 	{
 		return $this->mysql_create_search($board);
 	}
@@ -1537,7 +1596,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board board object
 	 */
-	private function p_mysql_create_search($board)
+	private static function p_mysql_create_search($board)
 	{
 		// with true it gives the charset string directly
 		$charset = $this->mysql_check_multibyte(true);
@@ -1588,7 +1647,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board board object
 	 */
-	private function p_remove_search($board)
+	private static function p_remove_search($board)
 	{
 		return $this->mysql_remove_search($board);
 	}
@@ -1600,7 +1659,7 @@ class Radix extends \Model
 	 *
 	 * @param object $board board object
 	 */
-	private function p_mysql_remove_search($board)
+	private static function p_mysql_remove_search($board)
 	{
 		\DB::query("DROP TABLE IF EXISTS ".$this->get_table($board, '_search'))->execute();
 
@@ -1618,7 +1677,7 @@ class Radix extends \Model
 	 * @param string $suffix the table suffix like _threads
 	 * @return boolean true if the table is NOT utf8mb4
 	 */
-	private function p_mysql_check_charset($board, $suffix)
+	private static function p_mysql_check_charset($board, $suffix)
 	{
 		// rather than using information_schema, for ease let's just check the output of the create table
 		\DB::query('SHOW CREATE TABLE '.$this->get_table($board, $suffix))->execute();
@@ -1637,7 +1696,7 @@ class Radix extends \Model
 	 * @param object $board board object
 	 * @return bool TRUE on success, FALSE on failure (in case MySQL doesn't support multibyte)
 	 */
-	private function p_mysql_change_charset($board)
+	private static function p_mysql_change_charset($board)
 	{
 		// if utf8mb4 is not supported, stop the machines
 		if (!$this->mysql_check_multibyte())

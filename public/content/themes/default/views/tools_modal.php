@@ -1,11 +1,11 @@
 <?php
-if (!defined('BASEPATH'))
+if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 ?>
 
 <?php
 if ($enabled_tools_modal) :
-	if (!($board = get_selected_radix()))
+	if (!($board = Radix::get_selected()))
 	{
 		$board = new stdClass();
 		$board->shortname = '';
@@ -18,12 +18,12 @@ if ($enabled_tools_modal) :
 	</div>
 	<div class="modal-body" style="text-align: center">
 		<div class="modal-error"></div>
-		<div class="modal-loading loading"><img src="<?= site_url() ?>assets/js/images/loader-18.gif"/></div>
+		<div class="modal-loading loading"><img src="<?= URI::base() ?>assets/js/images/loader-18.gif"/></div>
 		<div class="modal-information"></div>
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn secondary closeModal" data-function="closeModal"><?= __('Cancel') ?></a>
-		<a href="#" class="btn btn-primary submitModal" data-function="submitModal" data-report="<?= site_url($board->shortname . '/report/') ?>" data-delete="<?= site_url($board->shortname . '/delete/') ?>"><?= __('Submit') ?></a>
+		<a href="#" class="btn btn-primary submitModal" data-function="submitModal" data-report="<?= URI::create($board->shortname . '/report/') ?>" data-delete="<?= URI::create($board->shortname . '/delete/') ?>"><?= __('Submit') ?></a>
 	</div>
 </div>
 <?php endif; ?>
