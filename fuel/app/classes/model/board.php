@@ -1653,7 +1653,7 @@ class Board extends \Model
 		}
 
 		// hook entire comment data to alter in plugin
-		$data = $this->plugins->run_hook('fu_post_model_comment_alter_input', array($board, $data), 'simple');
+		$data = Plugins::run_hook('fu_post_model_comment_alter_input', array($board, $data), 'simple');
 
 		// process comment name+trip
 		if ($data['name'] === FALSE || $data['name'] == '')

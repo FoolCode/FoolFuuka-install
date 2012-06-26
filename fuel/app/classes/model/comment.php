@@ -761,7 +761,7 @@ class Comment extends \Model
 		);
 
 		// leave this NULL so it processes normally
-		$switch = $this->plugins->run_hook('fu_post_model_process_media_switch_resize', array($media_config));
+		$switch = Plugins::run_hook('fu_post_model_process_media_switch_resize', array($media_config));
 
 		// if plugin returns false, error
 		if(isset($switch['return']) && $switch['return'] === FALSE)
@@ -816,7 +816,7 @@ class Comment extends \Model
 		$find = "'(\r?\n|^)(&gt;.*?)(?=$|\r?\n)'i";
 		$html = '\\1<span class="greentext">\\2</span>\\3';
 
-		$html = $this->plugins->run_hook('fu_post_model_process_comment_greentext_result', array($html), 'simple');
+		$html = Plugins::run_hook('fu_post_model_process_comment_greentext_result', array($html), 'simple');
 
 		$comment = $post->comment;
 
@@ -925,7 +925,7 @@ class Comment extends \Model
 			'attr_backlink' => 'class="backlink" data-function="highlight" data-backlink="true" data-board="' . $data->board->shortname . '" data-post="' . $current_p_num_u . '"',
 		);
 
-		$build_url = $this->plugins->run_hook('fu_post_model_process_internal_links_html_result', array($data, $build_url), 'simple');
+		$build_url = Plugins::run_hook('fu_post_model_process_internal_links_html_result', array($data, $build_url), 'simple');
 
 		$this->backlinks[$data->num][$this->current_p->num] = implode(
 			'<a href="' . site_url(array($data->board->shortname, 'thread', $data->post->thread_num)) . '#' . $build_url['hash'] . $current_p_num_u . '" ' .
@@ -994,7 +994,7 @@ class Comment extends \Model
 			'backlink' => 'class="backlink" data-function="highlight" data-backlink="true" data-board="' . (($data->board) ? $data->board->shortname : $data->shortname) . '" data-post="' . $data->num . '"'
 		);
 
-		$build_url = $this->plugins->run_hook('fu_post_model_process_crossboard_links_html_result', array($data, $build_url), 'simple');
+		$build_url = Plugins::run_hook('fu_post_model_process_crossboard_links_html_result', array($data, $build_url), 'simple');
 
 		if (!$data->board)
 		{

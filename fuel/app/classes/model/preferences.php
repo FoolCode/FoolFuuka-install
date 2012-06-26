@@ -66,6 +66,10 @@ class Preferences extends \Model
 		if($fallback != null)
 			return $fallback;
 
+		$const = strtoupper(substr($setting,strpos($setting,'.') + 1));
+		if(defined('FOOL_'.$const))
+			return constant('FOOL_'.$const);
+
 		return null;
 	}
 
