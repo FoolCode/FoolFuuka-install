@@ -187,11 +187,6 @@ class Board extends \Model
 
 		$threads = $query->as_object()->execute()->as_array();
 
-		if(!count($threads))
-		{
-			throw new \BoardMessagesNotFound;
-		}
-
 		// cache the count or get the cached count
 		if($type == 'ghost')
 		{
@@ -220,7 +215,6 @@ class Board extends \Model
 		}
 
 		$threads_count = $query_threads->as_object()->execute()->current()->threads;
-
 
 		// set total pages found
 		if ($threads_count <= $per_page)
@@ -251,31 +245,25 @@ class Board extends \Model
 			$sql_arr[] = '('.$temp.')';
 		}
 
-		$query_posts = \DB::query(implode('UNION', $sql_arr)); //->as_array();
-		\Debug::dump($query_posts);die();
+		$query_posts = \DB::query(implode(' UNION ', $sql_arr), \DB::SELECT)->as_object()->execute()->as_array();
 		// populate posts_arr array
 		$posts = Comment::forge($query_posts, $board);
 		$results = array();
 
+		foreach ($threads as $thread)
+		{
+			if ( ! isset($results[$thread->thread_num]['omitted']) || ! isset($results[$thread->thread_num]['images_omitted']))
+			{
+				$results[$thread->thread_num] = array(
+					'omitted' => ($thread->nreplies - 6),
+					'images_omitted' => ($thread->nimages - 1)
+				);
+			}
+		}
+
 		// populate results array and order posts
 		foreach ($posts as $post)
 		{
-			$post_num = ($post->op == 0) ? $post->thread_num : $post->num;
-
-			if (!isset($results[$post_num]['omitted']))
-			{
-				foreach ($threads as $thread_num => $counter)
-				{
-					if ($thread_num == $post_num)
-					{
-						$results[$post_num] = array(
-							'omitted' => ($counter->replies - 6),
-							'images_omitted' => ($counter->images - 1)
-						);
-					}
-				}
-			}
-
 			if ($post->op == 0)
 			{
 				if ($post->preview_orig)

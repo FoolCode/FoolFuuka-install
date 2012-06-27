@@ -221,7 +221,7 @@ class Comment extends \Model
 			$array = array();
 			foreach ($post as $p)
 			{
-				$array = static::forge($p, $board, $options);
+				$array[] = static::forge($p, $board, $options);
 			}
 
 			return $array;
