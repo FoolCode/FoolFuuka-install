@@ -38,7 +38,6 @@ function __($string)
 
 // Initialize the framework with the config file.
 Fuel::init('config.php');
-//Autoloader::alias_to_namespace('Fuel\\Core\\URI');
 
 Autoloader::alias_to_namespace('Model\\Inet');
 Autoloader::alias_to_namespace('Model\\Preferences');

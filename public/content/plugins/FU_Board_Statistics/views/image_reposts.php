@@ -9,7 +9,7 @@ if (!defined('DOCROOT'))
 		<div class="image_reposts_number">
 			<strong>#<?php echo $key+1 ?></strong> - Reposts: <?php echo $item->total ?>
 		</div>
-		<a href="<?php echo URI::create(array(Radix::get_selected()->shortname, 'search', 'image', $this->post->get_media_hash($item->media_hash, TRUE))) ?>">
+		<a href="<?php echo Uri::create(array(Radix::get_selected()->shortname, 'search', 'image', $this->post->get_media_hash($item->media_hash, TRUE))) ?>">
 			<img src="<?php echo $this->post->get_media_link(Radix::get_selected(), $item, TRUE) ?>" />
 		</a>
 	</div>

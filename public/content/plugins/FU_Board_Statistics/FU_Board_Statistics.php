@@ -47,7 +47,7 @@ class FU_Board_Statistics extends Plugins_model
 		
 		Plugins::register_hook($this, 'fu_themes_generic_top_nav_buttons', 3, function($top_nav){
 			if(Radix::get_selected())
-				$top_nav[] = array('href' => URI::create(array(Radix::get_selected()->shortname, 'statistics')), 'text' => __('Stats'));
+				$top_nav[] = array('href' => Uri::create(array(Radix::get_selected()->shortname, 'statistics')), 'text' => __('Stats'));
 				return array('return' => $top_nav);
 		});
 
@@ -113,7 +113,7 @@ class FU_Board_Statistics extends Plugins_model
 	
 	function manage()
 	{
-		$this->viewdata['controller_title'] = '<a href="' . URI::create("admin/plugins/board_statistics") . '">' . __("Board Statistics") . '</a>';
+		$this->viewdata['controller_title'] = '<a href="' . Uri::create("admin/plugins/board_statistics") . '">' . __("Board Statistics") . '</a>';
 		$this->viewdata['function_title'] = __('Manage');
 
 		if($this->input->post())
@@ -161,7 +161,7 @@ class FU_Board_Statistics extends Plugins_model
 					<ul>
 						<?php foreach ($stats as $key => $stat) : ?>
 						<li>
-							<a href="<?php echo URI::create(array(Radix::get_selected()->shortname, 'statistics', $key)) ?>" title="<?php echo form_prep($stat['name']) ?>" ><?php echo $stat['name'] ?></a>
+							<a href="<?php echo Uri::create(array(Radix::get_selected()->shortname, 'statistics', $key)) ?>" title="<?php echo form_prep($stat['name']) ?>" ><?php echo $stat['name'] ?></a>
 						</li>
 						<?php endforeach; ?>
 					</ul>

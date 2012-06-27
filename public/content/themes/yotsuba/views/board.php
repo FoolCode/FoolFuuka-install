@@ -53,15 +53,15 @@
 						<?php if ($op->trip) : ?><span class="postertrip"><?= $op->trip ?></span><?php endif; ?>
 						<?php if (in_array($op->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($op->capcode == 'M') ? 'Mod':'') . (($op->capcode == 'A') ? 'Admin':'') ?>"></strong>
-							<?php if ($op->capcode == 'M') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
-							<?php if ($op->capcode == 'A') : ?><img src="<?= URI::create('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($op->capcode == 'M') : ?><img src="<?= Uri::create('content/themes/yotsuba/images/') . 'icon-mod.gif' ?>" alt="This user is a Moderator." title="This user is a Moderator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
+							<?php if ($op->capcode == 'A') : ?><img src="<?= Uri::create('content/themes/yotsuba/images/') . 'icon-admin.gif' ?>" alt="This user is an Administrator." title="This user is an Administrator." class="identityIcon" style="float: none!important; margin-left: 0px;"><?php endif; ?>
 						<?php endif; ?>
 					</span>
 					<span class="dateTime"><?= gmdate('D M d H:i:s Y', $op->original_timestamp) ?></span>
 					<span class="postNum">
-						<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>#<?= $num ?>" title="Highlight this post">No.</a><a href="<?= URI::create(array($selected_radix->shortname, $quote_mode, $op->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= $num ?></a>
+						<a href="<?= Uri::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>#<?= $num ?>" title="Highlight this post">No.</a><a href="<?= Uri::create(array($selected_radix->shortname, $quote_mode, $op->thread_num)) ?>#q<?= $num ?>" title="Quote this post"><?= $num ?></a>
 
-						[<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="replylink">Reply</a>]
+						[<a href="<?= Uri::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="replylink">Reply</a>]
 					</span>
 				</div>
 				<blockquote class="postMessage" id="m<?= $num ?>"><?= $op->comment_processed ?></blockquote>
@@ -72,7 +72,7 @@
 					<strong>9 posts omitted.</strong><br/><em>(9 have images)</em>
 					<?php endif; ?>
 				</span>
-				<a href="<?= URI::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="quotelink button">View Thread</a>
+				<a href="<?= Uri::create(array($selected_radix->shortname, 'thread', $op->thread_num)) ?>" class="quotelink button">View Thread</a>
 			</div>
 		</div>
 		<?php if (isset($post['omitted']) && $post['omitted'] > 0) : ?>

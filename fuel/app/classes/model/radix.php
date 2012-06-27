@@ -916,7 +916,11 @@ class Radix extends \Model
 		$selected = false;
 		foreach ($ids as $id)
 		{
-			if (!$result = \Cache::get('model.radix.load_preferences.'.$id))
+			try
+			{
+				$result = \Cache::get('model.radix.load_preferences.'.$id);
+			}
+			catch (\CacheNotFoundException $e)
 			{
 				$result = \DB::select()->where('boards_preferences')->where('board_id', $id)
 					->as_object()->execute->as_array();

@@ -18,12 +18,12 @@ if ($enabled_tools_modal) :
 	</div>
 	<div class="modal-body" style="text-align: center">
 		<div class="modal-error"></div>
-		<div class="modal-loading loading"><img src="<?= URI::base() ?>assets/js/images/loader-18.gif"/></div>
+		<div class="modal-loading loading"><img src="<?= Uri::base() ?>assets/js/images/loader-18.gif"/></div>
 		<div class="modal-information"></div>
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn secondary closeModal" data-function="closeModal"><?= __('Cancel') ?></a>
-		<a href="#" class="btn btn-primary submitModal" data-function="submitModal" data-report="<?= URI::create($board->shortname . '/report/') ?>" data-delete="<?= URI::create($board->shortname . '/delete/') ?>"><?= __('Submit') ?></a>
+		<a href="#" class="btn btn-primary submitModal" data-function="submitModal" data-report="<?= Uri::create($board->shortname . '/report/') ?>" data-delete="<?= Uri::create($board->shortname . '/delete/') ?>"><?= __('Submit') ?></a>
 	</div>
 </div>
 <?php endif; ?>

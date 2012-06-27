@@ -8,15 +8,15 @@
 		<?= $template['metadata'] ?>
 
 		<title><?= $template['title'] ?></title>
-		<link href='<?= URI::base() ?>' rel='index' title='<?= get_setting('fs_gen_site_title') ?>' />
+		<link href='<?= Uri::base() ?>' rel='index' title='<?= get_setting('fs_gen_site_title') ?>' />
 <?php if (Radix::get_selected()) : ?>
-		<link href="<?= URI::create(Radix::get_selected()->shortname) ?>rss_gallery_50.xml" rel="alternate" type="application/rss+xml" title="RSS" />
-		<link href="<?= URI::create(Radix::get_selected()->shortname) ?>atom_gallery_50.xml" rel="alternate" type="application/atom+xml" title="Atom" />
+		<link href="<?= Uri::create(Radix::get_selected()->shortname) ?>rss_gallery_50.xml" rel="alternate" type="application/rss+xml" title="RSS" />
+		<link href="<?= Uri::create(Radix::get_selected()->shortname) ?>atom_gallery_50.xml" rel="alternate" type="application/atom+xml" title="Atom" />
 <?php endif; ?>
-		<link href="<?= URI::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
-		<link href="<?= URI::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+		<link href="<?= Uri::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+		<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
 		<!--[if lt IE 8]>
-		<link href="<?= URI::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+		<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
 		<?php
 		foreach($this->fallback_override('style.css', $this->get_config('extends_css')) as $css)
@@ -29,7 +29,7 @@
 		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 <?php if (get_setting('fs_sphinx_global')) : ?>
-		<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE); ?> " href="<?= URI::create('@system/functions/opensearch') ?>" />
+		<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 <?php endif; ?>
 		<?= get_setting('fs_theme_header_code'); ?>
 
@@ -72,12 +72,12 @@
 
 						<ul class="nav">
 							<li class="dropdown">
-								<a href="<?= URI::base() ?>" id="brand" class="brand dropdown-toggle" data-toggle="dropdown">
+								<a href="<?= Uri::base() ?>" id="brand" class="brand dropdown-toggle" data-toggle="dropdown">
 									<?= (Radix::get_selected()) ? '/' . $board->shortname . '/' . ' - ' . $board->name :  get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> <b class="caret"></b>
 								</a>
 								<ul class="dropdown-menu">
-									<?= '<li><a href="' . URI::create('@default') . '">' . __('Index') . '</a></li>'; ?>
-									<?= (Auth::has_access('maccess.mod')) ? '<li><a href="' . URI::create('@system/admin') . '">' . __('Control Panel') . '</a></li>' : '' ?>
+									<?= '<li><a href="' . Uri::create('@default') . '">' . __('Index') . '</a></li>'; ?>
+									<?= (Auth::has_access('maccess.mod')) ? '<li><a href="' . Uri::create('@system/admin') . '">' . __('Control Panel') . '</a></li>' : '' ?>
 									<li class="divider"></li>
 									<?php
 									if (Radix::get_archives())
@@ -115,7 +115,7 @@
 								</li>
 								<?php endif; ?>
 							<li style="padding-right:0px;">
-								<a href="<?= URI::create(array($board->shortname)) ?>" style="padding-right:4px;"><?= __('Index') ?></a>
+								<a href="<?= Uri::create(array($board->shortname)) ?>" style="padding-right:4px;"><?= __('Index') ?></a>
 							</li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-left:2px; padding-right:4px;">
@@ -123,13 +123,13 @@
 								</a>
 								<ul class="dropdown-menu" style="margin-left:-9px">
 									<li>
-										<a href="<?= URI::create(array(Radix::get_selected()->shortname, 'by_post')) ?>">
+										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_post')) ?>">
 											<?= __('By Post') ?>
 											<?php if ($this->input->cookie('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 									<li>
-										<a href="<?= URI::create(array(Radix::get_selected()->shortname, 'by_thread')) ?>">
+										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_thread')) ?>">
 											<?= __('By Thread') ?>
 											<?php if ($this->input->cookie('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
@@ -141,8 +141,8 @@
 							$top_nav = array();
 							if (Radix::get_selected())
 							{
-								$top_nav[] = array('href' => URI::create(array(Radix::get_selected()->shortname, 'ghost')), 'text' => __('Ghost'));
-								$top_nav[] = array('href' => URI::create(array(Radix::get_selected()->shortname, 'gallery')), 'text' => __('Gallery'));
+								$top_nav[] = array('href' => Uri::create(array(Radix::get_selected()->shortname, 'ghost')), 'text' => __('Ghost'));
+								$top_nav[] = array('href' => Uri::create(array(Radix::get_selected()->shortname, 'gallery')), 'text' => __('Gallery'));
 							}
 
 							$top_nav = Plugins::run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
@@ -249,7 +249,7 @@
 						foreach($this->get_available_styles('yotsuba_2') as $key => $style) :
 						?>
 							<li>
-								<a href="<?= URI::create(array('@system', 'functions', 'theme', $this->get_selected_theme(), $style)) ?>">
+								<a href="<?= Uri::create(array('@system', 'functions', 'theme', $this->get_selected_theme(), $style)) ?>">
 									<?= $key ?><?= ($style == $this->get_selected_theme_class()) ?' <i class="icon-ok"></i>':'' ?>
 								</a>
 							</li>
@@ -268,7 +268,7 @@
 						if (($theme = $this->get_by_name($theme))) :
 							?>
 							<li>
-								<a href="<?= URI::create(array('@system', 'functions', 'theme', $theme['directory'])) ?>">
+								<a href="<?= Uri::create(array('@system', 'functions', 'theme', $theme['directory'])) ?>">
 									<?= $theme['name'] ?><?= ($theme['directory'] == $this->get_selected_theme())?' <i class="icon-ok"></i>':'' ?>
 								</a>
 							</li>
@@ -286,7 +286,7 @@
 					<ul class="dropdown-menu">
 						<?php foreach(config_item('ff_available_languages') as $key => $lang) : ?>
 						<li>
-							<a href="<?= URI::create(array('@system', 'functions', 'language', $key)) ?>">
+							<a href="<?= Uri::create(array('@system', 'functions', 'language', $key)) ?>">
 								<?= $lang ?><?= ((!$this->input->cookie('language') && $key == 'en_EN') || $key == $this->input->cookie('language'))?' <i class="icon-ok"></i>':'' ?>
 							</a>
 						</li>
@@ -329,10 +329,10 @@
 		</script>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="<?= URI::base() ?>assets/js/jquery.js"><\/script>')</script>
-		<script defer src="<?= URI::base() ?>assets/bootstrap2/js/bootstrap.min.js?v=<?= FOOL_VERSION ?>"></script>
-		<script defer src="<?= URI::base() . $this->fallback_asset('plugins.js') ?>"></script>
-		<script defer src="<?= URI::base() . $this->fallback_asset('board.js') ?>"></script>
+		<script>window.jQuery || document.write('<script src="<?= Uri::base() ?>assets/js/jquery.js"><\/script>')</script>
+		<script defer src="<?= Uri::base() ?>assets/bootstrap2/js/bootstrap.min.js?v=<?= FOOL_VERSION ?>"></script>
+		<script defer src="<?= Uri::base() . $this->fallback_asset('plugins.js') ?>"></script>
+		<script defer src="<?= Uri::base() . $this->fallback_asset('board.js') ?>"></script>
 <?php if (get_setting('fs_theme_google_analytics')) : ?>
 		<script>
 			var _gaq=[['_setAccount','<?= get_setting('fs_theme_google_analytics') ?>'],['_trackPageview'],['_trackPageLoadTime']];

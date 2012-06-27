@@ -19,13 +19,20 @@ class Controller_Chan extends Controller_Common
 	public function before()
 	{
 		parent::before();
-		
+
 		header('X-UA-Compatible: IE=edge,chrome=1');
 		header('imagetoolbar: false');
 		$this->_theme = new \Theme();
 
 		$this->_theme->set_theme('default');
 		$this->_theme->set_layout('chan');
+
+		$this->_theme->bind('is_page', FALSE);
+		$this->_theme->bind('disable_headers', FALSE);
+		$this->_theme->bind('enabled_tools_modal', FALSE);
+		$this->_theme->bind('backend_vars', FALSE);
+
+		$this->_theme->set_partial('tools_search', 'tools_search');
 	}
 
 	/**
@@ -36,11 +43,8 @@ class Controller_Chan extends Controller_Common
 	 */
 	public function action_index()
 	{
-		$this->_theme->bind('is_page', FALSE);
-		$this->_theme->bind('disable_headers', FALSE);
-		$this->_theme->bind('is_statistics', FALSE);
-		$this->_theme->bind('enabled_tools_modal', FALSE);
-		return $this->_theme->build('index');
+		$this->_theme->bind('disable_headers', TRUE);
+		return Response::forge($this->_theme->build('index'));
 	}
 
 

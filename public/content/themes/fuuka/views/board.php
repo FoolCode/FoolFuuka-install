@@ -20,7 +20,7 @@ foreach ($posts as $key => $post) :
 			<span><?= __('File:') . ' ' . byte_format($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed ?> <?= '<!-- ' . substr($op->media_hash, 0, -2) . '-->' ?></span>
 			<?php if ($op->media_status != 'banned') : ?>
 				<?php if (!$selected_radix->hide_thumbnails || Auth::has_access('maccess.mod')) : ?>
-					[<a href="<?= URI::create(Radix::get_selected()->shortname . '/search/image/' . $op->safe_media_hash) ?>"><?= __('View Same') ?></a>]
+					[<a href="<?= Uri::create(Radix::get_selected()->shortname . '/search/image/' . $op->safe_media_hash) ?>"><?= __('View Same') ?></a>]
 					[<a href="http://google.com/searchbyimage?image_url=<?= $op->thumb_link ?>">Google</a>]
 					[<a href="http://iqdb.org/?url=<?= $op->thumb_link ?>">iqdb</a>]
 					[<a href="http://saucenao.com/search.php?url=<?= $op->thumb_link ?>">SauceNAO</a>]
@@ -29,10 +29,10 @@ foreach ($posts as $key => $post) :
 			<br />
 			<?php if ($op->media_status != 'available') :?>
 				<?php if ($op->media_status == 'banned') : ?>
-					<img src="<?= URI::base() . $this->fallback_asset('images/banned-image.png') ?>" width="150" height="150" class="thumb"/>
+					<img src="<?= Uri::base() . $this->fallback_asset('images/banned-image.png') ?>" width="150" height="150" class="thumb"/>
 				<?php else : ?>
 					<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" rel="noreferrer">
-						<img src="<?= URI::base() . $this->fallback_asset('images/missing-image.jpg') ?>" width="150" height="150" class="thumb"/>
+						<img src="<?= Uri::base() . $this->fallback_asset('images/missing-image.jpg') ?>" width="150" height="150" class="thumb"/>
 					</a>
 				<?php endif; ?>
 			<?php else: ?>
@@ -58,16 +58,16 @@ foreach ($posts as $key => $post) :
 		</label>
 
 		<?php if (!isset($thread_id)) : ?>
-			<a class="js" href="<?= URI::create($selected_radix->shortname . '/thread/' . $op->num) ?>">No.<?= $op->num ?></a>
+			<a class="js" href="<?= Uri::create($selected_radix->shortname . '/thread/' . $op->num) ?>">No.<?= $op->num ?></a>
 		<?php else : ?>
-			<a class="js" href="<?= URI::create($selected_radix->shortname . '/thread/' . $op->num) ?>">No.</a><a class="js" href="javascript:replyQuote('>><?= $op->num ?>\n')"><?= $op->num ?></a>
+			<a class="js" href="<?= Uri::create($selected_radix->shortname . '/thread/' . $op->num) ?>">No.</a><a class="js" href="javascript:replyQuote('>><?= $op->num ?>\n')"><?= $op->num ?></a>
 		<?php endif; ?>
 
-		<?php if ($op->deleted == 1) : ?><img class="inline" src="<?= URI::base() . 'content/themes/' . (($this->get_selected_theme()) ? $this->get_selected_theme() : 'default') . '/images/icons/file-delete-icon.png'; ?>" alt="[DELETED]" title="<?php _('This post was deleted before its lifetime has expired.') ?>"/><?php endif ?>
-		<?php if ($op->spoiler == 1) : ?><img class="inline" src="<?= URI::base() . 'content/themes/' . (($this->get_selected_theme()) ? $this->get_selected_theme() : 'default') . '/images/icons/spoiler-icon.png'; ?>" alt="[SPOILER]" title="<?php _('The image in this post is marked as spoiler.') ?>"/><?php endif ?>
+		<?php if ($op->deleted == 1) : ?><img class="inline" src="<?= Uri::base() . 'content/themes/' . (($this->get_selected_theme()) ? $this->get_selected_theme() : 'default') . '/images/icons/file-delete-icon.png'; ?>" alt="[DELETED]" title="<?php _('This post was deleted before its lifetime has expired.') ?>"/><?php endif ?>
+		<?php if ($op->spoiler == 1) : ?><img class="inline" src="<?= Uri::base() . 'content/themes/' . (($this->get_selected_theme()) ? $this->get_selected_theme() : 'default') . '/images/icons/spoiler-icon.png'; ?>" alt="[SPOILER]" title="<?php _('The image in this post is marked as spoiler.') ?>"/><?php endif ?>
 
-		[<a href="<?= URI::create($selected_radix->shortname . '/thread/' . $op->num) ?>"><?= __('Reply') ?></a>]
-		<?php if (isset($post['omitted']) && $post['omitted'] > 50) : ?> [<a href="<?= URI::create($selected_radix->shortname . '/last50/' . $op->num) ?>"><?= __('Last 50') ?></a>]<?php endif; ?>
+		[<a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $op->num) ?>"><?= __('Reply') ?></a>]
+		<?php if (isset($post['omitted']) && $post['omitted'] > 50) : ?> [<a href="<?= Uri::create($selected_radix->shortname . '/last50/' . $op->num) ?>"><?= __('Last 50') ?></a>]<?php endif; ?>
 		<?php if ($selected_radix->archive) : ?> [<a href="http://boards.4chan.org/<?= $selected_radix->shortname . '/res/' . $op->num ?>"><?= __('Original') ?></a>]<?php endif; ?>
 
 		<div class="quoted-by" style="display: <?= (isset($p->backlinks)) ? 'block' : 'none' ?>">

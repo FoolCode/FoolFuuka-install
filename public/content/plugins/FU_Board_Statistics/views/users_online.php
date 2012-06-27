@@ -24,14 +24,14 @@ if (!defined('DOCROOT'))
 			if ($d->trip)
 				array_push($params, 'tripcode/' . urlencode($d->trip));
 
-			$poster_link = URI::create($params);
+			$poster_link = Uri::create($params);
 			?>
 			<a href="<?php echo $poster_link ?>">
 				<span class="poster_name"><?php echo $d->name ?></span> <span class="poster_trip"><?php echo $d->trip ?></span>
 			</a>
 		</td>
 		<td style="width:350px; text-align:center;"><?php echo date('d-M-Y H:i:s', $d->{'MAX(timestamp)'}) ?></td>
-		<td><a href="<?php echo URI::create(array(Radix::get_selected()->shortname, 'post', $d->num . ($d->subnum ? '_' . $d->subnum : ''))) ?>">
+		<td><a href="<?php echo Uri::create(array(Radix::get_selected()->shortname, 'post', $d->num . ($d->subnum ? '_' . $d->subnum : ''))) ?>">
 			&gt;&gt;<?php echo $d->num . ($d->subnum ? ',' . $d->subnum : '') ?>
 		</a></td>
 	</tr>

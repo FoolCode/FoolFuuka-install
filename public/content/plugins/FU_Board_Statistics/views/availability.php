@@ -23,7 +23,7 @@ if (!defined('DOCROOT'))
 				if ($d->trip)
 					array_push($params, 'tripcode/' . urlencode($d->trip));
 
-				$poster_link = URI::create($params);
+				$poster_link = Uri::create($params);
 
 				$values = (($d->std2 < $d->std1) ? array($d->avg2 - $d->std2, $d->avg2 + $d->std2) : array($d->avg1 - $d->std1, $d->avg1 + $d->std1));
 				$val_st = ($values[0] + 86400) % 86400;

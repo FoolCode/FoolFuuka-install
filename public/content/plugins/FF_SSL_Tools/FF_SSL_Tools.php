@@ -59,7 +59,7 @@ class FF_SSL_Tools extends Plugins_model
 			if(get_setting('ff_ssl_enable_top_link') && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off'))
 			{
 				$CI = & get_instance();
-				$top_nav[] = array('href' => 'https' . substr(URI::create($CI->uri->uri_string()), 4), 'text' => '<i class="icon-lock"></i> '.__('SSL'));
+				$top_nav[] = array('href' => 'https' . substr(Uri::create($CI->uri->uri_string()), 4), 'text' => '<i class="icon-lock"></i> '.__('SSL'));
 			}
 				return array('return' => $top_nav);
 		});
@@ -68,7 +68,7 @@ class FF_SSL_Tools extends Plugins_model
 			if(get_setting('ff_ssl_enable_bottom_link') && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off'))
 			{
 				$CI = & get_instance();
-				$top_nav[] = array('href' => 'https' . substr(URI::create($CI->uri->uri_string()), 4), 'text' => '<i class="icon-lock"></i> '.__('SSL'));
+				$top_nav[] = array('href' => 'https' . substr(Uri::create($CI->uri->uri_string()), 4), 'text' => '<i class="icon-lock"></i> '.__('SSL'));
 			}
 			return array('return' => $top_nav);
 		});

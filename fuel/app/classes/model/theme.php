@@ -439,7 +439,7 @@ class Theme extends \Model
 	 * @param bool $return TRUE to return the HTML as string
 	 * @return string the HTML
 	 */
-	public function build($view, $data = array(), $return = FALSE, $without_layout = FALSE)
+	public function build($view, $data = array(), $without_layout = FALSE)
 	{
 		foreach ($data as $key => $item)
 		{
@@ -484,10 +484,7 @@ class Theme extends \Model
 			)
 		);
 
-		if ($return)
-			return $html;
-
-		return \Response::forge($html, 200);
+		return $html;
 	}
 
 

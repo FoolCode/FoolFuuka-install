@@ -117,7 +117,7 @@ class Theme_Plugin_yotsuba extends Plugins_model
 			Chan::_set_parameters(
 				array(
 					'title' => __('Redirecting...'),
-					'url' => URI::create(Radix::get_selected()->shortname)
+					'url' => Uri::create(Radix::get_selected()->shortname)
 				)
 			);
 			$this->build('redirection');

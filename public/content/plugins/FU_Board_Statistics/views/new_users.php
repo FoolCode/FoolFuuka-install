@@ -32,7 +32,7 @@ if (!defined('DOCROOT'))
 			if ($d['trip'])
 				array_push($params, 'tripcode/' . urlencode($d['trip']));
 
-			$poster_link = URI::create($params);
+			$poster_link = Uri::create($params);
 			?>
 			<a href="<?php echo $poster_link ?>">
 				<span class="poster_name"><?php echo $d['name'] ?></span> <span class="poster_trip"><?php echo $d['trip'] ?></span>

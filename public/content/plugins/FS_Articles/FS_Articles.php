@@ -176,7 +176,7 @@ class FS_Articles extends Plugins_model
 
 	function manage()
 	{
-		$this->viewdata['controller_title'] = '<a href="' . URI::create("admin/articles/manage") . '">' . __("Articles") . '</a>';
+		$this->viewdata['controller_title'] = '<a href="' . Uri::create("admin/articles/manage") . '">' . __("Articles") . '</a>';
 		$this->viewdata['function_title'] = __('Manage');
 
 		$articles = $this->get_all();
@@ -184,7 +184,7 @@ class FS_Articles extends Plugins_model
 		ob_start();
 		?>
 
-			<a href="<?php echo URI::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo __('New article') ?></a>
+			<a href="<?php echo Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo __('New article') ?></a>
 
 			<table class="table table-bordered table-striped table-condensed">
 				<thead>
@@ -203,13 +203,13 @@ class FS_Articles extends Plugins_model
 							<?php echo htmlentities($article->title) ?>
 						</td>
 						<td>
-							<a href="<?php echo URI::create('@board/articles/' . $article->slug) ?>" target="_blank"><?php echo $article->slug ?></a>
+							<a href="<?php echo Uri::create('@board/articles/' . $article->slug) ?>" target="_blank"><?php echo $article->slug ?></a>
 						</td>
 						<td>
-							<a href="<?php echo URI::create('admin/articles/edit/'.$article->slug) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
+							<a href="<?php echo Uri::create('admin/articles/edit/'.$article->slug) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
 						</td>
 						<td>
-							<a href="<?php echo URI::create('admin/articles/remove/'.$article->id) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
+							<a href="<?php echo Uri::create('admin/articles/remove/'.$article->id) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
 						</td>
 					</tr>
 					<?php endforeach; ?>
@@ -273,7 +273,7 @@ class FS_Articles extends Plugins_model
 			$this->viewdata["function_title"] = __('New article') ;
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . URI::create('admin/articles') . '">' . __('Articles') . '</a>';
+		$this->viewdata["controller_title"] = '<a href="' . Uri::create('admin/articles') . '">' . __('Articles') . '</a>';
 		
 		$this->viewdata["main_content_view"] = $this->load->view("admin/form_creator.php", $data, TRUE);
 		$this->load->view("admin/default.php", $this->viewdata);
@@ -353,7 +353,7 @@ class FS_Articles extends Plugins_model
 			redirect('admin/articles/manage');
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . URI::create('admin/articles') . '">' . __('Articles') . '</a>';
+		$this->viewdata["controller_title"] = '<a href="' . Uri::create('admin/articles') . '">' . __('Articles') . '</a>';
 		$this->viewdata["function_title"] = __('Removing article:') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
@@ -456,7 +456,7 @@ class FS_Articles extends Plugins_model
 
 		foreach($result as $article)
 		{
-			$nav[] = array('href' => URI::create('articles/' . $article->slug), 'text' => fuuka_htmlescape($article->title));
+			$nav[] = array('href' => Uri::create('articles/' . $article->slug), 'text' => fuuka_htmlescape($article->title));
 		}
 		
 		return array('return' => $nav);
@@ -478,7 +478,7 @@ class FS_Articles extends Plugins_model
 		foreach($query->result() as $article)
 		{
 			$nav['articles']['elements'][] = array(
-				'href' => URI::create('articles/' . $article->slug), 
+				'href' => Uri::create('articles/' . $article->slug), 
 				'text' => fuuka_htmlescape($article->title)
 			);
 		}

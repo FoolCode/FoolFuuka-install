@@ -65,7 +65,7 @@ http://2-cdn-archive.yourdomain.org/purge/:username2:password</pre>',
 
 	function manage()
 	{
-		$this->viewdata['controller_title'] = '<a href="' . URI::create("admin/plugins/nginx_cache_purge") . '">' . __("Nginx Cache Purge") . '</a>';
+		$this->viewdata['controller_title'] = '<a href="' . Uri::create("admin/plugins/nginx_cache_purge") . '">' . __("Nginx Cache Purge") . '</a>';
 		$this->viewdata['function_title'] = __('Manage');
 
 		if($this->input->post())

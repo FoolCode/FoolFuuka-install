@@ -357,12 +357,12 @@ class Theme_Plugin_fuuka extends Plugins_model
 				 */
 				if ($result['posted']->thread_num == 0)
 				{
-					$callback = URI::create(array(Radix::get_selected()->shortname, 'thread',
+					$callback = Uri::create(array(Radix::get_selected()->shortname, 'thread',
 							$result['posted']->num)) . '#' . $result['posted']->num;
 				}
 				else
 				{
-					$callback = URI::create(array(Radix::get_selected()->shortname, 'thread',
+					$callback = Uri::create(array(Radix::get_selected()->shortname, 'thread',
 							$result['posted']->thread_num)) . '#' . $result['posted']->num .
 						(($result['posted']->subnum > 0) ? '_' . $result['posted']->subnum : '');
 				}
@@ -401,7 +401,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			Chan::_set_parameters(
 				array(
 					'title' => fuuka_title(0),
-					'url' => URI::create(Radix::get_selected()->shortname)
+					'url' => Uri::create(Radix::get_selected()->shortname)
 				)
 			);
 			$this->build('redirection');
@@ -431,7 +431,7 @@ class Theme_Plugin_fuuka extends Plugins_model
 			Chan::_set_parameters(
 				array(
 					'title' => fuuka_title(0),
-					'url' => URI::create(Radix::get_selected()->shortname . '/thread/' .
+					'url' => Uri::create(Radix::get_selected()->shortname . '/thread/' .
 						$this->input->post('parent'))
 				)
 			);

@@ -15,9 +15,9 @@
 		?>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script src="<?= URI::base() . $this->fallback_asset('plugins.js') ?>" type="text/javascript"></script>
+		<script src="<?= Uri::base() . $this->fallback_asset('plugins.js') ?>" type="text/javascript"></script>
 		<?php if (get_setting('fs_sphinx_global')) : ?>
-			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= URI::create('@system/functions/opensearch') ?>" />
+			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
 		<?= get_setting('fs_theme_header_code') ?>
 	</head>
@@ -39,11 +39,11 @@
 		<?php
 			$board_urls = array();
 
-			$board_urls[] = '<a href="' . URI::base() . '">' . strtolower(__('Index')) . '</a>';
+			$board_urls[] = '<a href="' . Uri::base() . '">' . strtolower(__('Index')) . '</a>';
 			if (Radix::get_selected())
 			{
-				$board_urls[] = '<a href="' . URI::create(Radix::get_selected()->shortname) . '">' . strtolower(__('Top')) . '</a>';
-				$board_urls[] = '<a href="' . URI::create(array(Radix::get_selected()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
+				$board_urls[] = '<a href="' . Uri::create(Radix::get_selected()->shortname) . '">' . strtolower(__('Top')) . '</a>';
+				$board_urls[] = '<a href="' . Uri::create(array(Radix::get_selected()->shortname, 'statistics')) . '">' . strtolower(__('Statistics')) . '</a>';
 			}
 			$board_urls[] = '<a href="https://github.com/FoOlRulez/FoOlFuuka/issues">' . strtolower(__('Report Bug')) . '</a>';
 
@@ -187,7 +187,7 @@
 					{
 						if (($theme = $this->get_by_name($theme)))
 						{
-							$theme_links[] = '<a href="' . URI::create(array('@system', 'functions', 'theme', $theme['directory'])) . '" onclick="changeTheme(\'' . $theme['directory'] . '\'); return false;">' . $theme['name'] . '</a>';
+							$theme_links[] = '<a href="' . Uri::create(array('@system', 'functions', 'theme', $theme['directory'])) . '" onclick="changeTheme(\'' . $theme['directory'] . '\'); return false;">' . $theme['name'] . '</a>';
 						}
 					}
 					echo 'Theme [ ' . implode(' / ', $theme_links) . ' ]';
