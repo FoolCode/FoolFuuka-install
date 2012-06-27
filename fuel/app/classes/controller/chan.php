@@ -35,6 +35,16 @@ class Controller_Chan extends Controller_Common
 		$this->_theme->set_partial('tools_search', 'tools_search');
 	}
 
+
+	public function router($method, $params)
+	{
+		if(Radix::set_selected_by_shortname($method))
+		{
+			return call_user_func_array(array($this, 'action_'.array_shift($params)), $params);
+		}
+	}
+
+
 	/**
 	 * The basic welcome message
 	 *
@@ -48,12 +58,10 @@ class Controller_Chan extends Controller_Common
 	}
 
 
-	public function action_latest($shortname)
+	public function action_latest()
 	{
-		$radix = Radix::get_by_shortname($shortname);
-
 		$board = new Board();
-		$thread = $board->get_latest($radix);
+		$thread = $board->get_latest(Radix::get_selected());
 		//Debug::dump($board);
 		//return Response::forge(var_)
 		return Response::forge(Debug::dump($board));

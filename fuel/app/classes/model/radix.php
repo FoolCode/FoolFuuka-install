@@ -922,17 +922,17 @@ class Radix extends \Model
 			}
 			catch (\CacheNotFoundException $e)
 			{
-				$result = \DB::select()->where('boards_preferences')->where('board_id', $id)
-					->as_object()->execute->as_array();
+				$result = \DB::select()->from('boards_preferences')->where('board_id', $id)
+					->as_object()->execute()->as_array();
 				\Cache::set('model.radix.load_preferences.'.$id, $result, 900);
 			}
 
 			foreach ($result as $value)
 			{
-				$this->preloaded_radixes[$id]->{$value->name} = $value->value;
+				static::$preloaded_radixes[$id]->{$value->name} = $value->value;
 			}
 
-			$selected = $this->preloaded_radixes[$id];
+			$selected = static::$preloaded_radixes[$id];
 		}
 
 		// useful if only one has been selected
