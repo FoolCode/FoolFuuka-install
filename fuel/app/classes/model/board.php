@@ -2,7 +2,7 @@
 
 namespace Model;
 
-Autoloader::add_classes(array(
+\Autoloader::add_classes(array(
 	'Model\\BoardMessagesNotFound' => APPPATH.'classes/model/board/error.php'
 ));
 
@@ -22,6 +22,70 @@ class Board extends \Model
 {
 
 	/**
+	 * The functions with 'p_' prefix will respond to plugins before and after
+	 *
+	 * @param string $name
+	 * @param array $parameters
+	 */
+	public function __call($name, $parameters)
+	{
+		$before = Plugins::run_hook('model/board/call/before/'.$name, $parameters);
+
+		if (is_array($before))
+		{
+			// if the value returned is an Array, a plugin was active
+			$parameters = $before['parameters'];
+		}
+
+		// if the replace is anything else than NULL for all the functions ran here, the
+		// replaced function wont' be run
+		$replace = Plugins::run_hook('model/board/call/replace/'.$name, $parameters, array($parameters));
+
+		if ($replace['return'] !== NULL)
+		{
+			$return = $replace['return'];
+		}
+		else
+		{
+			switch (count($parameters))
+			{
+				case 0:
+					$return = $this->{'p_'.$name}();
+					break;
+				case 1:
+					$return = $this->{'p_'.$name}($parameters[0]);
+					break;
+				case 2:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1]);
+					break;
+				case 3:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2]);
+					break;
+				case 4:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3]);
+					break;
+				case 5:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3], $parameters[4]);
+					break;
+				default:
+					$return = call_user_func_array(array(&$this, 'p_'.$name), $parameters);
+					break;
+			}
+		}
+
+		// in the after, the last parameter passed will be the result
+		array_push($parameters, $return);
+		$after = Plugins::run_hook('model/board/call/after/'.$name, $parameters);
+
+		if (is_array($after))
+		{
+			return $after['return'];
+		}
+
+		return $return;
+	}
+
+	/**
 	 * If the user is an admin, this will return SQL to add reports to the
 	 * query output
 	 *
@@ -29,20 +93,20 @@ class Board extends \Model
 	 * @param bool|string $join_on alternative join table name
 	 * @return string SQL to append reports to the rows
 	 */
-	private function sql_report_join($board, $query, $join_on = FALSE)
+	private function p_sql_report_join($board, $query, $join_on = FALSE)
 	{
 		// only show report notifications to certain users
 		if(\Auth::has_access('comment.reports'))
 		{
-			$query->join(DB::expr('
+			$query->join(\DB::expr('
 					SELECT
 						id AS report_id, doc_id AS report_doc_id, reason AS report_reason, ip_reporter as report_ip_reporter,
 						status AS report_status, created AS report_created
-					FROM ' . $this->db->protect_identifiers('reports', TRUE) . '
+					FROM ' . \DB::quote_identifier('reports') . '
 					WHERE `board_id` = ' . $board->id), 'LEFT'
-				)->on(DB::expr($this->radix->get_table($board)) . '.`doc_id`',
+				)->on(Radix::get_board($board). '.`doc_id`',
 					'=',
-					DB::expr($this->db->protect_identifiers('r') . '.`report_doc_id`')
+					\DB::expr('`r`.`report_doc_id`')
 				);
 		}
 	}
@@ -56,12 +120,12 @@ class Board extends \Model
 	 * @param bool|string $join_on alternative join table name
 	 * @return string SQL to append to retrieve image filenames
 	 */
-	private function sql_media_join($board, $query, $join_on = FALSE)
+	private function p_sql_media_join($board, $query, $join_on = FALSE)
 	{
-		$query->join(DB::expr($this->radix->get_table($board, '_images') . ' AS `mg`'), 'LEFT')
-			->on(DB::expr($this->radix->get_table($board)) . '.`media_id`',
+		$query->join(\DB::expr(Radix::get_table($board, '_images') . ' AS `mg`'), 'LEFT')
+			->on(\DB::expr(Radix::get_table($board) . '.`media_id`'),
 			'=',
-			DB::expr($this->db->protect_identifiers('mg') . '.`media_id`')
+			\DB::expr('`mg`.`media_id`')
 		);
 	}
 
@@ -74,7 +138,7 @@ class Board extends \Model
 	 * @param array $options modifiers
 	 * @return array|bool FALSE on error (likely from faulty $options), or the list of threads with 5 replies attached
 	 */
-	private function get_latest($board, $page = 1, $options = array())
+	private function p_get_latest($board, $page = 1, $options = array())
 	{
 		// default variables
 		$per_page = 20;
@@ -93,7 +157,7 @@ class Board extends \Model
 		{
 			case 'by_post':
 
-				$query = \DB::select('*', 'thread_num as unq_thread_num')
+				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
 					->from(\DB::expr(Radix::get_table($board, '_threads')))
 					->order_by('time_bump', 'desc')
 					->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
@@ -144,18 +208,18 @@ class Board extends \Model
 			// these two are the same
 			case 'by_post':
 			case 'by_thread':
-				$query_threads = \DB::select(DB::expr('COUNT(thread_num) AS threads'))
-					->from(DB::expr(Radix::get_table($board, '_threads')))->cached(1800);
+				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
+					->from(\DB::expr(Radix::get_table($board, '_threads')))->cached(1800);
 				break;
 
 			case 'ghost':
-				$query_threads = \DB::select(DB::expr('COUNT(thread_num) AS threads'))
-					->from(DB::expr(Radix::get_table($board, '_threads')))
-					->where('time_ghost_bump', DB::expr('IS NOT NULL'))->cached(1800);
+				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
+					->from(\DB::expr(Radix::get_table($board, '_threads')))
+					->where('time_ghost_bump', \DB::expr('IS NOT NULL'))->cached(1800);
 				break;
 		}
 
-		$threads_count = $query_threads->ad_object()->execute()->current()->threads;
+		$threads_count = $query_threads->as_object()->execute()->current()->threads;
 
 
 		// set total pages found
@@ -187,10 +251,10 @@ class Board extends \Model
 			$sql_arr[] = '('.$temp.')';
 		}
 
-		$query_posts = \DB::query(implode('UNION', $sql_arr))->as_object()->execute()->as_array();
-
+		$query_posts = \DB::query(implode('UNION', $sql_arr)); //->as_array();
+		\Debug::dump($query_posts);die();
 		// populate posts_arr array
-		$posts = Comment::forge($query_posts);
+		$posts = Comment::forge($query_posts, $board);
 		$results = array();
 
 		// populate results array and order posts
@@ -205,8 +269,8 @@ class Board extends \Model
 					if ($thread_num == $post_num)
 					{
 						$results[$post_num] = array(
-							'omitted' => ($counter['replies'] - 6),
-							'images_omitted' => ($counter['images'] - 1)
+							'omitted' => ($counter->replies - 6),
+							'images_omitted' => ($counter->images - 1)
 						);
 					}
 				}

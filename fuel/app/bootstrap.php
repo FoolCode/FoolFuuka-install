@@ -45,3 +45,5 @@ Autoloader::alias_to_namespace('Model\\Notices');
 Autoloader::alias_to_namespace('Model\\Plugins');
 Autoloader::alias_to_namespace('Model\\Theme');
 Autoloader::alias_to_namespace('Model\\Radix');
+Autoloader::alias_to_namespace('Model\\Board');
+Autoloader::alias_to_namespace('Model\\Comment');

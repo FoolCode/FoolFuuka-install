@@ -958,7 +958,7 @@ class Radix extends \Model
 		}
 		else
 		{
-			return $this->db->protect_identifiers('board_'.$shortname.$suffix, true);
+			return \DB::quote_identifier('board_'.$shortname.$suffix);
 		}
 	}
 
@@ -1059,7 +1059,7 @@ class Radix extends \Model
 	 */
 	private static function p_get_by_shortname($shortname)
 	{
-		return $this->get_by_type($shortname, 'shortname');
+		return static::get_by_type($shortname, 'shortname');
 	}
 
 

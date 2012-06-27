@@ -2,7 +2,7 @@
 
 namespace Model;
 
-Autoloader::add_classes(array(
+\Autoloader::add_classes(array(
 	'Model\\BoardMessagesNotFound' => APPPATH.'classes/model/board/error.php'
 ));
 
@@ -79,6 +79,70 @@ class Comment extends \Model
 	public $media_orig = null;
 	public $exif = null;
 
+
+	/**
+	 * The functions with 'p_' prefix will respond to plugins before and after
+	 *
+	 * @param string $name
+	 * @param array $parameters
+	 */
+	public function __call($name, $parameters)
+	{
+		$before = Plugins::run_hook('model/comment/call/before/'.$name, $parameters);
+
+		if (is_array($before))
+		{
+			// if the value returned is an Array, a plugin was active
+			$parameters = $before['parameters'];
+		}
+
+		// if the replace is anything else than NULL for all the functions ran here, the
+		// replaced function wont' be run
+		$replace = Plugins::run_hook('model/comment/call/replace/'.$name, $parameters, array($parameters));
+
+		if ($replace['return'] !== NULL)
+		{
+			$return = $replace['return'];
+		}
+		else
+		{
+			switch (count($parameters))
+			{
+				case 0:
+					$return = $this->{'p_'.$name}();
+					break;
+				case 1:
+					$return = $this->{'p_'.$name}($parameters[0]);
+					break;
+				case 2:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1]);
+					break;
+				case 3:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2]);
+					break;
+				case 4:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3]);
+					break;
+				case 5:
+					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3], $parameters[4]);
+					break;
+				default:
+					$return = call_user_func_array(array(&$this, 'p_'.$name), $parameters);
+					break;
+			}
+		}
+
+		// in the after, the last parameter passed will be the result
+		array_push($parameters, $return);
+		$after = Plugins::run_hook('model/comment/call/after/'.$name, $parameters);
+
+		if (is_array($after))
+		{
+			return $after['return'];
+		}
+
+		return $return;
+	}
 
 
 	public function __get($name)
@@ -167,8 +231,10 @@ class Comment extends \Model
 	}
 
 
-	public function _init($post, $board, $options = array())
+	public function __construct($post, $board, $options = array())
 	{
+		//parent::__construct();
+
 		$this->board = $board;
 
 		if (\Auth::has_access('comment.reports'))
@@ -188,8 +254,8 @@ class Comment extends \Model
 
 		$this->clean_fields();
 
-		$num = $post->thread_num.($post->subnum ? ',' - $post->subnum : '');
-		static::$_posts[$post->thread_num][] = $num;
+		$num = $this->thread_num.($this->subnum ? ',' - $this->subnum : '');
+		static::$_posts[$this->thread_num][] = $num;
 
 
 		if ($this->archive)
@@ -212,7 +278,7 @@ class Comment extends \Model
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	private function get_media_dir($thumbnail = false)
+	private function p_get_media_dir($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
@@ -254,7 +320,7 @@ class Comment extends \Model
 	 * @param bool $thumbnail if it's a thumbnail we're looking for
 	 * @return bool|string FALSE on not found, a fallback image if not found for thumbnails, or the URL on success
 	 */
-	private function get_media_link($thumbnail = false)
+	private function p_get_media_link($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
@@ -352,7 +418,7 @@ class Comment extends \Model
 	 *
 	 * @return bool|string FALSE if there's no media, local URL if it's not remote, or the remote URL
 	 */
-	private function get_remote_media_link()
+	private function p_get_remote_media_link()
 	{
 		if (!$this->media_hash)
 		{
@@ -390,7 +456,7 @@ class Comment extends \Model
 	 * @param bool $urlsafe if TRUE it will return a modified base64 compatible with URL
 	 * @return bool|string FALSE if media_hash not found, or the base64 string
 	 */
-	private function get_media_hash($urlsafe = FALSE)
+	private function p_get_media_hash($urlsafe = FALSE)
 	{
 		if (is_object($this) || is_array($this))
 		{
@@ -429,7 +495,7 @@ class Comment extends \Model
 	 * @param object $post the database row for the post
 	 * @return string the processed comment
 	 */
-	private function process_comment()
+	private function p_process_comment()
 	{
 		// default variables
 		$find = "'(\r?\n|^)(&gt;.*?)(?=$|\r?\n)'i";
@@ -592,7 +658,7 @@ class Comment extends \Model
 	 * @param array $matches the matches sent by preg_replace_callback
 	 * @return string the complete anchor
 	 */
-	private function process_crossboard_links($matches)
+	private function p_process_crossboard_links($matches)
 	{
 		// create link object with all relevant information
 		$data = new stdClass();
@@ -658,7 +724,7 @@ class Comment extends \Model
 	 *
 	 * @return array|bool
 	 */
-	private function delete($password = null, $force)
+	private function p_delete($password = null, $force)
 	{
 		if(!\Auth::has_access('comment.passwordless_deletion'))
 		{
@@ -713,7 +779,7 @@ class Comment extends \Model
 	 * @param bool $thumb if thumbnail should be deleted
 	 * @return bool TRUE on success or if it didn't exist in first place, FALSE on failure
 	 */
-	private function delete_media($media = true, $thumb = true)
+	private function p_delete_media($media = true, $thumb = true)
 	{
 		if (!$this->media_hash)
 		{
@@ -772,7 +838,7 @@ class Comment extends \Model
 	 *
 	 * @return array name without tripcode and processed tripcode concatenated with processed secure tripcode
 	 */
-	private function process_name()
+	private function p_process_name()
 	{
 		$name = $this->name;
 
@@ -813,7 +879,7 @@ class Comment extends \Model
 	 * @param string $plain the word to generate the tripcode from
 	 * @return string the processed tripcode
 	 */
-	private static function process_tripcode($plain)
+	private static function p_process_tripcode($plain)
 	{
 		if (trim($plain) == '')
 		{
@@ -836,7 +902,7 @@ class Comment extends \Model
 	 * @param string $plain the word to generate the secure tripcode from
 	 * @return string the processed secure tripcode
 	 */
-	private function process_secure_tripcode($plain)
+	private function p_process_secure_tripcode($plain)
 	{
 		return substr(base64_encode(sha1($plain . base64_decode(FOOLFUUKA_SECURE_TRIPCODE_SALT), TRUE)), 0, 11);
 	}
@@ -850,7 +916,7 @@ class Comment extends \Model
 	 * @param array $options modifiers
 	 * @return array error key with explanation to show to user, or success and post row
 	 */
-	private function comment()
+	private function p_comment()
 	{
 		// check: if passed stopforumspam, check if banned internally
 		$check = \DB::select()->from('posters')->where('ip', \Input::ip_decimal())

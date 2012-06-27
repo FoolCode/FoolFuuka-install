@@ -48,6 +48,18 @@ class Controller_Chan extends Controller_Common
 	}
 
 
+	public function action_latest($shortname)
+	{
+		$radix = Radix::get_by_shortname($shortname);
+
+		$board = new Board();
+		$thread = $board->get_latest($radix);
+		//Debug::dump($board);
+		//return Response::forge(var_)
+		return Response::forge(Debug::dump($board));
+	}
+
+
 	/**
 	 * The 404 action for the application.
 	 *
