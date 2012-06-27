@@ -85,6 +85,24 @@ class Board extends \Model
 		return $return;
 	}
 
+
+	/**
+	 * Returns the SQL string to append to queries to be able to
+	 * get the filenames required to create the path to media
+	 *
+	 * @param object $board
+	 * @param bool|string $join_on alternative join table name
+	 * @return string SQL to append to retrieve image filenames
+	 */
+	private function p_sql_media_join($board, $query, $join_on = FALSE)
+	{
+		$query->join(\DB::expr(Radix::get_table($board, '_images') . ' AS `mg`'), 'LEFT')
+			->on(
+				\DB::expr(Radix::get_table($board) . '.`media_id`'), '=', \DB::expr('`mg`.`media_id`')
+			);
+	}
+
+
 	/**
 	 * If the user is an admin, this will return SQL to add reports to the
 	 * query output
@@ -104,29 +122,10 @@ class Board extends \Model
 						status AS report_status, created AS report_created
 					FROM ' . \DB::quote_identifier('reports') . '
 					WHERE `board_id` = ' . $board->id), 'LEFT'
-				)->on(Radix::get_board($board). '.`doc_id`',
-					'=',
-					\DB::expr('`r`.`report_doc_id`')
-				);
+			)->on(
+				Radix::get_board($board). '.`doc_id`', '=', \DB::expr('`r`.`report_doc_id`')
+			);
 		}
-	}
-
-
-	/**
-	 * Returns the SQL string to append to queries to be able to
-	 * get the filenames required to create the path to media
-	 *
-	 * @param object $board
-	 * @param bool|string $join_on alternative join table name
-	 * @return string SQL to append to retrieve image filenames
-	 */
-	private function p_sql_media_join($board, $query, $join_on = FALSE)
-	{
-		$query->join(\DB::expr(Radix::get_table($board, '_images') . ' AS `mg`'), 'LEFT')
-			->on(\DB::expr(Radix::get_table($board) . '.`media_id`'),
-			'=',
-			\DB::expr('`mg`.`media_id`')
-		);
 	}
 
 
@@ -241,7 +240,6 @@ class Board extends \Model
 				->order_by('op', 'desc')->order_by('num', 'desc')->order_by('subnum', 'desc')
 				->limit(6)->offset(0);
 
-
 			$sql_arr[] = '('.$temp.')';
 		}
 
@@ -252,13 +250,10 @@ class Board extends \Model
 
 		foreach ($threads as $thread)
 		{
-			if ( ! isset($results[$thread->thread_num]['omitted']) || ! isset($results[$thread->thread_num]['images_omitted']))
-			{
-				$results[$thread->thread_num] = array(
-					'omitted' => ($thread->nreplies - 6),
-					'images_omitted' => ($thread->nimages - 1)
-				);
-			}
+			$results[$thread->thread_num] = array(
+				'omitted' => ($thread->nreplies - 6),
+				'images_omitted' => ($thread->nimages - 1)
+			);
 		}
 
 		// populate results array and order posts
