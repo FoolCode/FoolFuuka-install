@@ -36,11 +36,11 @@
 					<div class="fileInfo">
 						<span class="fileText">
 							<?= __('File:') ?>
-							<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank"><?= $op->media ?></a>-(<?= byte_format($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed ?>)
+							<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank"><?= $op->media ?></a>-(<?= \Num::format_bytes($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed ?>)
 						</span>
 					</div>
 					<a class="fileThumb" href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank">
-						<img src="<?= $op->thumb_link ?>" alt="<?= byte_format($op->media_size, 0) ?>" data-md5="<?= $op->media_hash ?>"<?php if ($op->preview_w > 0 && $op->preview_h > 0) : ?> style="height: <?= $op->preview_h ?>px; width: <?= $op->preview_w ?>px;"<?php endif; ?>/>
+						<img src="<?= $op->thumb_link ?>" alt="<?= \Num::format_bytes($op->media_size, 0) ?>" data-md5="<?= $op->media_hash ?>"<?php if ($op->preview_w > 0 && $op->preview_h > 0) : ?> style="height: <?= $op->preview_h ?>px; width: <?= $op->preview_w ?>px;"<?php endif; ?>/>
 					</a>
 				</div>
 				<?php endif; ?>

@@ -17,7 +17,7 @@ foreach ($posts as $key => $post) :
 ?>
 	<div id="<?= $op->num ?>">
 		<?php if ($op->preview_orig) : ?>
-			<span><?= __('File:') . ' ' . byte_format($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed ?> <?= '<!-- ' . substr($op->media_hash, 0, -2) . '-->' ?></span>
+			<span><?= __('File:') . ' ' . \Num::format_bytes($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed ?> <?= '<!-- ' . substr($op->media_hash, 0, -2) . '-->' ?></span>
 			<?php if ($op->media_status != 'banned') : ?>
 				<?php if (!$selected_radix->hide_thumbnails || Auth::has_access('maccess.mod')) : ?>
 					[<a href="<?= Uri::create(Radix::get_selected()->shortname . '/search/image/' . $op->safe_media_hash) ?>"><?= __('View Same') ?></a>]

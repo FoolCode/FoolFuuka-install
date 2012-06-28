@@ -38,11 +38,11 @@ $quote_mode = 'thread';
 				<div class="fileInfo">
 						<span class="fileText">
 							<?= __('File:') ?>
-							<a href="<?= ($p->media_link) ? $p->media_link : $p->remote_media_link ?>" target="_blank"><?= $p->media ?></a>-(<?= byte_format($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename_processed ?>)
+							<a href="<?= ($p->media_link) ? $p->media_link : $p->remote_media_link ?>" target="_blank"><?= $p->media ?></a>-(<?= \Num::format_bytes($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename_processed ?>)
 						</span>
 				</div>
 				<a class="fileThumb" href="<?= ($p->media_link) ? $p->media_link : $p->remote_media_link ?>" target="_blank">
-					<img src="<?= $p->thumb_link ?>" alt="<?= byte_format($p->media_size, 0) ?>" data-md5="<?= $p->media_hash ?>"<?php if ($p->preview_w > 0 && $p->preview_h > 0) : ?> style="height: <?= $p->preview_h ?>px; width: <?= $p->preview_w ?>px;"<?php endif; ?>/>
+					<img src="<?= $p->thumb_link ?>" alt="<?= \Num::format_bytes($p->media_size, 0) ?>" data-md5="<?= $p->media_hash ?>"<?php if ($p->preview_w > 0 && $p->preview_h > 0) : ?> style="height: <?= $p->preview_h ?>px; width: <?= $p->preview_w ?>px;"<?php endif; ?>/>
 				</a>
 			</div>
 			<?php endif; ?>

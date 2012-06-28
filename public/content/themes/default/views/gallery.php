@@ -45,7 +45,7 @@ foreach ($threads as $k => $p) :
 				<?php endif; ?>
 			</a>
 			<?php endif; ?>
-			<div class="post_file" style="padding-left: 2px"><?= byte_format($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename ?></div>
+			<div class="post_file" style="padding-left: 2px"><?= \Num::format_bytes($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename ?></div>
 			
 			<?php if ($p->media_status == 'banned') : ?>
 				<div class="post_file_controls">

@@ -157,8 +157,8 @@ class Comment extends \Model
 		{
 			case 'original_timestamp':
 				$this->original_timestamp = $this->timestamp;
-				$newyork = new DateTime(date('Y-m-d H:i:s', $this->timestamp), new DateTimeZone('America/New_York'));
-				$utc = new DateTime(date('Y-m-d H:i:s', $this->timestamp), new DateTimeZone('UTC'));
+				$newyork = new \DateTime(date('Y-m-d H:i:s', $this->timestamp), new \DateTimeZone('America/New_York'));
+				$utc = new \DateTime(date('Y-m-d H:i:s', $this->timestamp), new \DateTimeZone('UTC'));
 				$diff = $newyork->diff($utc)->h;
 				$this->timestamp = $this->timestamp + ($diff * 60 * 60);
 				return $this->original_timestamp;
@@ -465,7 +465,7 @@ class Comment extends \Model
 				throw new \CommentMediaHashNotFound;
 			}
 
-			$media = $media->media_hash;
+			$media = $this->media_hash;
 		}
 		else
 		{
@@ -478,11 +478,11 @@ class Comment extends \Model
 		// return a safely escaped media hash for urls or un-altered media hash
 		if ($urlsafe === TRUE)
 		{
-			return urlsafe_b64encode(urlsafe_b64decode($media));
+			return static::urlsafe_b64encode(static::urlsafe_b64decode($media));
 		}
 		else
 		{
-			return base64_encode(urlsafe_b64decode($media));
+			return base64_encode(static::urlsafe_b64decode($media));
 		}
 	}
 
@@ -706,6 +706,19 @@ class Comment extends \Model
 	private function p_build_board_comment()
 	{
 		return \Theme::build('board_comment', array('p' => $post), TRUE, TRUE);
+	}
+
+	public static function urlsafe_b64encode($string)
+	{
+		$string = base64_encode($string);
+		return str_replace(array('+', '/', '='), array('-', '_', ''), $string);
+	}
+
+
+	public static function urlsafe_b64decode($string)
+	{
+		$string = str_replace(array('-', '_'), array('+', '/'), $string);
+		return base64_decode($string);
 	}
 
 
@@ -1124,8 +1137,8 @@ class Comment extends \Model
 		if($this->board->archive)
 		{
 			// archives are in new york time
-			$newyork = new DateTime(date('Y-m-d H:i:s', time()), new DateTimeZone('America/New_York'));
-			$utc = new DateTime(date('Y-m-d H:i:s', time()), new DateTimeZone('UTC'));
+			$newyork = new \DateTime(date('Y-m-d H:i:s', time()), new \DateTimeZone('America/New_York'));
+			$utc = new \DateTime(date('Y-m-d H:i:s', time()), new \DateTimeZone('UTC'));
 			$diff = $newyork->diff($utc)->h;
 			$timestamp = time() - ($diff * 60 * 60);
 		}

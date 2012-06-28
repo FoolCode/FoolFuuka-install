@@ -463,10 +463,7 @@ class Theme extends \Model
 		// if there's no selected layout output or return this
 		if ($without_layout || $this->_selected_layout === FALSE)
 		{
-			if ($return)
-				return $content;
-
-			return $this->output->append_output($content);
+			return $content;
 		}
 
 		// build the layout

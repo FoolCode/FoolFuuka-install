@@ -122,13 +122,13 @@
 									<li>
 										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_post')) ?>">
 											<?= __('By Post') ?>
-											<?php if ($this->input->cookie('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 									<li>
 										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_thread')) ?>">
 											<?= __('By Thread') ?>
-											<?php if ($this->input->cookie('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 								</ul>
@@ -169,7 +169,7 @@
 				<?= $template['body'] ?>
 
 				<?php
-				if ($disable_headers !== TRUE && !$is_statistics && Radix::get_selected()) :
+				if ($disable_headers !== TRUE && Radix::get_selected()) :
 					echo $template['partials']['tools_modal'];
 				endif;
 				?>

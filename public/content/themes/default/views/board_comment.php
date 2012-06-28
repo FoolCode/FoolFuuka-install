@@ -37,7 +37,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 		<?php endif; ?>
 
 		<span class="post_file_metadata">
-			<?= byte_format($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h ?>
+			<?= \Num::format_bytes($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h ?>
 		</span>
 	</div>
 

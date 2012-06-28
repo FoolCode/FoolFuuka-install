@@ -4,7 +4,6 @@ if (!defined('DOCROOT'))
 ?>
 
 <?php
-if ($enabled_tools_modal) :
 	if (!($board = Radix::get_selected()))
 	{
 		$board = new stdClass();
@@ -26,4 +25,3 @@ if ($enabled_tools_modal) :
 		<a href="#" class="btn btn-primary submitModal" data-function="submitModal" data-report="<?= Uri::create($board->shortname . '/report/') ?>" data-delete="<?= Uri::create($board->shortname . '/delete/') ?>"><?= __('Submit') ?></a>
 	</div>
 </div>
-<?php endif; ?>

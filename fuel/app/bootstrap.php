@@ -36,6 +36,11 @@ function __($string)
 	return $string;
 }
 
+function _ngettext($string)
+{
+	return $string;
+}
+
 // Initialize the framework with the config file.
 Fuel::init('config.php');
 

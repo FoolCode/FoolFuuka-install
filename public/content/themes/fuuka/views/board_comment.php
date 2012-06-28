@@ -40,7 +40,7 @@ $selected_radix = isset($p->board)?$p->board:Radix::get_selected();
 				<br/>
 				<?php if ($p->preview_orig) : ?>
 					<span>
-						<?= __('File:') . ' ' . byte_format($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename_processed; ?>
+						<?= __('File:') . ' ' . \Num::format_bytes($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename_processed; ?>
 						<?= '<!-- ' . substr($p->media_hash, 0, -2) . '-->' ?>
 					</span>
 					<?php if ($p->media_status != 'banned') : ?>
