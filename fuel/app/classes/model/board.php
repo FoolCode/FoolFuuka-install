@@ -178,10 +178,6 @@ class Board extends \Model
 					->order_by('time_ghost_bump', 'desc')
 					->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
 				break;
-
-			default:
-				log_message('error', 'post.php/get_latest: invalid or missing type argument');
-				return FALSE;
 		}
 
 		$threads = $query->as_object()->execute()->as_array();
@@ -278,5 +274,218 @@ class Board extends \Model
 		}
 
 		return array('result' => $results, 'pages' => $pages);
+	}
+
+
+	/**
+	 * Get the thread
+	 * Deals also with "last_x", and "from_doc_id" for realtime updates
+	 *
+	 * @param object $board
+	 * @param int $num thread number
+	 * @param array $options modifiers
+	 * @return array|bool FALSE on failure (probably caused by faulty $options) or the thread array
+	 */
+	private function p_get_thread($board, $num, $options = array())
+	{
+		// default variables
+		$process = TRUE;
+		$clean = TRUE;
+		$type = 'thread';
+		$type_extra = array();
+		$realtime = FALSE;
+
+		// override defaults
+		foreach ($options as $key => $option)
+		{
+			$$key = $option;
+		}
+
+		// determine type
+		switch ($type)
+		{
+			case 'from_doc_id':
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
+				static::sql_media_join($board, $query);
+				static::sql_report_join($board, $query);
+				$query->where('thread_num', $num)->where('doc_id', '>', $type_extra['latest_doc_id'])
+					->order_by('num', 'asc')->order_by('subnum', 'asc');
+				break;
+
+			case 'ghosts':
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
+				static::sql_media_join($board, $query);
+				static::sql_report_join($board, $query);
+				$query->where('thread_num', $num)->where('subnum', '<>', 0)
+					->order_by('num', 'asc')->order_by('subnum', 'asc');
+				break;
+
+			case 'last_x':
+				$query = \DB::select()->from(\DB::expr('
+					(
+						('.\DB::select()->from(\DB::expr(Radix::get_table($board)))->where('num', $num)->limit(1).')
+						UNION
+						('.\DB::select()->from(\DB::expr(Radix::get_table($board)))->where('thread_num', $num)
+							->order_by('num', 'desc')->order_by('subnum', 'desc')->limit($type_extra['last_limit']).')
+					) AS x
+				'));
+				static::sql_media_join($board, $query);
+				static::sql_report_join($board, $query);
+				$query->order_by('num', 'asc')->order_by('subnum', 'asc');
+				break;
+
+			case 'thread':
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
+				static::sql_media_join($board, $query);
+				static::sql_report_join($board, $query);
+				$query->where('thread_num', $num)->order_by('num', 'asc')->order_by('subnum', 'asc');
+				break;
+		}
+
+		$query_result = $query->as_object()->execute()->as_array();
+
+		if (!count($query_result))
+		{
+			throw new \BoardResultEmpty;
+		}
+
+		$posts = Comment::forge($query_result, $board, array('realtime' => $realtime, 'backlinks_hash_only_url' => true));
+
+		// populate posts_arr array
+		$thread_check = $this->check_thread($board, $posts);
+
+		// process entire thread and store in $result array
+		$result = array();
+
+		foreach ($posts as $post)
+		{
+
+			if ($post->op == 0)
+			{
+				$result[$post->thread_num]['posts'][$post->num . (($post->subnum == 0) ? '' : '_' . $post->subnum)] = $post;
+			}
+			else
+			{
+				$result[$post->num]['op'] = $post;
+			}
+		}
+
+		/*
+
+		// populate results with backlinks
+		foreach ($this->backlinks as $key => $backlinks)
+		{
+			if (isset($result[$num]['op']) && $result[$num]['op']->num == $key)
+			{
+				$result[$num]['op']->backlinks = array_unique($backlinks);
+			}
+			else if (isset($result[$num]['posts'][$key]))
+			{
+				$result[$num]['posts'][$key]->backlinks = array_unique($backlinks);
+			}
+		}
+		 *
+		 *
+		 */
+
+		return array('result' => $result, 'thread_check' => $thread_check);
+	}
+
+
+	/**
+	 * Return the status of the thread to determine if it can be posted in, or if images can be posted
+	 * or if it's a ghost thread...
+	 *
+	 * @param object $board
+	 * @param mixed $num if you send a $query->result() of a thread it will avoid another query
+	 * @return array statuses of the thread
+	 */
+	private function p_check_thread($board, $num)
+	{
+		if ($num == 0)
+		{
+			return array('invalid_thread' => TRUE);
+		}
+
+		// of $num is an array it means we've sent a $query->result()
+		if (is_array($num))
+		{
+			$query_result = $num;
+		}
+		else
+		{
+			// grab the entire thread
+			$query_result = \DB::select()->from(\DB::expr(Radix::get_table($board)))
+				->where('thread_num', $num)->as_object()->execute()->as_array();
+
+			// thread was not found
+			if (!count($query_result))
+			{
+				return array('invalid_thread' => TRUE);
+			}
+		}
+
+		// define variables
+		$thread_op_present = FALSE;
+		$ghost_post_present = FALSE;
+		$thread_last_bump = 0;
+		$counter = array('posts' => 0, 'images' => 0);
+
+		foreach ($query_result as $post)
+		{
+			// we need to find if there's the OP in the list
+			// let's be strict, we want the $num to be the OP
+			if ($post->op == 1)
+			{
+				$thread_op_present = TRUE;
+			}
+
+			if($post->subnum > 0)
+			{
+				$ghost_post_present = TRUE;
+			}
+
+			if($post->subnum == 0 && $thread_last_bump < $post->timestamp)
+			{
+				$thread_last_bump = $post->timestamp;
+			}
+
+			if ($post->media_filename)
+			{
+				$counter['images']++;
+			}
+
+			$counter['posts']++;
+		}
+
+		// we didn't point to the thread OP, this is not a thread
+		if (!$thread_op_present)
+		{
+			return array('invalid_thread' => TRUE);
+		}
+
+		// time check
+		if(time() - $thread_last_bump > 432000 || $ghost_post_present)
+		{
+			return array('thread_dead' => TRUE, 'disable_image_upload' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+		}
+
+		if ($counter['posts'] > $board->max_posts_count)
+		{
+			if ($counter['images'] > $board->max_images_count)
+			{
+				return array('thread_dead' => TRUE, 'disable_image_upload' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+			}
+			else
+			{
+				return array('thread_dead' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+			}
+		}
+		else if ($counter['images'] > $board->max_images_count)
+		{
+			return array('disable_image_upload' => TRUE);
+		}
+
+		return array('valid_thread' => TRUE);
 	}
 }

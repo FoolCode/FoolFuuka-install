@@ -16,10 +16,10 @@ if (isset($board)) :
 	<li class="search-dropdown">
 		<?php
 		echo Form::open(
-			Uri::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search'),
 			array(
 				'class' => 'navbar-search pull-right',
-				'method' => 'GET'
+				'method' => 'GET',
+				'action' => Uri::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')
 			)
 		);
 		echo Form::input(array(

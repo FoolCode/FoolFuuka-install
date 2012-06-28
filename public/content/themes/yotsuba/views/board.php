@@ -18,7 +18,7 @@
 				<div class="postInfoM mobile" id="pim<?= $num ?>">
 					<span class="postNum nameBlock<?= (($op->capcode == 'M') ? ' capcodeMod':'') . (($op->capcode == 'A') ? ' capcodeAdmin':'') ?>">
 						<span class="subject"><?= $op->title_processed ?></span>
-						<span class="name"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . form_prep($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
+						<span class="name"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
 						<?php if ($op->trip) : ?><span class="postertrip"><?= $op->trip ?></span><?php endif; ?>
 						<?php if (in_array($op->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($op->capcode == 'M') ? 'Mod':'') . (($op->capcode == 'A') ? 'Admin':'') ?></strong>
@@ -49,7 +49,7 @@
 					<input type="checkbox" name="post[]" value="<?= $op->doc_id ?>" />
 					<span class="subject"><?= $op->title_processed ?></span>
 					<span class="nameBlock<?= (($op->capcode == 'M') ? ' capcodeMod':'') . (($op->capcode == 'A') ? ' capcodeAdmin':'') ?>">
-						<span class="name"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . form_prep($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
+						<span class="name"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
 						<?php if ($op->trip) : ?><span class="postertrip"><?= $op->trip ?></span><?php endif; ?>
 						<?php if (in_array($op->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($op->capcode == 'M') ? 'Mod':'') . (($op->capcode == 'A') ? 'Admin':'') ?>"></strong>

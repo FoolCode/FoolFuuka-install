@@ -54,7 +54,7 @@ foreach ($posts as $key => $post) :
 	<header<?= (isset($op->report_status) && !is_null($op->report_status)) ? ' class="reported"' : '' ?>>
 		<div class="post_data">
 			<h2 class="post_title"><?= $op->title_processed ?></h2>
-			<span class="post_author"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . form_prep($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
+			<span class="post_author"><?= ($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed ?></span>
 			<span class="post_trip"><?= $op->trip_processed ?></span>
 			<span class="poster_hash"><?= ($op->poster_hash_processed) ? 'ID:' . $op->poster_hash_processed : '' ?></span>
 			<?php if ($op->capcode != 'N') : ?>
@@ -72,8 +72,8 @@ foreach ($posts as $key => $post) :
 
 			<a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $op->thread_num) . '#'  . $num ?>" data-post="<?= $num ?>" data-function="highlight">No.</a><a href="<?= Uri::create(array($selected_radix->shortname, $quote_mode, $op->thread_num)) . '#q' . $num ?>" data-post="<?= $num ?>" data-function="quote"><?= $num ?></a>
 
-			<?php if ($op->spoiler == 1) : ?><span class="post_type"><i class="icon-eye-close" title="<?= form_prep(__('This post contains a spoiler image.')) ?>"></i></span><?php endif ?>
-			<?php if ($op->deleted == 1) : ?><span class="post_type"><i class="icon-trash" title="<?= form_prep(__('This post was deleted from 4chan manually.')) ?>"></i></span><?php endif ?>
+			<?php if ($op->spoiler == 1) : ?><span class="post_type"><i class="icon-eye-close" title="<?= htmlspecialchars(__('This post contains a spoiler image.')) ?>"></i></span><?php endif ?>
+			<?php if ($op->deleted == 1) : ?><span class="post_type"><i class="icon-trash" title="<?= htmlspecialchars(__('This post was deleted from 4chan manually.')) ?>"></i></span><?php endif ?>
 
 			<span class="post_controls">
 				<a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $num) ?>" class="btnr parent"><?= __('View') ?></a><a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $num) . '#reply' ?>" class="btnr parent"><?= __('Reply') ?></a><?= (isset($post['omitted']) && $post['omitted'] > 50) ? '<a href="' . Uri::create($selected_radix->shortname . '/last50/' . $num) . '" class="btnr parent">' . __('Last 50') . '</a>' : '' ?><?= ($selected_radix->archive) ? '<a href="http://boards.4chan.org/' . $selected_radix->shortname . '/res/' . $num . '" class="btnr parent">' . __('Original') . '</a>' : '' ?><a href="<?= Uri::create($selected_radix->shortname . '/report/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="report"><?= __('Report') ?></a><?php if (Auth::has_access('maccess.mod') || !$selected_radix->archive) : ?><a href="<?= Uri::create($selected_radix->shortname . '/delete/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="delete"><?= __('Delete') ?></a><?php endif; ?>
@@ -155,7 +155,7 @@ foreach ($posts as $key => $post) :
 
 	<?php if (isset($thread_id)) : ?>
 	<div class="js_hook_realtimethread"></div>
-	<?= ($enabled_tools_reply_box) ? $template['partials']['tools_reply_box'] : '' ?>
+	<?= isset($tools_reply_box) ? $template['partials']['tools_reply_box'] : '' ?>
 	<?php endif; ?>
 <?php if (isset($post['op']) || isset($post['posts'])) : ?>
 </article>

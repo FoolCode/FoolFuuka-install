@@ -29,7 +29,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 		</span>
 
 		<?php if (mb_strlen($p->media_filename_processed) > 38) : ?>
-			<span class="post_file_filename" rel="tooltip" title="<?= form_prep($p->media_filename) ?>">
+			<span class="post_file_filename" rel="tooltip" title="<?= htmlspecialchars($p->media_filename) ?>">
 				<?= mb_substr($p->media_filename_processed, 0, 32) . ' (...)' . mb_substr($p->media_filename_processed, mb_strrpos($p->media_filename_processed, '.')) . ', ' ?>
 			</span>
 		<?php else: ?>
@@ -76,7 +76,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 			<?php endif; ?>
 
 			<h2 class="post_title"><?= $p->title_processed ?></h2>
-			<span class="post_author"><?= ($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . form_prep($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed ?></span>
+			<span class="post_author"><?= ($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed ?></span>
 			<span class="post_trip"><?= $p->trip_processed ?></span>
 			<span class="poster_hash"><?= ($p->poster_hash_processed) ? 'ID:' . $p->poster_hash_processed : '' ?></span>
 			<?php if ($p->capcode != 'N') : ?>
@@ -94,9 +94,9 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 
 			<a href="<?= Uri::create(array('@radix',  $selected_radix->shortname, 'thread', $p->thread_num)) . '#'  . $num ?>" data-post="<?= $num ?>" data-function="highlight">No.</a><a href="<?= Uri::create(array('@radix',  $selected_radix->shortname, $quote_mode, $p->thread_num)) . '#q' . $num ?>" data-post="<?= str_replace('_', ',', $num) ?>" data-function="quote"><?= str_replace('_', ',', $num) ?></a>
 
-			<?php if ($p->subnum > 0)   : ?><span class="post_type"><i class="icon-comment-alt" title="<?= form_prep(__('This post was made in the archive.')) ?>"></i></span><?php endif ?>
-			<?php if ($p->spoiler == 1) : ?><span class="post_type"><i class="icon-eye-close" title="<?= form_prep(__('This post contains a spoiler image.')) ?>"></i></span><?php endif ?>
-			<?php if ($p->deleted == 1) : ?><span class="post_type"><i class="icon-trash" title="<?= form_prep(__('This post was deleted from 4chan manually.')) ?>"></i></span><?php endif ?>
+			<?php if ($p->subnum > 0)   : ?><span class="post_type"><i class="icon-comment-alt" title="<?= htmlspecialchars(__('This post was made in the archive.')) ?>"></i></span><?php endif ?>
+			<?php if ($p->spoiler == 1) : ?><span class="post_type"><i class="icon-eye-close" title="<?= htmlspecialchars(__('This post contains a spoiler image.')) ?>"></i></span><?php endif ?>
+			<?php if ($p->deleted == 1) : ?><span class="post_type"><i class="icon-trash" title="<?= htmlspecialchars(__('This post was deleted from 4chan manually.')) ?>"></i></span><?php endif ?>
 
 			<span class="post_controls">
 				<?php if (isset($modifiers['post_show_view_button'])) : ?><a href="<?= Uri::create('@radix/' . $selected_radix->shortname . '/thread/' . $p->thread_num) . '#' . $num ?>" class="btnr parent"><?= __('View') ?></a><?php endif; ?><a href="<?= Uri::create('@radix/' . $selected_radix->shortname . '/report/' . $p->doc_id) ?>" class="btnr parent" data-post="<?= $p->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="report"><?= __('Report') ?></a><?php if ($p->subnum > 0 || Auth::has_access('maccess.mod') || !$selected_radix->archive) : ?><a href="<?= Uri::create('@radix/' . $selected_radix->shortname . '/delete/' . $p->doc_id) ?>" class="btnr parent" data-post="<?= $p->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="delete"><?= __('Delete') ?></a><?php endif; ?>

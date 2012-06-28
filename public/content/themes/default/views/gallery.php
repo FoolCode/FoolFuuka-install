@@ -13,7 +13,7 @@ foreach ($threads as $k => $p) :
 		<header>
 			<div class="post_data">
 				<h2 class="post_title"><?= $p->title_processed ?></h2>
-				<span class="post_author"><?= (($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . form_prep($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed) ?></span>
+				<span class="post_author"><?= (($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed) ?></span>
 				<span class="post_trip"><?= $p->trip_processed ?></span>
 				<span class="poster_hash"><?= ($p->poster_hash_processed) ? 'ID:' . $p->poster_hash_processed : '' ?></span>
 				<?php if ($p->capcode == 'M') : ?>
@@ -57,8 +57,8 @@ foreach ($threads as $k => $p) :
 			<?php if (isset($p->nreplies)) : ?>
 				<?= __('Replies') ?> : <?= $p->nreplies ?> | <?= __('Images') ?>: <?= $p->nimages ?>
 			<?php endif; ?>
-			<?php if ($p->deleted == 1) : ?><span class="post_type"><img src="<?= Uri::base() . $this->fallback_asset('images/icons/file-delete-icon.png'); ?>" title="<?= form_prep(__('This post was deleted from 4chan manually')) ?>"/></span><?php endif ?>
-			<?php if ($p->spoiler == 1) : ?><span class="post_type"><img src="<?= Uri::base() . $this->fallback_asset('images/icons/spoiler-icon.png'); ?>" title="<?= form_prep(__('This post contains a spoiler image')) ?>"/></span><?php endif ?>
+			<?php if ($p->deleted == 1) : ?><span class="post_type"><img src="<?= Uri::base() . $this->fallback_asset('images/icons/file-delete-icon.png'); ?>" title="<?= htmlspecialchars(__('This post was deleted from 4chan manually')) ?>"/></span><?php endif ?>
+			<?php if ($p->spoiler == 1) : ?><span class="post_type"><img src="<?= Uri::base() . $this->fallback_asset('images/icons/spoiler-icon.png'); ?>" title="<?= htmlspecialchars(__('This post contains a spoiler image')) ?>"/></span><?php endif ?>
 		</div>
 	</article>
 <?php

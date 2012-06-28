@@ -30,6 +30,37 @@ Autoloader::register();
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 
 Fuel::load(APPPATH.'config/constants.php');
+/*
+if (function_exists('_'))
+{*/
+	function __($text)
+	{
+		$text = _($text);
+		$text = str_replace('{{FOOL_NAME}}', FOOL_NAME, $text);
+		return $text;
+	}
+
+	function _ngettext($msgid1, $msgid2, $n)
+	{
+		return ngettext($msgid1, $msgid2, $n);
+	}/*
+}
+else
+{
+	function __($text)
+	{
+		$text = str_replace('{{FOOL_NAME}}', FOOL_NAME, $text);
+		return $text;
+	}
+
+	function _ngettext($msgid1, $msgid2, $n)
+	{
+		if($n != 1)
+			return __($msgid2);
+
+		return __($msgid1);
+	}
+}/*
 
 function __($string)
 {
@@ -39,7 +70,7 @@ function __($string)
 function _ngettext($string)
 {
 	return $string;
-}
+}*/
 
 // Initialize the framework with the config file.
 Fuel::init('config.php');

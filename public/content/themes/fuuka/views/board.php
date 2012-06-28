@@ -45,7 +45,7 @@ foreach ($posts as $key => $post) :
 		<label>
 			<input type="checkbox" name="delete[]" value="<?= $op->doc_id ?>" />
 			<span class="filetitle"><?= $op->title_processed ?></span>
-			<span class="postername<?= ($op->capcode == 'M') ? ' mod' : '' ?><?= ($op->capcode == 'A') ? ' admin' : '' ?>"><?= (($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . form_prep($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed) ?></span>
+			<span class="postername<?= ($op->capcode == 'M') ? ' mod' : '' ?><?= ($op->capcode == 'A') ? ' admin' : '' ?>"><?= (($op->email_processed && $op->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($op->email_processed) . '">' . $op->name_processed . '</a>' : $op->name_processed) ?></span>
 			<span class="postertrip<?= ($op->capcode == 'M') ? ' mod' : '' ?><?= ($op->capcode == 'A') ? ' admin' : '' ?>"><?= $op->trip_processed ?></span>
 			<span class="poster_hash"><?php if ($op->poster_hash_processed) : ?>ID:<?= $op->poster_hash_processed ?><?php endif; ?></span>
 			<?php if ($op->capcode == 'M') : ?>

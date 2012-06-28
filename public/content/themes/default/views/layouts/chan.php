@@ -20,7 +20,7 @@
 		<![endif]-->
 		<?php
 			foreach($this->fallback_override('style.css', $this->get_config('extends_css')) as $css)
-				echo '<link href="'.$css.'"rel="stylesheet" type="text/css" />';
+				echo '<link href="'.Uri::base().$css.'"rel="stylesheet" type="text/css" />';
 		?>
 
 		<!--[if lt IE 9]>

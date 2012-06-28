@@ -15,7 +15,7 @@ $quote_mode = 'thread';
 				<span class="userInfo">
 					<span class="subject"><?= $p->title_processed ?></span>
 					<span class="nameBlock<?= (($p->capcode == 'M') ? ' capcodeMod':'') . (($p->capcode == 'A') ? ' capcodeAdmin':'') ?>">
-						<span class="name"><?= ($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . form_prep($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed ?></span>
+						<span class="name"><?= ($p->email_processed && $p->email_processed != 'noko') ? '<a href="mailto:' . htmlspecialchars($p->email_processed) . '">' . $p->name_processed . '</a>' : $p->name_processed ?></span>
 						<?php if ($p->trip) : ?><span class="postertrip"><?= $p->trip ?></span><?php endif; ?>
 						<?php if (in_array($p->capcode, array('M', 'A'))) : ?>
 							<strong class="capcode">## <?= (($p->capcode == 'M') ? 'Mod':'') . (($p->capcode == 'A') ? 'Admin':'') ?></strong>

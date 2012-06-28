@@ -147,10 +147,10 @@ class Comment extends \Model
 
 	public function __get($name)
 	{
-		if (substr($name, -10) === '_processed')
+		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
 		{
 			$processing_name = substr($name, 0, strlen($name) - 10);
-			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $post->$processing_name));
+			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $this->$processing_name));
 		}
 
 		switch ($name)
@@ -214,7 +214,7 @@ class Comment extends \Model
 	}
 
 
-	public static function forge($post, $board, $options = array())
+	public static function forge($post, &$board, $options = array())
 	{
 		if (is_array($post))
 		{
@@ -231,7 +231,7 @@ class Comment extends \Model
 	}
 
 
-	public function __construct($post, $board, $options = array())
+	public function __construct($post, &$board, $options = array())
 	{
 		//parent::__construct();
 
@@ -404,7 +404,7 @@ class Comment extends \Model
 					. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
 			}
 
-			return Preferences::get('fs_fuuka_boards_url', site_url()) . '/' . $this->board->shortname . '/'
+			return Preferences::get('fs_fuuka_boards_url', \Uri::base()) . '/' . $this->board->shortname . '/'
 				. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
 		}
 
@@ -433,7 +433,7 @@ class Comment extends \Model
 				return $this->board->images_url . $this->media_orig;
 			}
 
-			return site_url(array($this->board->shortname, 'redirect')) . $this->media_orig;
+			return \Uri::create(array($this->board->shortname, 'redirect')) . $this->media_orig;
 		}
 		else
 		{
@@ -544,9 +544,9 @@ class Comment extends \Model
 		$comment = preg_replace_callback("'(&gt;&gt;&gt;(\/(\w+)\/(\d+(?:,\d+)?)?(\/?)))'i",
 			array(get_class($this), 'process_crossboard_links'), $comment);
 
-		$comment = auto_linkify($comment, 'url', TRUE);
+		$comment = static::auto_linkify($comment, 'url', TRUE);
 		$comment = preg_replace($find, $html, $comment);
-		$comment = parse_bbcode($comment, ($this->board->archive && !$this->subnum));
+		//$comment = parse_bbcode($comment, ($this->board->archive && !$this->subnum));
 
 		// additional formatting
 		if ($this->board->archive && !$this->subnum)
@@ -587,7 +587,7 @@ class Comment extends \Model
 		$num = $matches[2];
 
 		// create link object with all relevant information
-		$data = new stdClass();
+		$data = new \stdClass();
 		$data->num = str_replace(',', '_', $matches[2]);
 		$data->board = $this->board;
 		$data->post = $this;
@@ -606,7 +606,7 @@ class Comment extends \Model
 		$build_url = Plugins::run_hook('fu_post_model_process_internal_links_html_result', array($data, $build_url), 'simple');
 
 		static::$_backlinks[$data->num][$this->num] = implode(
-			'<a href="' . site_url(array($data->board->shortname, 'thread', $data->post->thread_num)) . '#' . $build_url['hash'] . $current_p_num_u . '" ' .
+			'<a href="' . \Uri::create(array($data->board->shortname, 'thread', $data->post->thread_num)) . '#' . $build_url['hash'] . $current_p_num_u . '" ' .
 			$build_url['attr_backlink'] . '>&gt;&gt;' . $current_p_num_c . '</a>'
 		, $build_url['tags']);
 
@@ -618,11 +618,11 @@ class Comment extends \Model
 					. $build_url['attr_op'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 			}
 
-			return implode('<a href="' . site_url(array($data->board->shortname, 'thread', $num)) . '#' . $data->num . '" '
+			return implode('<a href="' . \Uri::create(array($data->board->shortname, 'thread', $num)) . '#' . $data->num . '" '
 				. $build_url['attr_op'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 		}
 
-		foreach (static::posts as $key => $thread)
+		foreach (static::$_posts as $key => $thread)
 		{
 			if (in_array($num, $thread))
 			{
@@ -632,18 +632,18 @@ class Comment extends \Model
 						. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 				}
 
-				return implode('<a href="' . site_url(array($data->board->shortname, 'thread', $key)) . '#' . $build_url['hash'] . $data->num . '" '
+				return implode('<a href="' . \Uri::create(array($data->board->shortname, 'thread', $key)) . '#' . $build_url['hash'] . $data->num . '" '
 					. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 			}
 		}
 
 		if ($this->realtime === TRUE)
 		{
-			return implode('<a href="' . site_url(array($data->board->shortname, 'thread', $key)) . '#' . $build_url['hash'] . $data->num . '" '
+			return implode('<a href="' . \Uri::create(array($data->board->shortname, 'thread', $key)) . '#' . $build_url['hash'] . $data->num . '" '
 				. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 		}
 
-		return implode('<a href="' . site_url(array($data->board->shortname, 'post', $data->num)) . '" '
+		return implode('<a href="' . (array($data->board->shortname, 'post', $data->num)) . '" '
 			. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 
 		// return un-altered
@@ -686,10 +686,10 @@ class Comment extends \Model
 
 		if ($data->num)
 		{
-			return implode('<a href="' . site_url(array($data->board->shortname, 'post', $data->num)) . '" ' . $build_url['backlink'] . '>&gt;&gt;&gt;' . $data->url . '</a>', $build_url['tags']);
+			return implode('<a href="' . \Uri::create(array($data->board->shortname, 'post', $data->num)) . '" ' . $build_url['backlink'] . '>&gt;&gt;&gt;' . $data->url . '</a>', $build_url['tags']);
 		}
 
-		return implode('<a href="' . site_url($data->board->shortname) . '">&gt;&gt;&gt;' . $data->url . '</a>', $build_url['tags']);
+		return implode('<a href="' . \Uri::create($data->board->shortname) . '">&gt;&gt;&gt;' . $data->url . '</a>', $build_url['tags']);
 
 		// return un-altered
 		return $matches[0];
@@ -719,6 +719,110 @@ class Comment extends \Model
 	{
 		$string = str_replace(array('-', '_'), array('+', '/'), $string);
 		return base64_decode($string);
+	}
+
+	/**
+	 * This function is grabbed from Codeigniter Framework on which
+	 * the original FoOlFuuka was coded on: http://codeigniter.com
+	 * The function is modified tu support multiple subdomains and https
+	 *
+	 * @param type $str
+	 * @param type $type
+	 * @param type $popup
+	 * @return type
+	 */
+	public static function auto_linkify($str, $type = 'both', $popup = FALSE)
+	{
+		if ($type != 'email')
+		{
+			if (preg_match_all("#(^|\s|\(|\])((http(s?)://)|(www\.))(\w+[^\s\)\<]+)#i", $str, $matches))
+			{
+				$pop = ($popup == TRUE) ? " target=\"_blank\" " : "";
+
+				for ($i = 0; $i < count($matches['0']); $i++)
+				{
+					$period = '';
+					if (preg_match("|\.$|", $matches['6'][$i]))
+					{
+						$period = '.';
+						$matches['6'][$i] = substr($matches['6'][$i], 0, -1);
+					}
+
+					$internal = (strpos($matches['6'][$i], $_SERVER['HTTP_HOST']) === 0);
+
+					if (!$internal && defined('FOOL_SUBDOMAINS_ENABLED') && FOOL_SUBDOMAINS_ENABLED == TRUE)
+					{
+						$subdomains = array(
+							FOOL_SUBDOMAINS_SYSTEM,
+							FOOL_SUBDOMAINS_BOARD,
+							FOOL_SUBDOMAINS_ARCHIVE,
+							FOOL_SUBDOMAINS_DEFAULT
+						);
+
+						foreach ($subdomains as $subdomain)
+						{
+							if (strpos($matches['6'][$i], rtrim($subdomain, '.')) === 0)
+							{
+								$host_array = explode('.', $_SERVER['HTTP_HOST']);
+								array_shift($host_array);
+								array_unshift($host_array, $subdomain);
+								$host = implode('.', $host_array);
+								if (strpos($matches['6'][$i], $host) === 0)
+								{
+									$internal = TRUE;
+									break;
+								}
+							}
+						}
+					}
+
+					if ($internal)
+					{
+						$str = str_replace($matches['0'][$i],
+							$matches['1'][$i] . '<a href="//' .
+							$matches['5'][$i] .
+							preg_replace('/[[\/\!]*?[^\[\]]*?]/si', '', $matches['6'][$i]) . '"' . $pop . '>http' .
+							$matches['4'][$i] . '://' .
+							$matches['5'][$i] .
+							$matches['6'][$i] . '</a>' .
+							$period, $str);
+					}
+					else
+					{
+						$str = str_replace($matches['0'][$i],
+							$matches['1'][$i] . '<a href="http' .
+							$matches['4'][$i] . '://' .
+							$matches['5'][$i] .
+							preg_replace('/[[\/\!]*?[^\[\]]*?]/si', '', $matches['6'][$i]) . '"' . $pop . '>http' .
+							$matches['4'][$i] . '://' .
+							$matches['5'][$i] .
+							$matches['6'][$i] . '</a>' .
+							$period, $str);
+					}
+				}
+			}
+		}
+
+		if ($type != 'url')
+		{
+			if (preg_match_all("/([a-zA-Z0-9_\.\-\+]+)@([a-zA-Z0-9\-]+)\.([a-zA-Z0-9\-\.]*)/i", $str, $matches))
+			{
+				for ($i = 0; $i < count($matches['0']); $i++)
+				{
+					$period = '';
+					if (preg_match("|\.$|", $matches['3'][$i]))
+					{
+						$period = '.';
+						$matches['3'][$i] = substr($matches['3'][$i], 0, -1);
+					}
+
+					$str = str_replace($matches['0'][$i],
+						safe_mailto($matches['1'][$i] . '@' . $matches['2'][$i] . '.' . $matches['3'][$i]) . $period, $str);
+				}
+			}
+		}
+
+		return $str;
 	}
 
 
