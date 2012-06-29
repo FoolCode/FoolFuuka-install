@@ -14,6 +14,7 @@ Autoloader::add_classes(array(
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
 	'Uri' => APPPATH.'classes/extend/uri.php',
+	'Validation' => APPPATH.'classes/extend/validation.php',
 ));
 
 // Register the autoloader

@@ -7,6 +7,7 @@ class Controller_Common extends Controller
 
 	public function before()
 	{
+		// automatic login
 		$hash = false;
 		if (Session::get('login_hash') !== null)
 		{
@@ -21,11 +22,11 @@ class Controller_Common extends Controller
 		{
 			$query = DB::select('*')->from('user_autologin')
 				->where('login_hash', $hash)->and_where('expiration', '>', time())
-				->as_object()->execute();
+				->as_object()->execute()->current();
 
 			if (count($query))
-			{
-				\Auth::force_login($query[0]->user_id);
+			{die('here');
+				\Auth::force_login($query->user_id);
 			}
 		}
 

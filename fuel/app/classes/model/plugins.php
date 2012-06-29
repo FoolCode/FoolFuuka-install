@@ -74,7 +74,7 @@ class Plugins extends \Model
 
 			// we don't care if the database doesn't contain an entry for a plugin
 			// in that case, it means it was never installed
-			$query = DB::select('*')->from('plugins');
+			$query = \DB::select()->from('plugins');
 			$query->where('slug', array_pop($slugs_to_sql));
 
 			foreach ($slugs_to_sql as $key => $slug_to_sql)

@@ -201,7 +201,7 @@ class Radix extends \Model
 				'help' => __('Insert the shorter name of the board. Reserved: "api", "cli", "admin".'),
 				'placeholder' => __('Req.'),
 				'class' => 'span1',
-				'validation' => 'required|max_length[5]|alpha_dash',
+				'validation' => 'required|max_length[5]|valid_string[alpha,dashesnumeric]',
 				'validation_func' => function($input, $form_internal)
 				{
 					// if we're not using the special subdomain for peripherals
@@ -221,7 +221,7 @@ class Radix extends \Model
 					if (isset($input['id']))
 					{
 						// existence ensured by CRITICAL in the ID check
-						$query = \DB::select()->from('board')->where('id', $input['id'])->as_object()->execute();
+						$query = \DB::select()->from('boards')->where('id', $input['id'])->as_object()->execute();
 
 						// no change?
 						if ($input['shortname'] == $query[0]->shortname)
@@ -272,7 +272,7 @@ class Radix extends \Model
 				'label' => __('Maximum number of threads to display in the index pages'),
 				'type' => 'input',
 				'class' => 'span1',
-				'validation' => 'trim|required|is_natural',
+				'validation' => 'trim|required|valid_string[numeric]',
 				'default_value' => FOOL_RADIX_THREADS_PER_PAGE
 			),
 			'archive' => array(
@@ -320,7 +320,7 @@ class Radix extends \Model
 						'placeholder' => 5,
 						'value' => 0,
 						'class' => 'span1',
-						'validation' => 'trim|is_natural|less_than[32]'
+						'validation' => 'trim|valid_string[numeric]|numeric_max[32]'
 					),
 					'thumb_threads' => array(
 						'database' => TRUE,
@@ -331,7 +331,7 @@ class Radix extends \Model
 						'placeholder' => 5,
 						'value' => 5,
 						'class' => 'span1',
-						'validation' => 'trim|is_natural|less_than[32]'
+						'validation' => 'trim|valid_string[numeric]|numeric_max[32]'
 					),
 					'new_threads_threads' => array(
 						'database' => TRUE,
@@ -342,7 +342,7 @@ class Radix extends \Model
 						'placeholder' => 5,
 						'value' => 5,
 						'class' => 'span1',
-						'validation' => 'trim|is_natural|less_than[32]'
+						'validation' => 'trim|valid_string[numeric]|numeric_max[32]'
 					),
 					'thread_refresh_rate' => array(
 						'database' => TRUE,
@@ -351,7 +351,7 @@ class Radix extends \Model
 						'value' => 3,
 						'label' => __('Minutes to refresh the thread'),
 						'placeholder' => 3,
-						'validation' => 'trim|is_natural|less_than[32]'
+						'validation' => 'trim|valid_string[numeric]|numeric_max[32]'
 					),
 					'page_settings' => array(
 						'database' => TRUE,
@@ -366,6 +366,9 @@ class Radix extends \Model
 						'style' => 'height:70px;',
 						'validation_func' => function($input, $form_internal)
 						{
+							if($input['page_settings'] === '')
+								return TRUE;
+
 							$json = @json_decode($input['page_settings']);
 							if (is_null($json))
 							{
@@ -388,7 +391,7 @@ class Radix extends \Model
 						'label' => __('Opening post thumbnail maximum width after resizing'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_THUMB_OP_WIDTH
 					),
 					'thumbnail_op_height' => array(
@@ -397,7 +400,7 @@ class Radix extends \Model
 						'label' => __('Opening post thumbnail maximum height after resizing'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_THUMB_OP_HEIGHT
 					),
 					'thumbnail_reply_width' => array(
@@ -406,7 +409,7 @@ class Radix extends \Model
 						'label' => __('Reply thumbnail maximum width after resizing'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_THUMB_REPLY_WIDTH
 					),
 					'thumbnail_reply_height' => array(
@@ -415,7 +418,7 @@ class Radix extends \Model
 						'label' => __('Reply thumbnail maximum height after resizing'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_THUMB_REPLY_HEIGHT
 					),
 					'max_image_size_kilobytes' => array(
@@ -424,7 +427,7 @@ class Radix extends \Model
 						'label' => __('Full image maximum size in kilobytes'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_KILOBYTES
 					),
 					'max_image_size_width' => array(
@@ -433,7 +436,7 @@ class Radix extends \Model
 						'label' => __('Full image maximum width in pixels'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_WIDTH
 					),
 					'max_image_size_height' => array(
@@ -442,7 +445,7 @@ class Radix extends \Model
 						'label' => __('Full image maximum height in pixels'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural|greater_than[25]',
+						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
 						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_HEIGHT
 					),
 					'max_posts_count' => array(
@@ -451,7 +454,7 @@ class Radix extends \Model
 						'label' => __('The maximum amount of posts before a thread "dies"'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural',
+						'validation' => 'trim|required|valid_string[numeric]',
 						'default_value' => FOOL_RADIX_MAX_POSTS_COUNT
 					),
 					'max_images_count' => array(
@@ -460,7 +463,7 @@ class Radix extends \Model
 						'label' => __('The maximum amount of images in replies before posting more is prohibited'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|is_natural',
+						'validation' => 'trim|required|valid_string[numeric]',
 						'default_value' => FOOL_RADIX_MAX_IMAGES_COUNT
 					),
 					'min_image_repost_hours' => array(
@@ -469,7 +472,7 @@ class Radix extends \Model
 						'label' => __('The minimum time in hours to repost the same image (0 means no limit, -1 means never allowing a repost)'),
 						'type' => 'input',
 						'class' => 'span1',
-						'validation' => 'trim|required|integer|greater_than[-2]',
+						'validation' => 'trim|required|numeric_min[-2]',
 						'default_value' => FOOL_RADIX_MIN_IMAGE_REPOST_HOURS
 					)
 				)
@@ -519,6 +522,13 @@ class Radix extends \Model
 				'type' => 'checkbox',
 				'help' => __('Hide the thumbnails for 24 hours? (for moderation purposes)')
 			),
+			'myisam_search' => array(
+				'database' => TRUE,
+				'boards_preferences' => TRUE,
+				'type' => 'internal',
+				'default_value' => FOOL_RADIX_MYISAM_SEARCH,
+				'help' => __('internal')
+			),
 			'sphinx' => array(
 				'database' => TRUE,
 				'type' => 'checkbox',
@@ -528,12 +538,6 @@ class Radix extends \Model
 				'database' => TRUE,
 				'type' => 'checkbox',
 				'help' => __('Hide the board from public access? (only admins and mods will be able to browse it)')
-			),
-			'myisam_search' => array(
-				'database' => TRUE,
-				'boards_preferences' => TRUE,
-				'type' => 'internal',
-				'default_value' => FOOL_RADIX_MYISAM_SEARCH
 			),
 		);
 
@@ -559,7 +563,7 @@ class Radix extends \Model
 	/**
 	 * Clears the APC/memcached cache
 	 */
-	function p_clear_cache()
+	private static function p_clear_cache()
 	{
 		$all = self::get_all();
 
@@ -611,6 +615,8 @@ class Radix extends \Model
 				unset($data[$key]);
 			}
 		}
+
+		//die(\Debug::dump($data_boards_preferences));
 
 		// data must be already sanitized through the form array
 		if (isset($data['id']))

@@ -9,7 +9,7 @@ class Controller_Admin extends Controller_Common
 
     public function before()
     {
-		if( ! Auth::has_access('admin.logged') && \Uri::segment(2) != 'auth')
+		if(!Auth::has_access('maccess.user') && \Uri::segment(2) != 'auth')
 			return Response::redirect('admin/auth/login');
 
 		// returns the static sidebar array (can't use functions in )
@@ -27,7 +27,7 @@ class Controller_Admin extends Controller_Common
 
     public function action_index()
     {
-        Response::redirect('admin/boards/manage');
+		Response::redirect('admin/boards/manage');
     }
 
 

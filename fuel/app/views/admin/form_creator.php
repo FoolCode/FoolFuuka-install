@@ -299,7 +299,7 @@
 							else
 								$data['hide'] = FALSE;
 							$data['parent'] = $name;
-							$this->load->view('admin/Form::creator', $data);
+							echo View::forge('admin/form_creator', $data);
 						}
 
 						if(isset($helpers['sub_inverse']))
@@ -310,7 +310,7 @@
 							else
 								$data['hide'] = FALSE;
 							$data['parent'] = $name . '_inverse';
-							$this->load->view('admin/Form::creator', $data);
+							echo View::forge('admin/form_creator', $data);
 						}
 
 						break;

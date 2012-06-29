@@ -58,7 +58,11 @@ return array(
 	'roles' => array(
 		'user' => array('access' => array('user', 'member'), 'maccess' => array('user')),
 		'mod' => array('access' => array('mod'), 'maccess' => array('user', 'mod')),
-		'admin' => array('access' => array('admin'), 'maccess' => array('user', 'mod', 'admin')),
+		'admin' => array(
+			'access' => array('admin'),
+			'maccess' => array('user', 'mod', 'admin'),
+			'boards' => array('edit')
+		),
 		/**
 		 * Examples
 		 * ---
