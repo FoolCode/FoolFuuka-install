@@ -205,7 +205,7 @@ class Radix extends \Model
 				'validation_func' => function($input, $form_internal)
 				{
 					// if we're not using the special subdomain for peripherals
-					if (Preferences::get('fs_srv_sys_subdomain', FOOL_PREF_SYS_SUBDOMAIN) === FALSE)
+					if (Preferences::get('ff.srv_sys_subdomain', FOOL_PREF_SYS_SUBDOMAIN) === FALSE)
 					{
 						if (in_array($input['shortname'], unserialize(FOOL_PROTECTED_RADIXES)))
 						{
@@ -616,8 +616,6 @@ class Radix extends \Model
 			}
 		}
 
-		//die(\Debug::dump($data_boards_preferences));
-
 		// data must be already sanitized through the form array
 		if (isset($data['id']))
 		{
@@ -885,10 +883,10 @@ class Radix extends \Model
 			}
 		}
 
-		self::$preloaded_radixes = $result_object;
+		static::$preloaded_radixes = $result_object;
 
 		if ($preferences == true)
-			self::load_preferences();
+			static::load_preferences();
 
 		return false;
 	}
@@ -1306,7 +1304,7 @@ class Radix extends \Model
 		// triggers fail if we try to send it from the other database, so switch it for a moment
 		// the alternative would be adding a database prefix to the trigger name which would be messy
 		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.Preferences::get('fs_fuuka_boards_db'))->execute();
+			\DB::query('USE '.Preferences::get('fu.boards_db'))->execute();
 
 		\DB::query("
 			CREATE PROCEDURE `update_thread_".$board->shortname."` (tnum INT)
@@ -1548,7 +1546,7 @@ class Radix extends \Model
 	private static function p_mysql_remove_triggers($board)
 	{
 		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.Preferences::get('fs_fuuka_boards_db'))->execute();
+			\DB::query('USE '.Preferences::get('fu.boards_db'))->execute();
 
 		$prefixes_procedure = array(
 			'update_thread_',
@@ -1572,7 +1570,7 @@ class Radix extends \Model
 		foreach ($prefixes_trigger as $prefix)
 			\DB::query("DROP TRIGGER IF EXISTS `".$prefix.$board->shortname."`")->execute();
 
-		if (Preferences::get('fs_fuuka_boards_db'))
+		if (Preferences::get('fu.boards_db'))
 			\DB::query('USE '.\Config::get('db.default.connection.Database'))->execute();
 	}
 

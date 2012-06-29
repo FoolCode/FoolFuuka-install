@@ -307,7 +307,7 @@ class Comment extends \Model
 			throw new \CommentMediaDirNotAvailable;
 		}
 
-		return Preferences::get('fu.board_directory').'/'.$this->board->shortname.'/'
+		return Preferences::get('fu.boards_directory').'/'.$this->board->shortname.'/'
 			.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 	}
 
@@ -383,14 +383,14 @@ class Comment extends \Model
 		if(isset($image))
 		{
 			$media_cdn = array();
-			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && Preferences::get('fu.board_media_balancers_https'))
+			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && Preferences::get('fu.boards_media_balancers_https'))
 			{
-				$balancers = Preferences::get('fu.board_media_balancers_https');
+				$balancers = Preferences::get('fu.boards_media_balancers_https');
 			}
 
-			if (!isset($balancers) && Preferences::get('fu.board_media_balancers'))
+			if (!isset($balancers) && Preferences::get('fu.boards_media_balancers'))
 			{
-				$balancers = Preferences::get('fu.board_media_balancers');
+				$balancers = Preferences::get('fu.boards_media_balancers');
 			}
 
 			if(isset($balancers))
@@ -404,7 +404,7 @@ class Comment extends \Model
 					. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
 			}
 
-			return Preferences::get('fs_fuuka_boards_url', \Uri::base()) . '/' . $this->board->shortname . '/'
+			return Preferences::get('fu.boards_url', \Uri::base()) . '/' . $this->board->shortname . '/'
 				. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
 		}
 
