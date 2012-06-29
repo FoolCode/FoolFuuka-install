@@ -9,6 +9,8 @@ class Controller_Admin extends Controller_Common
 
     public function before()
     {
+		parent::before();
+
 		if(!Auth::has_access('maccess.user') && \Uri::segment(2) != 'auth')
 			return Response::redirect('admin/auth/login');
 
@@ -27,8 +29,14 @@ class Controller_Admin extends Controller_Common
 
     public function action_index()
     {
-		Response::redirect('admin/boards/manage');
+		return Response::redirect('admin/boards/manage');
     }
+
+
+	public function action_404()
+	{
+		return Response::forge('404', 404);
+	}
 
 
 	/**

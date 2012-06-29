@@ -25,7 +25,7 @@ class Controller_Common extends Controller
 				->as_object()->execute()->current();
 
 			if (count($query))
-			{die('here');
+			{
 				\Auth::force_login($query->user_id);
 			}
 		}

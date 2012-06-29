@@ -47,6 +47,10 @@ class Controller_Chan extends Controller_Common
 		{
 			return call_user_func_array(array($this, 'action_'.array_shift($params)), $params);
 		}
+		else
+		{
+			return call_user_func_array(array($this, 'action_404'), $params);
+		}
 	}
 
 
