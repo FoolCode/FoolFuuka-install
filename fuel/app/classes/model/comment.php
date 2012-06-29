@@ -1085,7 +1085,7 @@ class Comment extends \Model
 				throw new \CommentSendingSameComment;
 			}
 
-			if (time() - $row->timestamp < 10 && time() - $row->timestamp > 0 && !$this->auth->is_mod_admin())
+			if (time() - $row->timestamp < 10 && time() - $row->timestamp > 0 && !\Auth::has_access('comment.limitless_comment'))
 			{
 				throw new \CommentSendingNewCommentTimeLimit;
 			}

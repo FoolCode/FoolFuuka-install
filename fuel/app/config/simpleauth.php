@@ -57,11 +57,16 @@ return array(
 	 */
 	'roles' => array(
 		'user' => array('access' => array('user', 'member'), 'maccess' => array('user')),
-		'mod' => array('access' => array('mod'), 'maccess' => array('user', 'mod')),
+		'mod' => array(
+			'access' => array('mod'),
+			'maccess' => array('user', 'mod'),
+			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports')
+		),
 		'admin' => array(
 			'access' => array('admin'),
 			'maccess' => array('user', 'mod', 'admin'),
-			'boards' => array('edit')
+			'boards' => array('edit'),
+			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports')
 		),
 		/**
 		 * Examples
