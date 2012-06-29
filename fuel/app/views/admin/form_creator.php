@@ -344,7 +344,7 @@
 						echo View::forge('admin/form_creator', array('form' => $data_form));
 						break;
 
-					case 'dropdown':
+					case 'select':
 						?>
 						<label><?php echo $helpers['label'] ?></label>
 						<?php
@@ -365,7 +365,7 @@
 							$item['selected'] = $helpers['default_value'];
 						}
 
-						echo Form::dropdown($name, $item['options'], $item['selected']);
+						echo Form::select($name, $item['selected'], $item['options']);
 						?>
 						<span class="help-inline">
 							<?php

@@ -57,8 +57,9 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		$themes = array();
+		$theme_obj = new Theme();
 
-		foreach(Theme::get_all() as $name => $theme)
+		foreach($theme_obj->get_all() as $name => $theme)
 		{
 			$themes[] = array(
 				'type' => 'checkbox',
@@ -80,13 +81,13 @@ class Controller_Admin_Preferences extends Controller_Admin
 
 		$themes_default = array();
 
-		foreach(Theme::get_all() as $name => $theme)
+		foreach($theme_obj->get_all() as $name => $theme)
 		{
 			$themes_default[$name] = $theme['name'];
 		}
 
 		$form['ff.theme_default'] = array(
-			'type' => 'dropdown',
+			'type' => 'select',
 			'label' => __('Default theme'),
 			'help' => __('The theme the users will see as they reach your site.'),
 			'options' => $themes_default,
