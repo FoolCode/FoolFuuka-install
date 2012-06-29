@@ -22,7 +22,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		// build the array for the form
-		$form['fs_gen_site_title'] = array(
+		$form['ff.gen_site_title'] = array(
 			'type' => 'input',
 			'label' => 'Title',
 			'class' => 'span3',
@@ -33,7 +33,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		// build the array for the form
-		$form['fs_gen_index_title'] = array(
+		$form['ff.gen_index_title'] = array(
 			'type' => 'input',
 			'label' => 'Index title',
 			'class' => 'span3',
@@ -71,13 +71,13 @@ class Controller_Admin_Preferences extends Controller_Admin
 			);
 		}
 
-		$form['fs_theme_active_themes'] = array(
+		$form['ff.theme_active_themes'] = array(
 			'type' => 'checkbox_array',
 			'label' => __('Active themes'),
 			'help' => __('Choose the themes to make available to the users. Admins are able to access any of them even if disabled.'),
 			'checkboxes' => $themes
 		);
-/*
+
 		$themes_default = array();
 
 		foreach(Theme::get_all() as $name => $theme)
@@ -85,7 +85,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			$themes_default[$name] = $theme['name'];
 		}
 
-		$form['fs_theme_default'] = array(
+		$form['ff.theme_default'] = array(
 			'type' => 'dropdown',
 			'label' => __('Default theme'),
 			'help' => __('The theme the users will see as they reach your site.'),
@@ -93,8 +93,8 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'default_value' => FOOL_THEME_DEFAULT,
 			'preferences' => TRUE,
 		);
-*/
-		$form['fs_theme_google_analytics'] = array(
+
+		$form['ff.theme_google_analytics'] = array(
 			'type' => 'input',
 			'label' => __('Google Analytics code'),
 			'placeholder' => 'UX-XXXXXXX-X',
@@ -107,7 +107,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'separator'
 		);
 
-		$form['fs_theme_header_text'] = array(
+		$form['ff.theme_header_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Text ("notices")'),
 			'preferences' => TRUE,
@@ -115,7 +115,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['fs_theme_header_code'] = array(
+		$form['ff.theme_header_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Code'),
 			'preferences' => TRUE,
@@ -123,7 +123,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['fs_theme_footer_text'] = array(
+		$form['ff.theme_footer_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Text'),
 			'preferences' => TRUE,
@@ -131,7 +131,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['fs_theme_footer_code'] = array(
+		$form['ff.theme_footer_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Code'),
 			'preferences' => TRUE,
@@ -172,7 +172,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'open'
 		);
 
-		$form['fs_ads_top_banner'] = array(
+		$form['ff.ads_top_banner'] = array(
 			'type' => 'textarea',
 			'label' => __('Top banner'),
 			'help' => __('Insert the HTML code provided by your advertiser.'),
@@ -181,13 +181,13 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['fs_ads_top_banner_active'] = array(
+		$form['ff.ads_top_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Enable top banner')
 		);
 
-		$form['fs_ads_bottom_banner'] = array(
+		$form['ff.ads_bottom_banner'] = array(
 			'type' => 'textarea',
 			'label' => __('Bottom banner'),
 			'help' => __('Insert the HTML code provided by your advertiser.'),
@@ -196,7 +196,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['fs_ads_bottom_banner_active'] = array(
+		$form['ff.ads_bottom_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Enable bottom banner')
@@ -235,12 +235,12 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'open'
 		);
 
-		$form['fs_reg_disabled'] = array(
+		$form['ff.reg_disabled'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable New User Registrations')
 		);
-		$form['fs_reg_email_disabled'] = array(
+		$form['ff.reg_email_disabled'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable Email Activation')
@@ -255,7 +255,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'help' => __('In order to use reCAPTCHA&trade; you need to sign up for the service at <a href="http://www.google.com/recaptcha">reCAPTCHA&trade;</a>, which will provide you with a public and a private key.')
 		);
 
-		$form['fs_reg_recaptcha_public'] = array(
+		$form['ff.reg_recaptcha_public'] = array(
 			'type' => 'input',
 			'label' => __('reCaptcha&trade; Public Key'),
 			'preferences' => TRUE,
@@ -264,7 +264,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span4'
 		);
 
-		$form['fs_reg_recaptcha_secret'] = array(
+		$form['ff.reg_recaptcha_secret'] = array(
 			'type' => 'input',
 			'label' => __('reCaptcha&trade; Secret Key'),
 			'preferences' => TRUE,

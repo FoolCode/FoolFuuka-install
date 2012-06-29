@@ -264,35 +264,28 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'type' => 'open'
 		);
 
-		$form['fs_fuuka_boards_directory'] = array(
+		$form['fu.boards_directory'] = array(
 			'type' => 'input',
 			'label' => __('Boards directory'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default path to the boards directory (Example: /var/www/foolfuuka/boards)')
 		);
 
-		$form['fs_fuuka_boards_url'] = array(
+		$form['fu.boards_url'] = array(
 			'type' => 'input',
 			'label' => __('Boards URL'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default url to the boards folder (Example: http://foolfuuka.site.com/there/boards)')
 		);
 
-		$form['fs_fuuka_boards_db'] = array(
+		$form['fu.boards_db'] = array(
 			'type' => 'input',
 			'label' => __('Boards database'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default database. You should point it to your Asagi database if you have a separate one.')
 		);
 
-		$form['fs_fuuka_boards_db'] = array(
-			'type' => 'input',
-			'label' => __('Boards database'),
-			'preferences' => TRUE,
-			'help' => __('Overrides the default database. You should point it to your Asagi database if you have a separate one.')
-		);
-
-		$form['fs_fuuka_boards_media_balancers'] = array(
+		$form['fu.boards_media_balancers'] = array(
 			'type' => 'textarea',
 			'label' => __('Media load balancers'),
 			'preferences' => TRUE,
@@ -300,7 +293,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span6'
 		);
 
-		$form['fs_fuuka_boards_media_balancers_https'] = array(
+		$form['fu.boards_media_balancers_https'] = array(
 			'type' => 'textarea',
 			'label' => __('HTTPS media load balancers'),
 			'preferences' => TRUE,
@@ -342,7 +335,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'type' => 'open'
 		);
 
-		$form['fs_sphinx_global'] = array(
+		$form['fu.sphinx_global'] = array(
 			'type' => 'checkbox',
 			'label' => 'Global SphinxSearch',
 			'placeholder' => 'FoOlFuuka',
@@ -350,7 +343,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'help' => __('Activate Sphinx globally (enables crossboard search)')
 		);
 
-		$form['fu_sphinx_listen'] = array(
+		$form['fu.sphinx_listen'] = array(
 			'type' => 'input',
 			'label' => 'Listen (Sphinx)',
 			'placeholder' => FOOL_PREF_SPHINX_LISTEN,
@@ -360,7 +353,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'validation' => 'trim|max_length[48]',
 			'validation_func' => function($input, $form)
 			{
-				if (strpos($input['fu_sphinx_listen'], ':') === FALSE)
+				if (strpos($input['fu.sphinx_listen'], ':') === FALSE)
 				{
 					return array(
 						'error_code' => 'MISSING_COLON',
@@ -368,7 +361,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 					);
 				}
 
-				$sphinx_ip_port = explode(':', $input['fu_sphinx_listen']);
+				$sphinx_ip_port = explode(':', $input['fu.sphinx_listen']);
 
 				if (count($sphinx_ip_port) != 2)
 				{
@@ -400,7 +393,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			}
 		);
 
-		$form['fu_sphinx_listen_mysql'] = array(
+		$form['fu.sphinx_listen_mysql'] = array(
 			'type' => 'input',
 			'label' => 'Listen (MySQL)',
 			'placeholder' => FOOL_PREF_SPHINX_LISTEN_MYSQL,
@@ -410,7 +403,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span2'
 		);
 
-		$form['fu_sphinx_connection_flags'] = array(
+		$form['fu.sphinx_connection_flags'] = array(
 			'type' => 'input',
 			'label' => 'Connection Flags (MySQL)',
 			'placeholder' => 0,
@@ -420,7 +413,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span2'
 		);
 
-		$form['fu_sphinx_dir'] = array(
+		$form['fu.sphinx_dir'] = array(
 			'type' => 'input',
 			'label' => 'Working Directory',
 			'placeholder' => FOOL_PREF_SPHINX_DIR,
@@ -430,7 +423,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'validation' => 'trim',
 			'validation_func' => function($input, $form)
 			{
-				if (!file_exists($input['fu_sphinx_dir']))
+				if (!file_exists($input['fu.sphinx_dir']))
 				{
 					return array(
 						'error_code' => 'SPHINX_WORKING_DIR_NOT_FOUND',
@@ -442,7 +435,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			}
 		);
 
-		$form['fu_sphinx_min_word_len'] = array(
+		$form['fu.sphinx_min_word_len'] = array(
 			'type' => 'input',
 			'label' => 'Minimum Word Length',
 			'placeholder' => FOOL_PREF_SPHINX_MIN_WORD,
@@ -452,7 +445,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'validation' => 'trim|is_natural_no_zero'
 		);
 
-		$form['fu_sphinx_mem_limit'] = array(
+		$form['fu.sphinx_mem_limit'] = array(
 			'type' => 'input',
 			'label' => 'Memory Limit',
 			'placeholder' => FOOL_PREF_SPHINX_MEMORY,
@@ -462,7 +455,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span1'
 		);
 
-		$form['fu_sphinx_max_children'] = array(
+		$form['fu.sphinx_max_children'] = array(
 			'type' => 'input',
 			'label' => 'Max Children',
 			'placeholder' => 0,
@@ -472,7 +465,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span1'
 		);
 
-		$form['fu_sphinx_max_matches'] = array(
+		$form['fu.sphinx_max_matches'] = array(
 			'type' => 'input',
 			'label' => 'Max Matches',
 			'placeholder' => 5000,
