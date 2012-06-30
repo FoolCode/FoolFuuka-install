@@ -5,6 +5,7 @@ namespace Model;
 
 class BoardException extends \FuelException {}
 class BoardThreadNotFoundException extends \Model\BoardException {}
+class BoardMalformedInputException extends \Model\BoardException {}
 
 
 /**
@@ -185,6 +186,12 @@ class Board extends \Model\Model_Base
 		$this->set_options('page', $page);
 
 		return $this;
+	}
+
+
+	protected static function is_natural($num)
+	{
+		return ctype_digit((string) $num);
 	}
 
 
@@ -402,10 +409,9 @@ class Board extends \Model\Model_Base
 		$this->set_method_fetching('get_thread_comments')
 			->set_options(array('type' => 'thread', 'realtime' => false, 'extra' => array()));
 
-		$num = intval($num);
-		if($num < 1)
+		if(!static::is_natural($num) || $num < 1)
 		{
-			throw new BoardException(__('The thread number is invalid.'));
+			throw new BoardMalformedInputException(__('The thread number is invalid.'));
 		}
 
 		$this->set_options('num', $num);

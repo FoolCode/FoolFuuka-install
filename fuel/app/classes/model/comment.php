@@ -661,7 +661,7 @@ class Comment extends \Model
 	private function p_process_crossboard_links($matches)
 	{
 		// create link object with all relevant information
-		$data = new stdClass();
+		$data = new \stdClass();
 		$data->url = $matches[2];
 		$data->num = $matches[4];
 		$data->shortname = $matches[3];

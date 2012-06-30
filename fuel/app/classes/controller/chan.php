@@ -28,8 +28,6 @@ class Controller_Chan extends Controller_Common
 		$this->_theme->set_theme('default');
 		$this->_theme->set_layout('chan');
 
-		$this->_theme->bind('radix', $this->_radix);
-
 		if (!is_null($this->_radix))
 		{
 			$this->_theme->set_title($this->_radix->formatted_title);
@@ -68,7 +66,7 @@ class Controller_Chan extends Controller_Common
 	public function router($method, $params)
 	{
 		$this->_radix = Radix::set_selected_by_shortname($method);
-
+		$this->_theme->bind('radix', $this->_radix?:null);
 		if ($this->_radix)
 		{
 			$method = array_shift($params);
@@ -146,16 +144,16 @@ class Controller_Chan extends Controller_Common
 			$this->_theme->bind('section_title', ($by_thread ? __('Latest by Thread').' - ' : '').__('Page').' '.$page);
 		}
 
-		$this->_theme->bind('is_page', TRUE);
-		$this->_theme->bind('board', $board);
-		$this->_theme->bind('radix', $this->_radix);
-		$this->_theme->bind('posts_per_thread', $options['per_thread'] - 1);
-		$this->_theme->bind('order', $by_thread ? 'by_thread' : 'by_post');
-		$this->_theme->bind('pagination',
-			array(
-			'base_url' => Uri::create(array($this->_radix->shortname, ($by_thread ? 'by_thread' : 'page'))),
-			'current_page' => $page,
-			'total' => $board->get_count()
+		$this->_theme->bind(array(
+			'is_page' => true,
+			'board' => $board,
+			'posts_per_thread' => $options['per_thread'] - 1,
+			'order' => $by_thread ? 'by_thread' : 'by_post',
+			'pagination' => array(
+				'base_url' => Uri::create(array($this->_radix->shortname, ($by_thread ? 'by_thread' : 'page'))),
+				'current_page' => $page,
+				'total' => $board->get_count()
+			)
 		));
 
 		return Response::forge($this->_theme->build('board'));
@@ -164,7 +162,7 @@ class Controller_Chan extends Controller_Common
 
 	public function action_thread($num = 0, $limit = 0)
 	{
-		$num = intval(str_replace('S', '', $num));
+		$num = str_replace('S', '', $num);
 
 		try
 		{
@@ -224,12 +222,12 @@ class Controller_Chan extends Controller_Common
 		if ($tools_reply_box)
 			$this->_theme->set_partial('tools_reply_box', 'tools_reply_box');
 
-		array(
+		$this->_theme->bind(array(
 			'thread_id' => $num,
 			'latest_doc_id' => $latest_doc_id,
 			'latest_timestamp' => $latest_timestamp,
 			'thread_op_data' => $thread[$num]['op']
-		);
+		));
 
 		return Response::forge($this->_theme->build('board'));
 	}

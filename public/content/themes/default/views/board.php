@@ -87,7 +87,7 @@ foreach ($board->get_comments() as $key => $post) :
 
 			<?php if (Auth::has_access('maccess.mod')) : ?>
 				<div class="btn-group" style="clear:both; padding:5px 0 0 0;">
-					<button class="btn btn-mini" data-function="activateModeration"><?= __('Mod') ?><?php if ($op->poster_ip) echo ' ' .inet_dtop($op->poster_ip) ?></button>
+					<button class="btn btn-mini" data-function="activateModeration"><?= __('Mod') ?><?php if ($op->poster_ip) echo ' ' .\Inet::dtop($op->poster_ip) ?></button>
 				</div>
 				<div class="btn-group post_mod_controls" style="clear:both; padding:5px 0 0 0;">
 					<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_post"><?= __('Delete Post') ?></button>
@@ -96,10 +96,10 @@ foreach ($board->get_comments() as $key => $post) :
 						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_md5"><?= __('Ban Image') ?></button>
 					<?php endif; ?>
 					<?php if ($op->poster_ip) : ?>
-						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . inet_dtop($op->poster_ip) ?></button>
-						<button class="btn btn-mini" data-function="searchUser" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP') ?></button>
-						<?php if (get_setting('fs_sphinx_global')) : ?>
-						<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
+						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . \Inet::dtop($op->poster_ip) ?></button>
+						<button class="btn btn-mini" data-function="searchUser" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= \Inet::dtop($op->poster_ip) ?>"><?= __('Search IP') ?></button>
+						<?php if (Preferences::get('fu.sphinx_global')) : ?>
+						<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= \Inet::dtop($op->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
 						<?php endif; ?>
 					<?php endif; ?>
 					<?php if (isset($op->report_status) && !is_null($op->report_status)) : ?>
@@ -128,7 +128,7 @@ foreach ($board->get_comments() as $key => $post) :
 	<?php if (isset($op->report_status) && !is_null($op->report_status)) : ?>
 	<div class="report_reason"><?= '<strong>' . __('Reported Reason:') . '</strong> ' . $op->report_reason_processed ?>
 		<br/>
-		<div class="ip_reporter"><?= inet_dtop($op->report_ip_reporter) ?></div>
+		<div class="ip_reporter"><?= \Inet::dtop($op->report_ip_reporter) ?></div>
 	</div>
 	<?php endif; ?>
 <?php elseif (isset($post['posts'])): ?>

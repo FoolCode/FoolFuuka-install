@@ -114,7 +114,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 
 	<?php if (Auth::has_access('maccess.mod')) : ?>
 	<div class="btn-group" style="clear:both; padding:5px 0 0 0;">
-		<button class="btn btn-mini" data-function="activateModeration"><?= __('Mod') ?><?php if ($p->poster_ip) echo ' ' .inet_dtop($p->poster_ip) ?></button>
+		<button class="btn btn-mini" data-function="activateModeration"><?= __('Mod') ?><?php if ($p->poster_ip) echo ' ' .\Inet::dtop($p->poster_ip) ?></button>
 	</div>
 	<div class="btn-group post_mod_controls" style="clear:both; padding:5px 0 0 5px;">
 		<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-action="remove_post"><?= __('Delete Post') ?></button>
@@ -123,10 +123,10 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 			<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-action="ban_md5"><?= __('Ban Image') ?></button>
 		<?php endif; ?>
 		<?php if ($p->poster_ip) : ?>
-			<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . inet_dtop($p->poster_ip) ?></button>
-			<button class="btn btn-mini" data-function="searchUser" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= inet_dtop($p->poster_ip) ?>"><?= __('Search IP') ?></button>
-			<?php if (get_setting('fs_sphinx_global')) : ?>
-			<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= inet_dtop($p->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
+			<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . \Inet::dtop($p->poster_ip) ?></button>
+			<button class="btn btn-mini" data-function="searchUser" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= \Inet::dtop($p->poster_ip) ?>"><?= __('Search IP') ?></button>
+			<?php if (Preferences::get('fu.sphinx_global')) : ?>
+			<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= \Inet::dtop($p->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
 			<?php endif; ?>
 		<?php endif; ?>
 		<?php if (isset($p->report_status) && !is_null($p->report_status)) : ?>
@@ -137,7 +137,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 	<?php if (isset($p->report_status) && !is_null($p->report_status)) : ?>
 	<div class="report_reason"><?= '<strong>' . __('Reported Reason:') . '</strong> ' . $p->report_reason_processed ?>
 		<br/>
-		<div class="ip_reporter"><?= inet_dtop($p->report_ip_reporter) ?></div>
+		<div class="ip_reporter"><?= \Inet::dtop($p->report_ip_reporter) ?></div>
 	</div>
 	<?php endif; ?>
 	<?php endif; ?>
