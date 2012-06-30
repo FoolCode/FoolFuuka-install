@@ -2,14 +2,14 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-if (!isset($board) && Preferences::get('fs_sphinx_global'))
+if (!isset($radix) && Preferences::get('fu.sphinx_global'))
 {
-	// search can work also without a board selected
-	$board = new stdClass();
-	$board->shortname = '';
+	// search can work also without a radix selected
+	$radix = new stdClass();
+	$radix->shortname = '';
 }
 
-if (isset($board)) :
+if (isset($radix)) :
 ?>
 
 <ul class="nav pull-right">
@@ -19,7 +19,7 @@ if (isset($board)) :
 			array(
 				'class' => 'navbar-search pull-right',
 				'method' => 'GET',
-				'action' => Uri::create(((!$board->shortname)?'':'@radix/' . $board->shortname) . '/search')
+				'action' => Uri::create(((!$radix->shortname)?'':'@radix/' . $radix->shortname) . '/search')
 			)
 		);
 		echo Form::input(array(
@@ -27,7 +27,7 @@ if (isset($board)) :
 			'data-function' => 'searchShow',
 			'value' => (isset($search["text"])) ? rawurldecode($search["text"]) : '',
 			'class' => 'span4 search-query',
-			'placeholder' => ($board->shortname)?__('Search or Insert Post No. or Thread URL'):__('Global Search')
+			'placeholder' => ($radix->shortname)?__('Search or Insert Post No. or Thread URL'):__('Global Search')
 		));
 		?>
 		<div class="search-dropdown-menu">
@@ -321,7 +321,7 @@ if (isset($board)) :
 						// sanitization
 						foreach($latest_searches as $item)
 						{
-							// all subitems must be array, all must have 'board'
+							// all subitems must be array, all must have 'radix'
 							if (!is_array($item) || !isset($item['board']))
 							{
 								$latest_searches = array();

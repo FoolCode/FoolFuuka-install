@@ -4,7 +4,7 @@ if (!defined('DOCROOT'))
 ?>
 
 	<nav class="index_nav clearfix">
-	<h1><?= Preferences::get('fs_gen_index_title', FOOL_PREF_GEN_INDEX_TITLE); ?></h1>
+	<h1><?= Preferences::get('fu.gen_index_title'); ?></h1>
 	<?php
 
 		$index_nav = array();
@@ -41,8 +41,8 @@ if (!defined('DOCROOT'))
 			}
 		}
 
-		$index_nav = Plugins::run_hook('fu_themes_generic_index_nav_elements', array($index_nav), 'simple');
-		$index_nav = Plugins::run_hook('fu_themes_default_index_nav_elements', array($index_nav), 'simple');
+		$index_nav = Plugins::run_hook('fu.themes.generic.index_nav_elements', array($index_nav), 'simple');
+		$index_nav = Plugins::run_hook('fu.themes.default.index_nav_elements', array($index_nav), 'simple');
 
 		foreach($index_nav as $item) : ?>
 			<ul class="pull-left clearfix">

@@ -2,9 +2,10 @@
 
 namespace Model;
 
-\Autoloader::add_classes(array(
-	'Model\\BoardMessagesNotFound' => APPPATH.'classes/model/board/error.php'
-));
+
+class BoardException extends \FuelException {}
+class BoardThreadNotFoundException extends \Model\BoardException {}
+
 
 /**
  * FoOlFuuka Post Model
@@ -18,71 +19,172 @@ namespace Model;
  * @author        	FoOlRulez
  * @license         http://www.apache.org/licenses/LICENSE-2.0.html
  */
-class Board extends \Model
+class Board extends \Model\Model_Base
 {
 
 	/**
-	 * The functions with 'p_' prefix will respond to plugins before and after
+	 * Array of Comment
 	 *
-	 * @param string $name
-	 * @param array $parameters
+	 * @var array
 	 */
-	public function __call($name, $parameters)
+	private $_comments = null;
+
+	/**
+	 * The count of the query without LIMIT
+	 *
+	 * @var int
+	 */
+	private $_total_count = 0;
+
+	/**
+	 * The method selected to retrieve comments
+	 *
+	 * @var string
+	 */
+	private $_method_fetching = null;
+
+	/**
+	 * The method selected to retrieve the comment's count without LIMIT
+	 *
+	 * @var string
+	 */
+	private $_method_counting = null;
+
+	/**
+	 * The options to give to the retrieving method
+	 *
+	 * @var array
+	 */
+	private $_options = array();
+
+	/**
+	 * The selected Radix
+	 *
+	 * @var array
+	 */
+	private $_radix = null;
+
+
+	public static function forge()
 	{
-		$before = Plugins::run_hook('model/board/call/before/'.$name, $parameters);
+		return new Board();
+	}
 
-		if (is_array($before))
+	/**
+	 * Returns the comments, and executes the query if not already executed
+	 *
+	 * @return array
+	 */
+	protected function p_get_comments()
+	{
+		if (is_null($this->_comments))
 		{
-			// if the value returned is an Array, a plugin was active
-			$parameters = $before['parameters'];
+			$this->{$this->_method_fetching}();
 		}
 
-		// if the replace is anything else than NULL for all the functions ran here, the
-		// replaced function wont' be run
-		$replace = Plugins::run_hook('model/board/call/replace/'.$name, $parameters, array($parameters));
+		return $this->_comments;
+	}
 
-		if ($replace['return'] !== NULL)
+
+	/**
+	 * Returns the count without LIMIT, and executes the query if not already executed
+	 *
+	 * @return array
+	 */
+	protected function p_get_count()
+	{
+		if (is_null($this->_total_count))
 		{
-			$return = $replace['return'];
-		}
-		else
-		{
-			switch (count($parameters))
+			if (method_exists($this, $this->_method_counting))
 			{
-				case 0:
-					$return = $this->{'p_'.$name}();
-					break;
-				case 1:
-					$return = $this->{'p_'.$name}($parameters[0]);
-					break;
-				case 2:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1]);
-					break;
-				case 3:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2]);
-					break;
-				case 4:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3]);
-					break;
-				case 5:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3], $parameters[4]);
-					break;
-				default:
-					$return = call_user_func_array(array(&$this, 'p_'.$name), $parameters);
-					break;
+				$this->{$this->_method_counting}();
+			}
+			else
+			{
+				$this->_total_count = false;
 			}
 		}
 
-		// in the after, the last parameter passed will be the result
-		array_push($parameters, $return);
-		$after = Plugins::run_hook('model/board/call/after/'.$name, $parameters);
+		return $this->_total_count;
+	}
 
-		if (is_array($after))
+
+	protected function p_get_pages()
+	{
+		return floor($this->get_count() / $this->_options['per_page']) + 1;
+	}
+
+
+	protected function p_get_highest($item)
+	{
+		$temp = $this->_comments_unsorted[0];
+
+		foreach ($this->_comments_unsorted as $post)
 		{
-			return $after['return'];
+			if ($temp->$item < $post->$item)
+			{
+				$temp = $post;
+			}
 		}
 
-		return $return;
+		return $post;
+	}
+
+
+	protected function p_set_method_fetching($name)
+	{
+		$this->_method_fetching = $name;
+
+		return $this;
+	}
+
+
+	protected function p_set_method_counting($name)
+	{
+		$this->_method_counting = $name;
+
+		return $this;
+	}
+
+
+	protected function p_set_options($name, $value = null)
+	{
+		if (is_array($name))
+		{
+			foreach ($name as $key => $item)
+			{
+				$this->set_options($key, $item);
+			}
+
+			return $this;
+		}
+
+		$this->_options[$name] = $value;
+
+		return $this;
+	}
+
+
+	protected function p_set_radix(&$radix)
+	{
+		$this->_radix = $radix;
+
+		return $this;
+	}
+
+
+	protected function p_set_page($page)
+	{
+		$page = intval($page);
+
+		if($page < 1)
+		{
+			throw new BoardException(__('The page number is not valid.'));
+		}
+
+		$this->set_options('page', $page);
+
+		return $this;
 	}
 
 
@@ -94,12 +196,15 @@ class Board extends \Model
 	 * @param bool|string $join_on alternative join table name
 	 * @return string SQL to append to retrieve image filenames
 	 */
-	private function p_sql_media_join($board, $query, $join_on = FALSE)
+	protected function p_sql_media_join($query, &$board = null, $join_on = false)
 	{
-		$query->join(\DB::expr(Radix::get_table($board, '_images') . ' AS `mg`'), 'LEFT')
-			->on(
-				\DB::expr(Radix::get_table($board) . '.`media_id`'), '=', \DB::expr('`mg`.`media_id`')
-			);
+		if (is_null($board))
+		{
+			$board = $this->_radix;
+		}
+
+		$query->join(\DB::expr(Radix::get_table($board, '_images').' AS `mg`'), 'LEFT')
+			->on(\DB::expr(Radix::get_table($board).'.`media_id`'), '=', \DB::expr('`mg`.`media_id`'));
 	}
 
 
@@ -111,21 +216,41 @@ class Board extends \Model
 	 * @param bool|string $join_on alternative join table name
 	 * @return string SQL to append reports to the rows
 	 */
-	private function p_sql_report_join($board, $query, $join_on = FALSE)
+	protected function p_sql_report_join($query, $board = null, $join_on = false)
 	{
+		if (is_null($board))
+		{
+			$board = $this->_radix;
+		}
+
 		// only show report notifications to certain users
-		if(\Auth::has_access('comment.reports'))
+		if (\Auth::has_access('comment.reports'))
 		{
 			$query->join(\DB::expr('
-					SELECT
+					(SELECT
 						id AS report_id, doc_id AS report_doc_id, reason AS report_reason, ip_reporter as report_ip_reporter,
 						status AS report_status, created AS report_created
-					FROM ' . \DB::quote_identifier('reports') . '
-					WHERE `board_id` = ' . $board->id), 'LEFT'
-			)->on(
-				Radix::get_board($board). '.`doc_id`', '=', \DB::expr('`r`.`report_doc_id`')
+					FROM `fu_reports`
+					WHERE `board_id` = '.$board->id.') AS r'),
+				'LEFT'
 			);
+			$query->on(\DB::expr(Radix::get_table($board).'.`doc_id`'), '=', \DB::expr('`r`.`report_doc_id`'));
 		}
+	}
+
+
+	protected function p_get_latest()
+	{
+		// prepare
+		$this->set_method_fetching('get_latest_comments')
+			->set_method_counting('get_latest_count')
+			->set_options(array(
+				'per_page' => 20,
+				'per_thread' => 5,
+				'order' => 'by_post'
+			));
+
+		return $this;
 	}
 
 
@@ -137,89 +262,39 @@ class Board extends \Model
 	 * @param array $options modifiers
 	 * @return array|bool FALSE on error (likely from faulty $options), or the list of threads with 5 replies attached
 	 */
-	private function p_get_latest($board, $page = 1, $options = array())
+	protected function p_get_latest_comments()
 	{
-		// default variables
-		$per_page = 20;
-		$process = TRUE;
-		$clean = TRUE;
-		$type = 'by_post';
+		extract($this->_options);
 
-		// override defaults
-		foreach ($options as $key => $option)
-		{
-			$$key = $option;
-		}
-
-		// determine type
-		switch ($type)
+		switch ($order)
 		{
 			case 'by_post':
 
 				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
-					->from(\DB::expr(Radix::get_table($board, '_threads')))
-					->order_by('time_bump', 'desc')
-					->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
+						->order_by('time_bump', 'desc')
+						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
 				break;
 
 			case 'by_thread':
 
 				$query = \DB::select('*', 'thread_num as unq_thread_num')
-					->from(\DB::expr(Radix::get_table($board, '_threads')))
-					->order_by('thread_num', 'desc')
-					->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
+						->order_by('thread_num', 'desc')
+						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
 				break;
 
 			case 'ghost':
 
 				$query = \DB::select('*', 'thread_num as unq_thread_num')
-					->from(\DB::expr(Radix::get_table($board, '_threads')))
-					->where('time_ghost_bump', \DB::expr('IS NOT NULL'))
-					->order_by('time_ghost_bump', 'desc')
-					->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
+						->where('time_ghost_bump', \DB::expr('IS NOT NULL'))
+						->order_by('time_ghost_bump', 'desc')
+						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
 				break;
 		}
 
 		$threads = $query->as_object()->execute()->as_array();
-
-		// cache the count or get the cached count
-		if($type == 'ghost')
-		{
-			$type_cache = 'ghost_num';
-		}
-		else
-		{
-			$type_cache = 'thread_num';
-		}
-
-
-		switch ($type)
-		{
-			// these two are the same
-			case 'by_post':
-			case 'by_thread':
-				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
-					->from(\DB::expr(Radix::get_table($board, '_threads')))->cached(1800);
-				break;
-
-			case 'ghost':
-				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
-					->from(\DB::expr(Radix::get_table($board, '_threads')))
-					->where('time_ghost_bump', \DB::expr('IS NOT NULL'))->cached(1800);
-				break;
-		}
-
-		$threads_count = $query_threads->as_object()->execute()->current()->threads;
-
-		// set total pages found
-		if ($threads_count <= $per_page)
-		{
-			$pages = NULL;
-		}
-		else
-		{
-			$pages = floor($threads_count/$per_page)+1;
-		}
 
 		// populate arrays with posts
 		$threads_arr = array();
@@ -229,31 +304,31 @@ class Board extends \Model
 		{
 			$threads_arr[$thread->unq_thread_num] = array('replies' => $thread->nreplies, 'images' => $thread->nimages);
 
-			$temp = \DB::select()->from(\DB::expr(Radix::get_table($board)));
-			static::sql_media_join($board, $temp);
-			static::sql_report_join($board, $temp);
+			$temp = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
+			$this->sql_media_join($temp);
+			$this->sql_report_join($temp);
 			$temp->where('thread_num', $thread->unq_thread_num)
 				->order_by('op', 'desc')->order_by('num', 'desc')->order_by('subnum', 'desc')
-				->limit(6)->offset(0);
+				->limit($per_thread + 1)->offset(0);
 
 			$sql_arr[] = '('.$temp.')';
 		}
 
 		$query_posts = \DB::query(implode(' UNION ', $sql_arr), \DB::SELECT)->as_object()->execute()->as_array();
 		// populate posts_arr array
-		$posts = Comment::forge($query_posts, $board);
+		$this->_comments_unsorted = Comment::forge($query_posts, $this->_radix);
 		$results = array();
 
 		foreach ($threads as $thread)
 		{
 			$results[$thread->thread_num] = array(
-				'omitted' => ($thread->nreplies - 6),
+				'omitted' => ($thread->nreplies - ($per_thread + 1)),
 				'images_omitted' => ($thread->nimages - 1)
 			);
 		}
 
 		// populate results array and order posts
-		foreach ($posts as $post)
+		foreach ($this->_comments_unsorted as $post)
 		{
 			if ($post->op == 0)
 			{
@@ -262,7 +337,7 @@ class Board extends \Model
 					$results[$post->thread_num]['images_omitted']--;
 				}
 
-				if(!isset($results[$post->thread_num]['posts']))
+				if (!isset($results[$post->thread_num]['posts']))
 					$results[$post->thread_num]['posts'] = array();
 
 				array_unshift($results[$post->thread_num]['posts'], $post);
@@ -273,7 +348,42 @@ class Board extends \Model
 			}
 		}
 
-		return array('result' => $results, 'pages' => $pages);
+		$this->_comments = $results;
+
+		return $this;
+	}
+
+
+	protected function p_get_latest_count()
+	{
+		extract($this->_options);
+
+		$type_cache = 'thread_num';
+
+		if ($order == 'ghost')
+		{
+			$type_cache = 'ghost_num';
+		}
+
+		switch ($type)
+		{
+			// these two are the same
+			case 'by_post':
+			case 'by_thread':
+				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))->cached(1800);
+				break;
+
+			case 'ghost':
+				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
+						->where('time_ghost_bump', \DB::expr('IS NOT NULL'))->cached(1800);
+				break;
+		}
+
+		$this->_total_count = $query_threads->as_object()->execute()->current()->threads;
+
+		return $this;
 	}
 
 
@@ -286,36 +396,42 @@ class Board extends \Model
 	 * @param array $options modifiers
 	 * @return array|bool FALSE on failure (probably caused by faulty $options) or the thread array
 	 */
-	private function p_get_thread($board, $num, $options = array())
+	protected function p_get_thread($num)
 	{
 		// default variables
-		$process = TRUE;
-		$clean = TRUE;
-		$type = 'thread';
-		$type_extra = array();
-		$realtime = FALSE;
+		$this->set_method_fetching('get_thread_comments')
+			->set_options(array('type' => 'thread', 'realtime' => false, 'extra' => array()));
 
-		// override defaults
-		foreach ($options as $key => $option)
+		$num = intval($num);
+		if($num < 1)
 		{
-			$$key = $option;
+			throw new BoardException(__('The thread number is invalid.'));
 		}
+
+		$this->set_options('num', $num);
+
+		return $this;
+	}
+
+	protected function p_get_thread_comments()
+	{
+		extract($this->_options);
 
 		// determine type
 		switch ($type)
 		{
 			case 'from_doc_id':
-				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
-				static::sql_media_join($board, $query);
-				static::sql_report_join($board, $query);
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
+				$this->sql_media_join($query);
+				$this->sql_report_join($query);
 				$query->where('thread_num', $num)->where('doc_id', '>', $type_extra['latest_doc_id'])
 					->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
 			case 'ghosts':
-				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
-				static::sql_media_join($board, $query);
-				static::sql_report_join($board, $query);
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
+				$this->sql_media_join($query);
+				$this->sql_report_join($query);
 				$query->where('thread_num', $num)->where('subnum', '<>', 0)
 					->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
@@ -323,21 +439,23 @@ class Board extends \Model
 			case 'last_x':
 				$query = \DB::select()->from(\DB::expr('
 					(
-						('.\DB::select()->from(\DB::expr(Radix::get_table($board)))->where('num', $num)->limit(1).')
+						('.\DB::select()->from(\DB::expr(Radix::get_table($this->_radix)))->where('num',
+							$num)->limit(1).')
 						UNION
-						('.\DB::select()->from(\DB::expr(Radix::get_table($board)))->where('thread_num', $num)
+						('.\DB::select()->from(\DB::expr(Radix::get_table($this->_radix)))->where('thread_num',
+								$num)
 							->order_by('num', 'desc')->order_by('subnum', 'desc')->limit($type_extra['last_limit']).')
 					) AS x
 				'));
-				static::sql_media_join($board, $query);
-				static::sql_report_join($board, $query);
+				$this->sql_media_join($query);
+				$this->sql_report_join($query);
 				$query->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
 			case 'thread':
-				$query = \DB::select()->from(\DB::expr(Radix::get_table($board)));
-				static::sql_media_join($board, $query);
-				static::sql_report_join($board, $query);
+				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
+				$this->sql_media_join($query);
+				$this->sql_report_join($query);
 				$query->where('thread_num', $num)->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 		}
@@ -346,23 +464,21 @@ class Board extends \Model
 
 		if (!count($query_result))
 		{
-			throw new \BoardResultEmpty;
+			throw new BoardThreadNotFoundException(__('There\'s no such a thread.'));
 		}
 
-		$posts = Comment::forge($query_result, $board, array('realtime' => $realtime, 'backlinks_hash_only_url' => true));
-
-		// populate posts_arr array
-		$thread_check = $this->check_thread($board, $posts);
+		$this->_comments_unsorted =
+			Comment::forge($query_result, $this->_radix, array('realtime' => $realtime, 'backlinks_hash_only_url' => true));
 
 		// process entire thread and store in $result array
 		$result = array();
 
-		foreach ($posts as $post)
+		foreach ($this->_comments_unsorted as $post)
 		{
 
 			if ($post->op == 0)
 			{
-				$result[$post->thread_num]['posts'][$post->num . (($post->subnum == 0) ? '' : '_' . $post->subnum)] = $post;
+				$result[$post->thread_num]['posts'][$post->num.(($post->subnum == 0) ? '' : '_'.$post->subnum)] = $post;
 			}
 			else
 			{
@@ -372,23 +488,25 @@ class Board extends \Model
 
 		/*
 
-		// populate results with backlinks
-		foreach ($this->backlinks as $key => $backlinks)
-		{
-			if (isset($result[$num]['op']) && $result[$num]['op']->num == $key)
-			{
-				$result[$num]['op']->backlinks = array_unique($backlinks);
-			}
-			else if (isset($result[$num]['posts'][$key]))
-			{
-				$result[$num]['posts'][$key]->backlinks = array_unique($backlinks);
-			}
-		}
+		  // populate results with backlinks
+		  foreach ($this->backlinks as $key => $backlinks)
+		  {
+		  if (isset($result[$num]['op']) && $result[$num]['op']->num == $key)
+		  {
+		  $result[$num]['op']->backlinks = array_unique($backlinks);
+		  }
+		  else if (isset($result[$num]['posts'][$key]))
+		  {
+		  $result[$num]['posts'][$key]->backlinks = array_unique($backlinks);
+		  }
+		  }
 		 *
 		 *
 		 */
 
-		return array('result' => $result, 'thread_check' => $thread_check);
+		$this->_comments = $result;
+
+		return $this;
 	}
 
 
@@ -400,7 +518,7 @@ class Board extends \Model
 	 * @param mixed $num if you send a $query->result() of a thread it will avoid another query
 	 * @return array statuses of the thread
 	 */
-	private function p_check_thread($board, $num)
+	protected function p_check_thread($board, $num)
 	{
 		if ($num == 0)
 		{
@@ -416,7 +534,7 @@ class Board extends \Model
 		{
 			// grab the entire thread
 			$query_result = \DB::select()->from(\DB::expr(Radix::get_table($board)))
-				->where('thread_num', $num)->as_object()->execute()->as_array();
+					->where('thread_num', $num)->as_object()->execute()->as_array();
 
 			// thread was not found
 			if (!count($query_result))
@@ -440,12 +558,12 @@ class Board extends \Model
 				$thread_op_present = TRUE;
 			}
 
-			if($post->subnum > 0)
+			if ($post->subnum > 0)
 			{
 				$ghost_post_present = TRUE;
 			}
 
-			if($post->subnum == 0 && $thread_last_bump < $post->timestamp)
+			if ($post->subnum == 0 && $thread_last_bump < $post->timestamp)
 			{
 				$thread_last_bump = $post->timestamp;
 			}
@@ -465,7 +583,7 @@ class Board extends \Model
 		}
 
 		// time check
-		if(time() - $thread_last_bump > 432000 || $ghost_post_present)
+		if (time() - $thread_last_bump > 432000 || $ghost_post_present)
 		{
 			return array('thread_dead' => TRUE, 'disable_image_upload' => TRUE, 'ghost_disabled' => $board->disable_ghost);
 		}
@@ -488,4 +606,5 @@ class Board extends \Model
 
 		return array('valid_thread' => TRUE);
 	}
+
 }

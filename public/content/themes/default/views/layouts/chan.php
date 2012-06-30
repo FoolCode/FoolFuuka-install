@@ -8,11 +8,11 @@
 		<?= $template['metadata'] ?>
 
 		<title><?= $template['title'] ?></title>
-		<link href='<?= Uri::base() ?>' rel='index' title='<?= Preferences::get('fs_gen_site_title') ?>' />
-<?php if (Radix::get_selected()) : ?>
-		<link href="<?= Uri::create(Radix::get_selected()->shortname) ?>rss_gallery_50.xml" rel="alternate" type="application/rss+xml" title="RSS" />
-		<link href="<?= Uri::create(Radix::get_selected()->shortname) ?>atom_gallery_50.xml" rel="alternate" type="application/atom+xml" title="Atom" />
-<?php endif; ?>
+		<link href='<?= Uri::base() ?>' rel='index' title='<?= Preferences::get('ff.gen_site_title') ?>' />
+		<?php if ($radix) : ?>
+		<link href="<?= Uri::create($radix->shortname) ?>rss_gallery_50.xml" rel="alternate" type="application/rss+xml" title="RSS" />
+		<link href="<?= Uri::create($radix->shortname) ?>atom_gallery_50.xml" rel="alternate" type="application/atom+xml" title="Atom" />
+		<?php endif; ?>
 		<link href="<?= Uri::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
 		<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
 		<!--[if lt IE 8]>
@@ -26,14 +26,14 @@
 		<!--[if lt IE 9]>
 			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<?php if (Preferences::get('fs_sphinx_global')) : ?>
-			<link rel="search" type="application/opensearchdescription+xml" title="<?= Preferences::get('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
+		<?php if (Preferences::get('fu.sphinx_global')) : ?>
+			<link rel="search" type="application/opensearchdescription+xml" title="<?= Preferences::get('ff.gen_site_title'); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
-		<?= Preferences::get('fs_theme_header_code'); ?>
+		<?= Preferences::get('ff.theme_header_code'); ?>
 
 	</head>
 	<body class="<?= $this->get_selected_theme_class(array('theme_default')) ?>">
-<?php if ($disable_headers !== TRUE) : ?>
+	<?php if ($disable_headers !== TRUE) : ?>
 		<div class="letters"><?php
 			$board_urls = array();
 			foreach (Radix::get_archives() as $key => $item)
@@ -62,7 +62,7 @@
 				echo sprintf(__('Boards: [ %s ]'), implode(' / ', $board_urls));
 			}
 		?></div>
-<?php endif; ?>
+	<?php endif; ?>
 		<div class="container-fluid">
 			<div class="navbar navbar-fixed-top">
 				<div class="navbar-inner">
@@ -70,7 +70,7 @@
 						<ul class="nav">
 							<li class="dropdown">
 								<a href="<?= Uri::base() ?>" id="brand" class="brand dropdown-toggle" data-toggle="dropdown">
-									<?= (Radix::get_selected()) ? '/' . $board->shortname . '/' . ' - ' . $board->name :  Preferences::get('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> <b class="caret"></b>
+									<?= ($radix) ? '/' . $radix->shortname . '/' . ' - ' . $radix->name :  Preferences::get('ff.gen_site_title') ?> <b class="caret"></b>
 								</a>
 								<ul class="dropdown-menu">
 									<?= '<li><a href="' . Uri::create('@default') . '">' . __('Index') . '</a></li>'; ?>
@@ -105,14 +105,14 @@
 						</ul>
 
 						<ul class="nav">
-						<?php if (Radix::get_selected()) : ?>
-							<?php if (Radix::get_selected()->archive && Radix::get_selected()->board_url != "") : ?>
+						<?php if ($radix) : ?>
+							<?php if ($radix->archive && $radix->board_url != "") : ?>
 							<li>
-								<a href="<?= Radix::get_selected()->board_url ?>" style="padding-right:4px;">4chan <i class="icon-share icon-white"></i></a>
+								<a href="<?= $radix->board_url ?>" style="padding-right:4px;">4chan <i class="icon-share icon-white"></i></a>
 							</li>
 							<?php endif; ?>
 							<li style="padding-right:0px;">
-								<a href="<?= Uri::create(array($board->shortname)) ?>" style="padding-right:4px;"><?= __('Index') ?></a>
+								<a href="<?= Uri::create(array($radix->shortname)) ?>" style="padding-right:4px;"><?= __('Index') ?></a>
 							</li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding-left:2px; padding-right:4px;">
@@ -120,15 +120,15 @@
 								</a>
 								<ul class="dropdown-menu" style="margin-left:-9px">
 									<li>
-										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_post')) ?>">
+										<a href="<?= Uri::create(array($radix->shortname, 'by_post')) ?>">
 											<?= __('By Post') ?>
-											<?php if (\Cookie::get('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_by_thread' . ($radix->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 									<li>
-										<a href="<?= Uri::create(array(Radix::get_selected()->shortname, 'by_thread')) ?>">
+										<a href="<?= Uri::create(array($radix->shortname, 'by_thread')) ?>">
 											<?= __('By Thread') ?>
-											<?php if (\Cookie::get('default_theme_by_thread' . (Radix::get_selected()->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_by_thread' . ($radix->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 								</ul>
@@ -136,10 +136,10 @@
 						<?php endif; ?>
 						<?php
 							$top_nav = array();
-							if (Radix::get_selected())
+							if ($radix)
 							{
-								$top_nav[] = array('href' => Uri::create(array(Radix::get_selected()->shortname, 'ghost')), 'text' => __('Ghost'));
-								$top_nav[] = array('href' => Uri::create(array(Radix::get_selected()->shortname, 'gallery')), 'text' => __('Gallery'));
+								$top_nav[] = array('href' => Uri::create(array($radix->shortname, 'ghost')), 'text' => __('Ghost'));
+								$top_nav[] = array('href' => Uri::create(array($radix->shortname, 'gallery')), 'text' => __('Gallery'));
 							}
 
 							$top_nav = Plugins::run_hook('fu_themes_generic_top_nav_buttons', array($top_nav), 'simple');
@@ -169,7 +169,7 @@
 				<?= $template['body'] ?>
 
 				<?php
-				if ($disable_headers !== TRUE && Radix::get_selected()) :
+				if ($disable_headers !== TRUE && $radix) :
 					echo $template['partials']['tools_modal'];
 				endif;
 				?>

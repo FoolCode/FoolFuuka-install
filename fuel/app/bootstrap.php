@@ -14,7 +14,7 @@ Autoloader::add_classes(array(
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
 	'Uri' => APPPATH.'classes/extend/uri.php',
-	'Validation' => APPPATH.'classes/extend/validation.php',
+	'Validation' => APPPATH.'classes/extend/validation.php'
 ));
 
 // Register the autoloader
@@ -76,6 +76,8 @@ function _ngettext($string)
 // Initialize the framework with the config file.
 Fuel::init('config.php');
 
+Autoloader::add_class('Model\\Model_Base', APPPATH.'classes/model/model_base.php');
+Autoloader::alias_to_namespace('Model\\Model_Base');
 Autoloader::alias_to_namespace('Model\\Inet');
 Autoloader::alias_to_namespace('Model\\Preferences');
 Autoloader::alias_to_namespace('Model\\Notices');

@@ -147,12 +147,6 @@ class Comment extends \Model
 
 	public function __get($name)
 	{
-		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
-		{
-			$processing_name = substr($name, 0, strlen($name) - 10);
-			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $this->$processing_name));
-		}
-
 		switch ($name)
 		{
 			case 'original_timestamp':
@@ -208,6 +202,12 @@ class Comment extends \Model
 				$this->preview_w = 0;
 				$this->preview_h = 0;
 				return 0;
+		}
+
+		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
+		{
+			$processing_name = substr($name, 0, strlen($name) - 10);
+			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $this->$processing_name));
 		}
 
 		return null;
@@ -535,7 +535,7 @@ class Comment extends \Model
 		$comment = htmlentities($comment, ENT_COMPAT | ENT_IGNORE, 'UTF-8', FALSE);
 
 		// preg_replace_callback handle
-		$this->current_board_for_prc = $board;
+		$this->current_board_for_prc = $this->board;
 
 		// format entire comment
 		$comment = preg_replace_callback("'(&gt;&gt;(\d+(?:,\d+)?))'i",

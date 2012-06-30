@@ -4,7 +4,7 @@ if (!defined('DOCROOT'))
 ?>
 
 <?php
-	if (!($board = Radix::get_selected()))
+	if (!($board = $radix))
 	{
 		$board = new stdClass();
 		$board->shortname = '';

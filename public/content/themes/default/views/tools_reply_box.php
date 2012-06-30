@@ -2,12 +2,12 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_selected()->archive) || (isset($thread_id))) :
+if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->archive) || (isset($thread_id))) :
 ?>
 
 <div id="reply" class="thread_Form::wrap clearfix">
 <section class="thread_form clearfix">
-<?= Form::open(array('enctype' => 'multipart/form-data', 'action' => Radix::get_selected()->shortname . '/submit')) ?>
+<?= Form::open(array('enctype' => 'multipart/form-data', 'action' => $radix->shortname . '/submit')) ?>
 <?= Form::hidden('reply_numero', isset($thread_id)?$thread_id:0) ?>
 <fieldset>
 
@@ -61,7 +61,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_
 		<?php if (!isset($disable_image_upload) || !$disable_image_upload) : ?>
 		<div class="input-prepend">
 			<label class="add-on" for="file_image"><?= __('File') ?></label><input type="file" name="file_image" id="file_image" />
-			<?= Form::hidden('MAX_FILE_SIZE', Radix::get_selected()->max_image_size_kilobytes) ?>
+			<?= Form::hidden('MAX_FILE_SIZE', $radix->max_image_size_kilobytes) ?>
 		</div>
 		<?php endif; ?>
 
@@ -101,7 +101,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_
 		echo Form::textarea(array(
 			'name' => 'reply_chennodiscursus',
 			'id' => 'reply_chennodiscursus',
-			'placeholder' => (!Radix::get_selected()->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
+			'placeholder' => (!$radix->archive && isset($thread_dead) && $thread_dead) ? __('This thread has been archived. Any replies made will be marked as ghost posts and will only affect the ghost index.') : '',
 			'rows' => 3,
 			'style' => 'height:132px; width:320px;'
 		));
@@ -143,10 +143,10 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !Radix::get_
 		</div>
 
 		<?php
-			if (Radix::get_selected()->posting_rules)
+			if ($radix->posting_rules)
 			{
 				$this->load->library('Markdown_Parser');
-				echo Markdown(Radix::get_selected()->posting_rules);
+				echo Markdown($radix->posting_rules);
 			}
 		?>
 	</div>

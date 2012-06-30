@@ -2,15 +2,17 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-foreach ($posts as $key => $post) :
+ Profiler::mark('start of board');
+
+
+
+foreach ($board->get_comments() as $key => $post) :
 	if (isset($post['op'])) :
 		$op = $post['op'];
-		$selected_radix = isset($op->board)?$op->board:Radix::get_selected();
-
 		$num =  $op->num . ( $op->subnum ? '_' . $op->subnum : '' );
 		$quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 ?>
-<article id="<?= $num ?>" class="clearfix thread doc_id_<?= $op->doc_id ?> board_<?= $selected_radix->shortname ?>">
+<article id="<?= $num ?>" class="clearfix thread doc_id_<?= $op->doc_id ?> board_<?= $op->board->shortname ?>">
 	<?php if ($op->preview_orig) : ?>
 		<div class="thread_image_box">
 			<?php if ($op->media_status != 'available') :?>
@@ -23,7 +25,7 @@ foreach ($posts as $key => $post) :
 				<?php endif; ?>
 			<?php else: ?>
 			<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank" rel="noreferrer" class="thread_image_link">
-				<?php if(!Auth::has_access('maccess.mod') && !$selected_radix->transparent_spoiler && $op->spoiler) :?>
+				<?php if(!Auth::has_access('maccess.mod') && !$op->board->transparent_spoiler && $op->spoiler) :?>
 				<div class="spoiler_box"><span class="spoiler_box_text"><?= __('Spoiler') ?><span class="spoiler_box_text_help"><?= __('Click to view') ?></span></div>
 				<?php else : ?>
 				<img src="<?= $op->thumb_link ?>" width="<?= $op->preview_w ?>" height="<?= $op->preview_h ?>" class="thread_image<?= ($op->spoiler) ? ' is_spoiler_image' : '' ?>" data-md5="<?= $op->media_hash ?>" />
@@ -37,8 +39,8 @@ foreach ($posts as $key => $post) :
 
 			<div class="post_file_controls">
 				<?php if ($op->media_status != 'banned') : ?>
-					<?php if (!$selected_radix->hide_thumbnails || Auth::has_access('maccess.mod')) : ?>
-					<a href="<?= Uri::create($selected_radix->shortname . '/search/image/' . $op->safe_media_hash) ?>" class="btnr parent"><?= __('View Same') ?></a><a
+					<?php if (!$op->board->hide_thumbnails || Auth::has_access('maccess.mod')) : ?>
+					<a href="<?= Uri::create($op->board->shortname . '/search/image/' . $op->safe_media_hash) ?>" class="btnr parent"><?= __('View Same') ?></a><a
 						href="http://google.com/searchbyimage?image_url=<?= $op->thumb_link ?>" target="_blank"
 						class="btnr parent">Google</a><a
 						href="http://iqdb.org/?url=<?= $op->thumb_link ?>" target="_blank"
@@ -67,16 +69,16 @@ foreach ($posts as $key => $post) :
 			<?php endif; ?>
 
 			<span class="time_wrap">
-				<time datetime="<?= gmdate(DATE_W3C, $op->timestamp) ?>" class="show_time" <?php if ($selected_radix->archive) : ?> title="<?= __('4chan Time') . ': ' . gmdate('D M d H:i:s Y', $op->original_timestamp) ?>"<?php endif; ?>><?= gmdate('D M d H:i:s Y', $op->timestamp) ?></time>
+				<time datetime="<?= gmdate(DATE_W3C, $op->timestamp) ?>" class="show_time" <?php if ($op->board->archive) : ?> title="<?= __('4chan Time') . ': ' . gmdate('D M d H:i:s Y', $op->original_timestamp) ?>"<?php endif; ?>><?= gmdate('D M d H:i:s Y', $op->timestamp) ?></time>
 			</span>
 
-			<a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $op->thread_num) . '#'  . $num ?>" data-post="<?= $num ?>" data-function="highlight">No.</a><a href="<?= Uri::create(array($selected_radix->shortname, $quote_mode, $op->thread_num)) . '#q' . $num ?>" data-post="<?= $num ?>" data-function="quote"><?= $num ?></a>
+			<a href="<?= Uri::create($op->board->shortname . '/thread/' . $op->thread_num) . '#'  . $num ?>" data-post="<?= $num ?>" data-function="highlight">No.</a><a href="<?= Uri::create(array($op->board->shortname, $quote_mode, $op->thread_num)) . '#q' . $num ?>" data-post="<?= $num ?>" data-function="quote"><?= $num ?></a>
 
 			<?php if ($op->spoiler == 1) : ?><span class="post_type"><i class="icon-eye-close" title="<?= htmlspecialchars(__('This post contains a spoiler image.')) ?>"></i></span><?php endif ?>
 			<?php if ($op->deleted == 1) : ?><span class="post_type"><i class="icon-trash" title="<?= htmlspecialchars(__('This post was deleted from 4chan manually.')) ?>"></i></span><?php endif ?>
 
 			<span class="post_controls">
-				<a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $num) ?>" class="btnr parent"><?= __('View') ?></a><a href="<?= Uri::create($selected_radix->shortname . '/thread/' . $num) . '#reply' ?>" class="btnr parent"><?= __('Reply') ?></a><?= (isset($post['omitted']) && $post['omitted'] > 50) ? '<a href="' . Uri::create($selected_radix->shortname . '/last50/' . $num) . '" class="btnr parent">' . __('Last 50') . '</a>' : '' ?><?= ($selected_radix->archive) ? '<a href="http://boards.4chan.org/' . $selected_radix->shortname . '/res/' . $num . '" class="btnr parent">' . __('Original') . '</a>' : '' ?><a href="<?= Uri::create($selected_radix->shortname . '/report/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="report"><?= __('Report') ?></a><?php if (Auth::has_access('maccess.mod') || !$selected_radix->archive) : ?><a href="<?= Uri::create($selected_radix->shortname . '/delete/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="delete"><?= __('Delete') ?></a><?php endif; ?>
+				<a href="<?= Uri::create($op->board->shortname . '/thread/' . $num) ?>" class="btnr parent"><?= __('View') ?></a><a href="<?= Uri::create($op->board->shortname . '/thread/' . $num) . '#reply' ?>" class="btnr parent"><?= __('Reply') ?></a><?= (isset($post['omitted']) && $post['omitted'] > 50) ? '<a href="' . Uri::create($op->board->shortname . '/last50/' . $num) . '" class="btnr parent">' . __('Last 50') . '</a>' : '' ?><?= ($op->board->archive) ? '<a href="http://boards.4chan.org/' . $op->board->shortname . '/res/' . $num . '" class="btnr parent">' . __('Original') . '</a>' : '' ?><a href="<?= Uri::create($op->board->shortname . '/report/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="report"><?= __('Report') ?></a><?php if (Auth::has_access('maccess.mod') || !$op->board->archive) : ?><a href="<?= Uri::create($op->board->shortname . '/delete/' . $op->doc_id) ?>" class="btnr parent" data-post="<?= $op->doc_id ?>" data-post-id="<?= $num ?>" data-controls-modal="post_tools_modal" data-backdrop="true" data-keyboard="true" data-function="delete"><?= __('Delete') ?></a><?php endif; ?>
 			</span>
 
 			<div class="backlink_list"<?= (isset($op->backlinks)) ? ' style="display:block"' : '' ?>>
@@ -88,20 +90,20 @@ foreach ($posts as $key => $post) :
 					<button class="btn btn-mini" data-function="activateModeration"><?= __('Mod') ?><?php if ($op->poster_ip) echo ' ' .inet_dtop($op->poster_ip) ?></button>
 				</div>
 				<div class="btn-group post_mod_controls" style="clear:both; padding:5px 0 0 0;">
-					<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_post"><?= __('Delete Post') ?></button>
+					<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_post"><?= __('Delete Post') ?></button>
 					<?php if ($op->preview_orig) : ?>
-						<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_image"><?= __('Delete Image') ?></button>
-						<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_md5"><?= __('Ban Image') ?></button>
+						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_image"><?= __('Delete Image') ?></button>
+						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_md5"><?= __('Ban Image') ?></button>
 					<?php endif; ?>
 					<?php if ($op->poster_ip) : ?>
-						<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . inet_dtop($op->poster_ip) ?></button>
-						<button class="btn btn-mini" data-function="searchUser" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP') ?></button>
+						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . inet_dtop($op->poster_ip) ?></button>
+						<button class="btn btn-mini" data-function="searchUser" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP') ?></button>
 						<?php if (get_setting('fs_sphinx_global')) : ?>
-						<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $selected_radix->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $selected_radix->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
+						<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $op->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $op->board->shortname)) ?>" data-id="<?= $op->doc_id ?>" data-poster-ip="<?= inet_dtop($op->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
 						<?php endif; ?>
 					<?php endif; ?>
 					<?php if (isset($op->report_status) && !is_null($op->report_status)) : ?>
-						<button class="btn btn-mini" data-function="mod" data-board="<?= $selected_radix->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_report"><?= __('Delete Report') ?></button>
+						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_report"><?= __('Delete Report') ?></button>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
@@ -135,6 +137,8 @@ foreach ($posts as $key => $post) :
 
 	<aside class="posts">
 		<?php
+			 Profiler::mark('start of this piece of code');
+
 		if (isset($post['posts'])) :
 			$post_counter = 0;
 			foreach ($post['posts'] as $p)
@@ -150,6 +154,8 @@ foreach ($posts as $key => $post) :
 
 				echo $this->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
 			}
+			Profiler::mark('end of this piece of code');
+
 		endif; ?>
 	</aside>
 

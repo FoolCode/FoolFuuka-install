@@ -332,9 +332,21 @@ class Theme extends \Model
 	 * @param type $name
 	 * @param type $value
 	 */
-	public function bind($name, $value)
+	public function bind($name, $value = null)
 	{
+		if(is_array($name))
+		{
+			foreach($name as $key => $val)
+			{
+				$this->bind($key, $val);
+			}
+
+			return $this;
+		}
+
 		$this->_view_variables[$name] = $value;
+
+		return $this;
 	}
 
 
@@ -347,6 +359,8 @@ class Theme extends \Model
 	public function unbind($name, $value)
 	{
 		unset($this->_view_variables[$name]);
+
+		return $this;
 	}
 
 
@@ -527,7 +541,16 @@ class Theme extends \Model
 		// rewrite short tags from CodeIgniter 2.1
 		if (version_compare(phpversion(), '5.4.0') < 0 && (bool) @ini_get('short_open_tag') === FALSE)
 		{
-			echo eval('?>'.preg_replace("/;*\s*\?>/", "; ?>", str_replace('<?=', '<?php echo ', file_get_contents($_location))));
+			try
+			{
+				$_tagged = \Cache::get('model.theme._build.view.'.str_replace(array('/', '\\'), array('.', '.'), $_location));
+			}
+			catch (\CacheNotFoundException $e)
+			{
+				$_tagged = '?>'.preg_replace("/;*\s*\?>/", "; ?>", str_replace('<?=', '<?php echo ', file_get_contents($_location)));
+				\Cache::set('model.theme._build.view.'.str_replace(array('/', '\\'), array('.', '.'), $_location), $_tagged, 2);
+			}
+			echo eval($_tagged);
 		}
 		else
 		{

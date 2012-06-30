@@ -2,7 +2,7 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-$selected_radix = isset($p->board)?$p->board:Radix::get_selected();
+$selected_radix = isset($p->board)?$p->board:$radix;
 
 $num =  $p->num . ( $p->subnum ? '_' . $p->subnum : '' );
 $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
