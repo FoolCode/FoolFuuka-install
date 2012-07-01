@@ -44,7 +44,7 @@ class Media extends \Model\Model_Base
 		'exif'
 	);
 
-	public static function get_fields()
+	protected static function p_get_fields()
 	{
 		return static::$_fields;
 	}
@@ -73,7 +73,7 @@ class Media extends \Model\Model_Base
 	}
 
 
-	public static function forge_from_comment($comment, $board)
+	protected static function p_forge_from_comment($comment, $board)
 	{
 		// if this comment doesn't have media data
 		if (!isset($comment->media_id) || !$comment->media_id)
@@ -155,7 +155,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	public function p_get_media_dir($thumbnail = false)
+	protected function p_get_media_dir($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
@@ -197,7 +197,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if it's a thumbnail we're looking for
 	 * @return bool|string FALSE on not found, a fallback image if not found for thumbnails, or the URL on success
 	 */
-	public function p_get_media_link($thumbnail = false)
+	protected function p_get_media_link($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
@@ -311,7 +311,7 @@ class Media extends \Model\Model_Base
 	 *
 	 * @return bool|string FALSE if there's no media, local URL if it's not remote, or the remote URL
 	 */
-	public function p_get_remote_media_link()
+	protected function p_get_remote_media_link()
 	{
 		if (!$this->media_hash)
 		{
@@ -352,7 +352,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $urlsafe if TRUE it will return a modified base64 compatible with URL
 	 * @return bool|string FALSE if media_hash not found, or the base64 string
 	 */
-	public function p_get_media_hash($urlsafe = FALSE)
+	protected function p_get_media_hash($urlsafe = FALSE)
 	{
 		if (is_object($this) || is_array($this))
 		{
@@ -382,14 +382,14 @@ class Media extends \Model\Model_Base
 		}
 	}
 
-	public static function urlsafe_b64encode($string)
+	protected static function p_urlsafe_b64encode($string)
 	{
 		$string = base64_encode($string);
 		return str_replace(array('+', '/', '='), array('-', '_', ''), $string);
 	}
 
 
-	public static function urlsafe_b64decode($string)
+	protected static function p_urlsafe_b64decode($string)
 	{
 		$string = str_replace(array('-', '_'), array('+', '/'), $string);
 		return base64_decode($string);
@@ -403,7 +403,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumb if thumbnail should be deleted
 	 * @return bool TRUE on success or if it didn't exist in first place, FALSE on failure
 	 */
-	public function p_delete_media($media = true, $thumb = true)
+	protected function p_delete_media($media = true, $thumb = true)
 	{
 		if (!$this->media_hash)
 		{

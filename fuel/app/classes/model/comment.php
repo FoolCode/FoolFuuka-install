@@ -14,14 +14,14 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @var array
 	 */
-	private static $_posts = array();
+	protected static $_posts = array();
 
 	/**
 	 * Array of backlinks found in the posts
 	 *
 	 * @var type
 	 */
-	private static $_backlinks = array();
+	protected static $_backlinks = array();
 
 	// global variables used for processing due to callbacks
 
@@ -31,7 +31,7 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @var bool
 	 */
-	private $_backlinks_hash_only_url = FALSE;
+	protected $_backlinks_hash_only_url = FALSE;
 
 	/**
 	 * Sets the callbacks so they return URLs good for realtime updates
@@ -39,9 +39,9 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @var type
 	 */
-	private $_realtime = FALSE;
-	private $_force_entries = FALSE;
-	private $_forced_entries = array(
+	protected $_realtime = FALSE;
+	protected $_force_entries = FALSE;
+	protected $_forced_entries = array(
 		'title_processed', 'name_processed', 'email_processed', 'trip_processed', 'media_orig_processed',
 		'preview_orig_processed', 'media_filename_processed', 'media_hash_processed', 'poster_hash_processed',
 		'original_timestamp', 'fourchan_date', 'comment', 'comment_processed'
@@ -166,7 +166,7 @@ class Comment extends \Model\Model_Base
 	 * @param object $post the database row for the post
 	 * @return string the processed comment
 	 */
-	public function p_process_comment()
+	protected function p_process_comment()
 	{
 		// default variables
 		$find = "'(\r?\n|^)(&gt;.*?)(?=$|\r?\n)'i";
@@ -253,7 +253,7 @@ class Comment extends \Model\Model_Base
 	 * @param array $matches the matches sent by preg_replace_callback
 	 * @return string the complete anchor
 	 */
-	public function p_process_internal_links($matches)
+	protected function p_process_internal_links($matches)
 	{
 		$num = $matches[2];
 
@@ -329,7 +329,7 @@ class Comment extends \Model\Model_Base
 	 * @param array $matches the matches sent by preg_replace_callback
 	 * @return string the complete anchor
 	 */
-	public function p_process_crossboard_links($matches)
+	protected function p_process_crossboard_links($matches)
 	{
 		// create link object with all relevant information
 		$data = new \stdClass();
@@ -374,7 +374,7 @@ class Comment extends \Model\Model_Base
 	 * @param object $post database row for the post
 	 * @return string the post box HTML with the selected theme
 	 */
-	private function p_build_board_comment()
+	protected function p_build_board_comment()
 	{
 		return \Theme::build('board_comment', array('p' => $post), TRUE, TRUE);
 	}
@@ -391,7 +391,7 @@ class Comment extends \Model\Model_Base
 	 * @param type $popup
 	 * @return type
 	 */
-	public static function auto_linkify($str, $type = 'both', $popup = FALSE)
+	protected static function p_auto_linkify($str, $type = 'both', $popup = FALSE)
 	{
 		if ($type != 'email')
 		{
@@ -486,7 +486,7 @@ class Comment extends \Model\Model_Base
 	}
 
 
-	public function clean_fields()
+	protected function clean_fields()
 	{
 		if (!\Auth::has_access('maccess.mod'))
 			unset($this->poster_ip);
@@ -501,7 +501,7 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @return array|bool
 	 */
-	private function p_delete($password = null, $force)
+	protected function p_delete($password = null, $force)
 	{
 		if(!\Auth::has_access('comment.passwordless_deletion'))
 		{
@@ -554,7 +554,7 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @return array name without tripcode and processed tripcode concatenated with processed secure tripcode
 	 */
-	private function p_process_name()
+	protected function p_process_name()
 	{
 		$name = $this->name;
 
@@ -595,7 +595,7 @@ class Comment extends \Model\Model_Base
 	 * @param string $plain the word to generate the tripcode from
 	 * @return string the processed tripcode
 	 */
-	private static function p_process_tripcode($plain)
+	protected static function p_process_tripcode($plain)
 	{
 		if (trim($plain) == '')
 		{
@@ -618,7 +618,7 @@ class Comment extends \Model\Model_Base
 	 * @param string $plain the word to generate the secure tripcode from
 	 * @return string the processed secure tripcode
 	 */
-	private function p_process_secure_tripcode($plain)
+	protected function p_process_secure_tripcode($plain)
 	{
 		return substr(base64_encode(sha1($plain . base64_decode(FOOLFUUKA_SECURE_TRIPCODE_SALT), TRUE)), 0, 11);
 	}
@@ -632,7 +632,7 @@ class Comment extends \Model\Model_Base
 	 * @param array $options modifiers
 	 * @return array error key with explanation to show to user, or success and post row
 	 */
-	private function p_comment()
+	protected function p_comment()
 	{
 		// check: if passed stopforumspam, check if banned internally
 		$check = \DB::select()->from('posters')->where('ip', \Input::ip_decimal())
