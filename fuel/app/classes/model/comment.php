@@ -91,6 +91,7 @@ class Comment extends \Model\Model_Base
 			case 'comment':
 				return $this->comment = @iconv('UTF-8', 'UTF-8//IGNORE', $this->comment);
 			case 'comment_processed':
+
 				return $this->comment_processed = @iconv('UTF-8', 'UTF-8//IGNORE', $this->process_comment());
 		}
 
@@ -165,7 +166,7 @@ class Comment extends \Model\Model_Base
 	 * @param object $post the database row for the post
 	 * @return string the processed comment
 	 */
-	private function p_process_comment()
+	public function p_process_comment()
 	{
 		// default variables
 		$find = "'(\r?\n|^)(&gt;.*?)(?=$|\r?\n)'i";
@@ -252,7 +253,7 @@ class Comment extends \Model\Model_Base
 	 * @param array $matches the matches sent by preg_replace_callback
 	 * @return string the complete anchor
 	 */
-	private function p_process_internal_links($matches)
+	public function p_process_internal_links($matches)
 	{
 		$num = $matches[2];
 
@@ -328,7 +329,7 @@ class Comment extends \Model\Model_Base
 	 * @param array $matches the matches sent by preg_replace_callback
 	 * @return string the complete anchor
 	 */
-	private function p_process_crossboard_links($matches)
+	public function p_process_crossboard_links($matches)
 	{
 		// create link object with all relevant information
 		$data = new \stdClass();
@@ -378,7 +379,7 @@ class Comment extends \Model\Model_Base
 		return \Theme::build('board_comment', array('p' => $post), TRUE, TRUE);
 	}
 
-	
+
 
 	/**
 	 * This function is grabbed from Codeigniter Framework on which
