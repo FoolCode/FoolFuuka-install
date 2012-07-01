@@ -243,7 +243,7 @@ class Controller_Chan extends Controller_Common
 		}
 		catch(\Model\BoardThreadNotFoundException $e)
 		{
-			return $this->post($num);
+			return $this->action_post($num);
 		}
 		catch (\Model\BoardException $e)
 		{
@@ -284,4 +284,36 @@ class Controller_Chan extends Controller_Common
 		return Response::forge($this->_theme->build('board'));
 	}
 
+
+	public function action_post($num)
+	{
+		try
+		{
+			$board = Board::forge()->get_post()->set_radix($this->_radix)->set_options('num', $num);
+
+			$comments = $board->get_comments();
+		}
+		catch (\Model\BoardMalformedInputException $e)
+		{
+			return $this->error(__('The post number you submitted is invalid.'));
+		}
+		catch (\Model\BoardPostNotFoundException $e)
+		{
+			return $this->error(__('The post you are looking for does not exist.'));
+		}
+
+		// it always returns an array
+		$comment = $comments[0];
+
+		$redirect =  Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/');
+
+		if (!$comment->op)
+		{
+			$redirect .= '#'.$comment->num.($comment->subnum ? '_'.$comment->subnum :'');
+		}
+
+		$this->_theme->set_title(__('Redirecting'));
+		$this->_theme->set_layout('redirect');
+		return Response::forge($this->_theme->build('redirect', array('url' => $redirect)));
+	}
 }

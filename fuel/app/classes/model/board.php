@@ -5,8 +5,10 @@ namespace Model;
 
 class BoardException extends \FuelException {}
 class BoardThreadNotFoundException extends \Model\BoardException {}
+class BoardPostNotFoundException extends \Model\BoardException {}
 class BoardMalformedInputException extends \Model\BoardException {}
-class BoardNotCompatibleMethod extends \Model\BoardException {}
+class BoardNotCompatibleMethodException extends \Model\BoardException {}
+class BoardMissingOptionsException extends \Model\BoardException {}
 
 
 /**
@@ -197,9 +199,41 @@ class Board extends \Model\Model_Base
 	}
 
 
-	public static function is_natural($num)
+	public static function is_natural($str)
 	{
-		return ctype_digit((string) $num);
+		return ctype_digit((string) $str);
+	}
+
+	public static function is_valid_post_number($str)
+	{
+		if(static::is_natural($str))
+		{
+			return true;
+		}
+
+		return (bool) preg_match('/^[0-9]+(,|_)[0-9]+$/', $str);
+	}
+
+	public static function split_post_number($num)
+	{
+		if (strpos($num, ',') !== FALSE)
+		{
+			$arr = explode(',', $num);
+		}
+		else if (strpos($num, '_') !== FALSE)
+		{
+			$arr = explode('_', $num);
+		}
+		else
+		{
+			$result['num'] = $num;
+			$result['subnum'] = 0;
+			return $result;
+		}
+
+		$result['num'] = $arr[0];
+		$result['subnum'] = isset($arr[1]) ? $arr[1] : 0;
+		return $result;
 	}
 
 
@@ -537,7 +571,7 @@ class Board extends \Model\Model_Base
 	{
 		if ($this->_method_fetching != 'get_thread_comments')
 		{
-			throw new BoardNotCompatibleMethod;
+			throw new BoardNotCompatibleMethodException;
 		}
 
 		// define variables to override
@@ -611,5 +645,54 @@ class Board extends \Model\Model_Base
 
 		return $result;
 	}
+
+
+	protected function p_get_post()
+	{
+		// default variables
+		$this->set_method_fetching('get_post_comments');
+
+		return $this;
+	}
+
+
+	protected function  p_get_post_comments()
+	{
+		extract($this->_options);
+
+		$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
+
+		if (isset($this->_options['num']))
+		{
+			if(!static::is_valid_post_number($this->_options['num']))
+			{
+				throw new BoardMalformedInputException;
+			}
+			$num_arr = static::split_post_number($this->_options['num']);
+			$query->where('num' , $num_arr['num'])->where('subnum', $num_arr['subnum']);
+		}
+		else if (isset($this->_options['doc_id']))
+		{
+			$query->where('doc_id', $this->_options['doc_id']);
+			break;
+		}
+		else
+		{
+			throw new BoardMissingOptionsException;
+		}
+
+		$result = $query->as_object()->execute()->as_array();
+
+		if(!count($result))
+		{
+			throw new BoardPostNotFoundException;
+		}
+
+		$this->_comments_unsorted = Comment::forge($result, $this->_radix);
+		$this->_comments = $this->_comments_unsorted;
+
+		return $this;
+	}
+
 
 }
