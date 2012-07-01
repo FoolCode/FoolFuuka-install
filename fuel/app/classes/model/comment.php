@@ -378,18 +378,7 @@ class Comment extends \Model\Model_Base
 		return \Theme::build('board_comment', array('p' => $post), TRUE, TRUE);
 	}
 
-	public static function urlsafe_b64encode($string)
-	{
-		$string = base64_encode($string);
-		return str_replace(array('+', '/', '='), array('-', '_', ''), $string);
-	}
-
-
-	public static function urlsafe_b64decode($string)
-	{
-		$string = str_replace(array('-', '_'), array('+', '/'), $string);
-		return base64_decode($string);
-	}
+	
 
 	/**
 	 * This function is grabbed from Codeigniter Framework on which

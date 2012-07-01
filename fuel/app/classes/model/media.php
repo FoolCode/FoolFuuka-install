@@ -27,9 +27,9 @@ class Media extends \Model\Model_Base
 	public $media_orig = null;
 	public $exif = null;
 
-	public $_board = null;
+	public $board = null;
 
-	private static $_fields = array(
+	public static $_fields = array(
 		'media_id',
 		'spoiler',
 		'preview_orig',
@@ -89,6 +89,9 @@ class Media extends \Model\Model_Base
 	{
 		switch ($name)
 		{
+			case 'media_status':
+				$this->media_link = $this->get_media_link();
+				return $this->media_status;
 			case 'safe_media_hash':
 				return $this->safe_media_hash = $this->get_media_hash(true);
 			case 'remote_media_link':
@@ -107,23 +110,28 @@ class Media extends \Model\Model_Base
 					}
 					catch (\CacheNotFoundException $e)
 					{
-						$imgpath = $this->get_media_dir(true);
-						$imgsize = false;
-
-						if ($imgpath)
+						try
 						{
-							$imgsize = @getimagesize($imgpath);
+							$imgpath = $this->get_media_dir(true);
+							$imgsize = false;
+
+							if ($imgpath)
+							{
+								$imgsize = @getimagesize($imgpath);
+							}
+
+							\Cache::set('comment.'.$this->board->id.'.'.$this->doc_id.'_spoiler_size', $imgsize, 86400);
+
+							if ($imgsize !== FALSE)
+							{
+								$this->preview_h = $imgsize[1];
+								$this->preview_w = $imgsize[0];
+							}
+
+							return $this->$name;
 						}
-
-						\Cache::set('comment.'.$this->board->id.'.'.$this->doc_id.'_spoiler_size', $imgsize, 86400);
-
-						if ($imgsize !== FALSE)
-						{
-							$post->preview_h = $imgsize[1];
-							$post->preview_w = $imgsize[0];
-						}
-
-						return $this->$name;
+						catch (MediaNotFoundException $e)
+						{}
 					}
 				}
 				$this->preview_w = 0;
@@ -228,7 +236,7 @@ class Media extends \Model\Model_Base
 			// locate the image
 			if ($thumbnail && file_exists($this->get_media_dir($thumbnail)) !== false)
 			{
-				if ($post->op == 1)
+				if ($this->op == 1)
 				{
 					$image = $this->preview_op ? : $this->preview_reply;
 				}
@@ -303,7 +311,7 @@ class Media extends \Model\Model_Base
 	 *
 	 * @return bool|string FALSE if there's no media, local URL if it's not remote, or the remote URL
 	 */
-	private function p_get_remote_media_link()
+	public function p_get_remote_media_link()
 	{
 		if (!$this->media_hash)
 		{
@@ -322,11 +330,14 @@ class Media extends \Model\Model_Base
 		}
 		else
 		{
-			if (file_exists($this->get_media_dir()) !== false)
+			try
 			{
-				return $this->get_media_link();
+				if (file_exists($this->get_media_dir()) !== false)
+				{
+					return $this->get_media_link();
+				}
 			}
-			else
+			catch (MediaNotFoundException $e)
 			{
 				return false;
 			}
@@ -369,6 +380,19 @@ class Media extends \Model\Model_Base
 		{
 			return base64_encode(static::urlsafe_b64decode($media_hash));
 		}
+	}
+
+	public static function urlsafe_b64encode($string)
+	{
+		$string = base64_encode($string);
+		return str_replace(array('+', '/', '='), array('-', '_', ''), $string);
+	}
+
+
+	public static function urlsafe_b64decode($string)
+	{
+		$string = str_replace(array('-', '_'), array('+', '/'), $string);
+		return base64_decode($string);
 	}
 
 

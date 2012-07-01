@@ -148,7 +148,7 @@ foreach ($board->get_comments() as $key => $post) :
 				if ($p->thread_num == 0)
 					$p->thread_num = $p->num;
 
-				echo $this->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
+				//echo $this->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
 			}
 
 		endif; ?>
