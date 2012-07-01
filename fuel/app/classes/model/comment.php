@@ -71,6 +71,12 @@ class Comment extends \Model\Model_Base
 
 	public function __get($name)
 	{
+		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
+		{
+			$processing_name = substr($name, 0, strlen($name) - 10);
+			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $this->$processing_name));
+		}
+
 		switch ($name)
 		{
 			case 'original_timestamp':
@@ -88,11 +94,7 @@ class Comment extends \Model\Model_Base
 				return $this->comment_processed = @iconv('UTF-8', 'UTF-8//IGNORE', $this->process_comment());
 		}
 
-		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
-		{
-			$processing_name = substr($name, 0, strlen($name) - 10);
-			return $this->$name = e(@iconv('UTF-8', 'UTF-8//IGNORE', $this->$processing_name));
-		}
+
 
 		return null;
 	}
@@ -126,15 +128,22 @@ class Comment extends \Model\Model_Base
 			$this->_forced_entries[] = 'report_reason_processed';
 		}
 
-		$media = Media::get_fields();
+		$media_fields = Media::get_fields();
+		$media = new \stdClass();
 
 		foreach ($post as $key => $value)
 		{
-			if(!in_array($key, $media))
+			if(!in_array($key, $media_fields))
+			{
 				$this->$key = $value;
+			}
+			else
+			{
+				$media->$key = $value;
+			}
 		}
 
-		$this->media = Media::forge_from_comment($this);
+		$this->media = Media::forge_from_comment($media);
 
 		foreach ($options as $key => $value)
 		{

@@ -2,13 +2,13 @@
 
 namespace Model;
 
-class CommentMediaNotFound extends \FuelException {}
+class MediaNotFoundException extends \FuelException {}
 
-class CommentMediaHashNotFound extends CommentMediaNotFound {}
-class CommentMediaDirNotAvailable extends CommentMediaNotFound {}
-class CommentMediaFileNotFound extends CommentMediaNotFound {}
-class CommentMediaHidden extends CommentMediaNotFound {}
-class CommentMediaHiddenDay extends CommentMediaNotFound {}
+class MediaHashNotFoundException extends \Model\MediaNotFoundException {}
+class MediaDirNotAvailableException extends \Model\MediaNotFoundException {}
+class MediaFileNotFoundException extends \Model\MediaNotFoundException {}
+class MediaHiddenException extends \Model\MediaNotFoundException {}
+class MediaHiddenDayException extends \Model\MediaNotFoundException {}
 
 
 
@@ -44,7 +44,7 @@ class Media extends \Model\Model_Base
 		'exif'
 	);
 
-	protected static function p_get_fields()
+	public static function get_fields()
 	{
 		return static::$_fields;
 	}
@@ -77,7 +77,7 @@ class Media extends \Model\Model_Base
 	}
 
 
-	protected static function p_forge_from_comment($comment)
+	public static function forge_from_comment($comment)
 	{
 		// if this comment doesn't have media data
 		if (!isset($comment->media_id) || !$comment->media_id)
@@ -151,11 +151,11 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	private function p_get_media_dir($thumbnail = false)
+	public function p_get_media_dir($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
-			throw new \CommentMediaHashNotFound;
+			throw new MediaHashNotFoundException;
 		}
 
 		if ($thumbnail === true)
@@ -177,7 +177,7 @@ class Media extends \Model\Model_Base
 		// if we don't check, the return will return a valid folder that will evaluate file_exists() as TRUE
 		if (is_null($image))
 		{
-			throw new \CommentMediaDirNotAvailable;
+			throw new MediaDirNotAvailableException;
 		}
 
 		return Preferences::get('fu.boards_directory').'/'.$this->board->shortname.'/'
@@ -193,11 +193,11 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if it's a thumbnail we're looking for
 	 * @return bool|string FALSE on not found, a fallback image if not found for thumbnails, or the URL on success
 	 */
-	private function p_get_media_link($thumbnail = false)
+	public function p_get_media_link($thumbnail = false)
 	{
 		if (!$this->media_hash)
 		{
-			throw new \CommentMediaHashNotFound;
+			throw new MediaHashNotFoundException;
 		}
 
 		$this->media_status = 'available';
@@ -209,14 +209,14 @@ class Media extends \Model\Model_Base
 			if (!$this->board->hide_thumbnails)
 			{
 				$this->media_status = 'forbidden';
-				throw \CommentMediaHidden;
+				throw new MediaHiddenException;
 			}
 
 			// add a delay of 1 day to all thumbnails
 			if ($this->board->delay_thumbnails && ($this->timestamp + 86400) > time())
 			{
 				$this->media_status = 'forbidden-24h';
-				throw \CommentMediaHiddenDay;
+				throw new MediaHiddenDayException;
 			}
 		}
 
@@ -224,34 +224,50 @@ class Media extends \Model\Model_Base
 		if ($this->banned == 1)
 		{
 			$this->media_status = 'banned';
-			throw \CommentMediaBanned;
+			throw new MediaBannedException;
 		}
 
-		// locate the image
-		if ($thumbnail && file_exists($this->get_media_dir($thumbnail)) !== false)
+		try
 		{
-			if ($post->op == 1)
+			// locate the image
+			if ($thumbnail && file_exists($this->get_media_dir($thumbnail)) !== false)
 			{
-				$image = $this->preview_op ? : $this->preview_reply;
+				if ($post->op == 1)
+				{
+					$image = $this->preview_op ? : $this->preview_reply;
+				}
+				else
+				{
+					$image = $this->preview_reply ? : $this->preview_op;
+				}
 			}
-			else
+		}
+		catch (MediaNotFoundException $e)
+		{}
+
+		try
+		{
+			// full image
+			if (!$thumbnail && file_exists($this->get_media_dir(false)))
 			{
-				$image = $this->preview_reply ? : $this->preview_op;
+				$image = $this->media;
 			}
 		}
+		catch (MediaNotFoundException $e)
+		{}
 
-		// full image
-		if (!$thumbnail && file_exists($this->get_media_dir(false)))
-		{
-			$image = $this->media;
-		}
 
-		// fallback if we have the full image but not the thumbnail
-		if ($thumbnail && !isset($image) && file_exists($this->get_media_dir(false)))
+		try
 		{
-			$thumbnail = FALSE;
-			$image = $this->media;
+			// fallback if we have the full image but not the thumbnail
+			if ($thumbnail && !isset($image) && file_exists($this->get_media_dir(false)))
+			{
+				$thumbnail = FALSE;
+				$image = $this->media;
+			}
 		}
+		catch (MediaNotFoundException $e)
+		{}
 
 		if(isset($image))
 		{
@@ -295,7 +311,7 @@ class Media extends \Model\Model_Base
 	{
 		if (!$this->media_hash)
 		{
-			throw new \CommentMediaHashNotFound;
+			throw new MediaHashNotFoundException;
 		}
 
 		if ($this->board->archive && $this->board->images_url != "")
@@ -329,13 +345,13 @@ class Media extends \Model\Model_Base
 	 * @param bool $urlsafe if TRUE it will return a modified base64 compatible with URL
 	 * @return bool|string FALSE if media_hash not found, or the base64 string
 	 */
-	private function p_get_media_hash($urlsafe = FALSE)
+	public function p_get_media_hash($urlsafe = FALSE)
 	{
 		if (is_object($this) || is_array($this))
 		{
 			if (!$this->media_hash)
 			{
-				throw new \CommentMediaHashNotFound;
+				throw new MediaHashNotFoundException;
 			}
 
 			$media_hash = $this->media_hash;
@@ -367,11 +383,11 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumb if thumbnail should be deleted
 	 * @return bool TRUE on success or if it didn't exist in first place, FALSE on failure
 	 */
-	private function p_delete_media($media = true, $thumb = true)
+	public function p_delete_media($media = true, $thumb = true)
 	{
 		if (!$this->media_hash)
 		{
-			throw new \CommentMediaHashNotFound;
+			throw new MediaHashNotFoundException;
 		}
 
 		// delete media file only if there is only one image OR the image is banned
@@ -384,7 +400,7 @@ class Media extends \Model\Model_Base
 				{
 					if (!unlink($media_file))
 					{
-						throw new \CommentMediaFileNotFound;
+						throw new MediaFileNotFoundException;
 					}
 				}
 			}
@@ -400,7 +416,7 @@ class Media extends \Model\Model_Base
 				{
 					if (!unlink($thumb_file))
 					{
-						throw new \CommentMediaFileNotFound;
+						throw new MediaFileNotFoundException;
 					}
 				}
 
@@ -411,7 +427,7 @@ class Media extends \Model\Model_Base
 				{
 					if (!unlink($thumb_file))
 					{
-						throw new \CommentMediaFileNotFound;
+						throw new MediaFileNotFoundException;
 					}
 				}
 
