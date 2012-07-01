@@ -27,7 +27,7 @@ class Media extends \Model\Model_Base
 	public $media_orig = null;
 	public $exif = null;
 
-	public $_comment = null;
+	public $_board = null;
 
 	private static $_fields = array(
 		'media_id',
@@ -50,17 +50,13 @@ class Media extends \Model\Model_Base
 	}
 
 
-	public function __construct($comment)
+	public function __construct($comment, $board)
 	{
-		$this->comment = $comment;
-		$this->board = $comment->board;
+		$this->board = $board;
 
 		foreach($comment as $key => $item)
 		{
-			if(in_array($key, static::$_fields))
-			{
-				$this->$key = $item;
-			}
+			$this->$key = $item;
 		}
 
 		if ($this->board->archive)
@@ -77,7 +73,7 @@ class Media extends \Model\Model_Base
 	}
 
 
-	public static function forge_from_comment($comment)
+	public static function forge_from_comment($comment, $board)
 	{
 		// if this comment doesn't have media data
 		if (!isset($comment->media_id) || !$comment->media_id)
@@ -85,7 +81,7 @@ class Media extends \Model\Model_Base
 			return null;
 		}
 
-		return new Media($comment);
+		return new Media($comment, $board);
 	}
 
 
