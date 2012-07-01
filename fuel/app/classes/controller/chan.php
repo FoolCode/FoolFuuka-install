@@ -21,8 +21,6 @@ class Controller_Chan extends Controller_Common
 	{
 		parent::before();
 
-		header('X-UA-Compatible: IE=edge,chrome=1');
-		header('imagetoolbar: false');
 		$this->_theme = new \Theme();
 
 		$this->_theme->set_theme('default');
@@ -108,26 +106,55 @@ class Controller_Chan extends Controller_Common
 	}
 
 
-	public function error($error = null)
+	protected function error($error = null)
 	{
 		if (is_null($error))
 		{
-			return Response::forge($this->_theme->build('error', array('error' => __('Something unexpected happened.'))));
+			return Response::forge($this->_theme->build('error', array('error' => __('We encountered an unexpected error.'))));
 		}
 		return Response::forge($this->_theme->build('error', array('error' => $error)));
 	}
 
 
-	public function action_page($page = 1, $by_thread = FALSE, $options = array())
+	public function action_page_mode($_mode = 'by_post')
 	{
-		if (empty($options))
-		{
-			$options['per_page'] = $this->_radix->threads_per_page;
-			$options['per_thread'] = 6;
-			$options['order'] = Cookie::get('default_theme_by_thread'.
-					($this->_radix->archive ? '_archive' : '_board')) ? 'by_thread' : 'by_post';
-		}
+		$mode = $_mode === 'by_thread' ? 'by_thread' : 'by_post';
+		$type = $this->_radix->archive ? 'archive' : 'board';
+		Cookie::set('default_theme_page_mode_'.$type, $mode);
 
+		Response::redirect($this->_radix->shortname);
+	}
+
+
+	public function action_page($page = 1)
+	{
+		$order = Cookie::get('default_theme_page_mode_'. ($this->_radix->archive ? 'archive' : 'board')) === 'by_thread'
+			? 'by_thread' : 'by_post';
+
+		$options = array(
+			'per_page' => $this->_radix->threads_per_page,
+			'per_thread' => 6,
+			'order' => $order
+		);
+
+		return $this->latest($page, $options);
+	}
+
+
+	public function action_ghost($page = 1)
+	{
+		$options = array(
+			'per_page' => $this->_radix->threads_per_page,
+			'per_thread' => 6,
+			'order' => 'ghost'
+		);
+
+		return $this->latest($page, $options);
+	}
+
+
+	protected function latest($page = 1, $options = array())
+	{
 		try
 		{
 			$board = Board::forge()->get_latest()->set_radix($this->_radix)->set_page($page)->set_options($options);
@@ -143,17 +170,30 @@ class Controller_Chan extends Controller_Common
 
 		if ($page > 1)
 		{
+			switch($options['order'])
+			{
+				case 'by_post':
+					$order_string = __('Threads by latest replies');
+					break;
+				case 'by_thread':
+					$order_string = __('Threads by creation');
+					break;
+				case 'ghost':
+					$order_string = __('Threads by latest ghost replies');
+					break;
+			}
+
 			$this->_theme->set_title(__('Page').' '.$page);
-			$this->_theme->bind('section_title', ($by_thread ? __('Latest by Thread').' - ' : '').__('Page').' '.$page);
+			$this->_theme->bind('section_title', $order_string.' - '.__('Page').' '.$page);
 		}
 
 		$this->_theme->bind(array(
 			'is_page' => true,
 			'board' => $board,
 			'posts_per_thread' => $options['per_thread'] - 1,
-			'order' => $by_thread ? 'by_thread' : 'by_post',
+			'order' => $options['order'],
 			'pagination' => array(
-				'base_url' => Uri::create(array($this->_radix->shortname, ($by_thread ? 'by_thread' : 'page'))),
+				'base_url' => Uri::create(array($this->_radix->shortname, $options['order'])),
 				'current_page' => $page,
 				'total' => $board->get_count()
 			)
@@ -166,6 +206,7 @@ class Controller_Chan extends Controller_Common
 
 		return Response::forge($this->_theme->build('board'));
 	}
+
 
 
 	public function action_thread($num = 0)
@@ -189,7 +230,7 @@ class Controller_Chan extends Controller_Common
 	}
 
 
-	public function thread($num = 0, $options = array())
+	protected function thread($num = 0, $options = array())
 	{
 		$num = str_replace('S', '', $num);
 

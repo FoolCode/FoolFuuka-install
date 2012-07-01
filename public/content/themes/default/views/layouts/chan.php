@@ -1,4 +1,7 @@
-<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed');
+header('X-UA-Compatible: IE=edge,chrome=1');
+header('imagetoolbar: false');
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -120,15 +123,15 @@
 								</a>
 								<ul class="dropdown-menu" style="margin-left:-9px">
 									<li>
-										<a href="<?= Uri::create(array($radix->shortname, 'by_post')) ?>">
+										<a href="<?= Uri::create(array($radix->shortname, 'page_mode', 'by_post')) ?>">
 											<?= __('By Post') ?>
-											<?php if (\Cookie::get('default_theme_by_thread' . ($radix->archive?'_archive':'_board')) != 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_page_mode_' . ($radix->archive?'archive':'board')) !== 'by_thread') echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 									<li>
-										<a href="<?= Uri::create(array($radix->shortname, 'by_thread')) ?>">
+										<a href="<?= Uri::create(array($radix->shortname, 'page_mode', 'by_thread')) ?>">
 											<?= __('By Thread') ?>
-											<?php if (\Cookie::get('default_theme_by_thread' . ($radix->archive?'_archive':'_board')) == 1) echo ' <i class="icon-ok"></i>'; ?>
+											<?php if (\Cookie::get('default_theme_page_mode_' . ($radix->archive?'archive':'board')) === 'by_thread') echo ' <i class="icon-ok"></i>'; ?>
 										</a>
 									</li>
 								</ul>

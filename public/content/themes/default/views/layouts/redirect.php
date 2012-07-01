@@ -1,4 +1,6 @@
-<?php if (!defined('DOCROOT')) exit('No direct script access allowed'); ?>
+<?php if (!defined('DOCROOT')) exit('No direct script access allowed');
+header('X-UA-Compatible: IE=edge,chrome=1');
+header('imagetoolbar: false');?>
 <!DOCTYPE html>
 <html>
 	<head>

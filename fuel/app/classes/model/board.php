@@ -294,7 +294,7 @@ class Board extends \Model\Model_Base
 
 			case 'by_thread':
 
-				$query = \DB::select('*', 'thread_num as unq_thread_num')
+				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
 						->order_by('thread_num', 'desc')
 						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
@@ -302,9 +302,9 @@ class Board extends \Model\Model_Base
 
 			case 'ghost':
 
-				$query = \DB::select('*', 'thread_num as unq_thread_num')
+				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
-						->where('time_ghost_bump', \DB::expr('IS NOT NULL'))
+						->where('time_ghost_bump', '', \DB::expr('IS NOT NULL'))
 						->order_by('time_ghost_bump', 'desc')
 						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
 				break;
