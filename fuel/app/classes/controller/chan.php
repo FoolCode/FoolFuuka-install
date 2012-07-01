@@ -360,7 +360,7 @@ class Controller_Chan extends Controller_Common
 		$hash = mb_substr($imploded_uri, 0, 22);
 		if (strpos($hash, '/') !== false || strpos($hash, '+') !== false)
 		{
-			$hash = Comment::get_media_hash(true, $hash);
+			$hash = Comment::urlsafe_b64encode(Comment::urlsafe_b64decode($hash));
 		}
 
 		// Obtain the PAGE from URI.
@@ -373,7 +373,63 @@ class Controller_Chan extends Controller_Common
 		// Fetch the POSTS with same media hash and generate the IMAGEPOSTS.
 		$page = intval($page);
 		Response::redirect(Uri::create(array(
-			get_selected_radix()->shortname, 'search', 'image', $hash, 'order', 'desc', 'page', $page))
-			, 'location', 301);
+			get_selected_radix()->shortname, 'search', 'image', $hash, 'order', 'desc', 'page', $page)), 'location', 301);
+	}
+
+
+	/**
+	 * @param $filename
+	 */
+	public function action_full_image($filename)
+	{
+		// Check if $filename is valid.
+		if (!in_array(substr($filename, -3), array('gif', 'jpg', 'png')) || !Board::is_natural(substr($filename, 0, 13)))
+		{
+			return $this->action_404();
+		}
+
+		// Fetch the FULL IMAGE with the FILENAME specified.
+		$image = Comment::get_full_media(get_selected_radix(), $filename);
+
+		if (isset($image['media_link']))
+		{
+			redirect($image['media_link'], 'location', 303);
+		}
+
+		if (isset($image['error_type']))
+		{
+			// NOT FOUND, INVALID MEDIA HASH
+			if ($image['error_type'] == 'no_record')
+			{
+				$this->output->set_status_header('404');
+				$this->theme->set_title(__('Error'));
+				$this->_set_parameters(
+					array(
+						'error' => __('There is no record of the specified image in our database.')
+					)
+				);
+				$this->theme->build('error');
+				return FALSE;
+			}
+
+			// NOT AVAILABLE ON SERVER
+			if ($image['error_type'] == 'not_on_server')
+			{
+				$this->output->set_status_header('404');
+				$this->theme->set_title(get_selected_radix()->formatted_title . ' &raquo; ' . __('Image Pruned'));
+				$this->_set_parameters(
+					array(
+						'section_title' => __('Error 404: The image has been pruned from the server.'),
+						'modifiers' => array('post_show_single_post' => TRUE, 'post_show_view_button' => TRUE),
+						'posts' => array('posts' => array('posts' => array($image['result'])))
+					)
+				);
+				$this->theme->build('board');
+				return FALSE;
+			}
+		}
+
+		// we reached the end with nothing
+		return $this->show_404();
 	}
 }

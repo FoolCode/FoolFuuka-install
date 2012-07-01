@@ -2,10 +2,6 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
- Profiler::mark('start of board');
-
-
-
 foreach ($board->get_comments() as $key => $post) :
 	if (isset($post['op'])) :
 		$op = $post['op'];
@@ -13,39 +9,39 @@ foreach ($board->get_comments() as $key => $post) :
 		$quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 ?>
 <article id="<?= $num ?>" class="clearfix thread doc_id_<?= $op->doc_id ?> board_<?= $op->board->shortname ?>">
-	<?php if ($op->preview_orig) : ?>
+	<?php if (!is_null($op->media)) : ?>
 		<div class="thread_image_box">
-			<?php if ($op->media_status != 'available') :?>
-				<?php if ($op->media_status == 'banned') : ?>
+			<?php if ($op->media->media_status != 'available') : ?>
+				<?php if ($op->media->media_status == 'banned') : ?>
 					<img src="<?= Uri::base() . $this->fallback_asset('images/banned-image.png')?>" width="150" height="150" />
 				<?php else : ?>
-					<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank" rel="noreferrer" class="thread_image_link">
+					<a href="<?= ($op->media->media_link) ? $op->media->media_link : $op->media->remote_media_link ?>" target="_blank" rel="noreferrer" class="thread_image_link">
 						<img src="<?= Uri::base() . $this->fallback_asset('images/missing-image.jpg')?>" width="150" height="150" />
 					</a>
 				<?php endif; ?>
 			<?php else: ?>
-			<a href="<?= ($op->media_link) ? $op->media_link : $op->remote_media_link ?>" target="_blank" rel="noreferrer" class="thread_image_link">
-				<?php if(!Auth::has_access('maccess.mod') && !$op->board->transparent_spoiler && $op->spoiler) :?>
+			<a href="<?= ($op->media->media_link) ? $op->media->media_link : $op->media->remote_media_link ?>" target="_blank" rel="noreferrer" class="thread_image_link">
+				<?php if(!Auth::has_access('maccess.mod') && !$op->board->transparent_spoiler && $op->media->spoiler) :?>
 				<div class="spoiler_box"><span class="spoiler_box_text"><?= __('Spoiler') ?><span class="spoiler_box_text_help"><?= __('Click to view') ?></span></div>
 				<?php else : ?>
-				<img src="<?= $op->thumb_link ?>" width="<?= $op->preview_w ?>" height="<?= $op->preview_h ?>" class="thread_image<?= ($op->spoiler) ? ' is_spoiler_image' : '' ?>" data-md5="<?= $op->media_hash ?>" />
+				<img src="<?= $op->media->thumb_link ?>" width="<?= $op->media->preview_w ?>" height="<?= $op->media->preview_h ?>" class="thread_image<?= ($op->media->spoiler) ? ' is_spoiler_image' : '' ?>" data-md5="<?= $op->media->media_hash ?>" />
 				<?php endif; ?>
 			</a>
 			<?php endif; ?>
 
-			<div class="post_file" style="padding-left: 2px;<?php if ($op->preview_w > 149) : ?> max-width:<?= $op->preview_w .'px'; endif; ?>;">
-				<?= \Num::format_bytes($op->media_size, 0) . ', ' . $op->media_w . 'x' . $op->media_h . ', ' . $op->media_filename_processed; ?>
+			<div class="post_file" style="padding-left: 2px;<?php if ($op->media->preview_w > 149) : ?> max-width:<?= $op->media->preview_w .'px'; endif; ?>;">
+				<?= \Num::format_bytes($op->media->media_size, 0) . ', ' . $op->media->media_w . 'x' . $op->media->media_h . ', ' . $op->media->media_filename_processed; ?>
 			</div>
 
 			<div class="post_file_controls">
-				<?php if ($op->media_status != 'banned') : ?>
+				<?php if ($op->media->media_status != 'banned') : ?>
 					<?php if (!$op->board->hide_thumbnails || Auth::has_access('maccess.mod')) : ?>
-					<a href="<?= Uri::create($op->board->shortname . '/search/image/' . $op->safe_media_hash) ?>" class="btnr parent"><?= __('View Same') ?></a><a
-						href="http://google.com/searchbyimage?image_url=<?= $op->thumb_link ?>" target="_blank"
+					<a href="<?= Uri::create($op->board->shortname . '/search/image/' . $op->media->safe_media_hash) ?>" class="btnr parent"><?= __('View Same') ?></a><a
+						href="http://google.com/searchbyimage?image_url=<?= $op->media->thumb_link ?>" target="_blank"
 						class="btnr parent">Google</a><a
-						href="http://iqdb.org/?url=<?= $op->thumb_link ?>" target="_blank"
+						href="http://iqdb.org/?url=<?= $op->media->thumb_link ?>" target="_blank"
 						class="btnr parent">iqdb</a><a
-						href="http://saucenao.com/search.php?url=<?= $op->thumb_link ?>" target="_blank"
+						href="http://saucenao.com/search.php?url=<?= $op->media->thumb_link ?>" target="_blank"
 						class="btnr parent">SauceNAO</a>
 					<?php endif; ?>
 				<?php endif; ?>
@@ -91,7 +87,7 @@ foreach ($board->get_comments() as $key => $post) :
 				</div>
 				<div class="btn-group post_mod_controls" style="clear:both; padding:5px 0 0 0;">
 					<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_post"><?= __('Delete Post') ?></button>
-					<?php if ($op->preview_orig) : ?>
+					<?php if (!is_null($op->media)) : ?>
 						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="remove_image"><?= __('Delete Image') ?></button>
 						<button class="btn btn-mini" data-function="mod" data-board="<?= $op->board->shortname ?>" data-id="<?= $op->doc_id ?>" data-action="ban_md5"><?= __('Ban Image') ?></button>
 					<?php endif; ?>
@@ -154,7 +150,6 @@ foreach ($board->get_comments() as $key => $post) :
 
 				echo $this->build('board_comment', array('p' => $p, 'modifiers' => $modifiers), TRUE, TRUE);
 			}
-			Profiler::mark('end of this piece of code');
 
 		endif; ?>
 	</aside>

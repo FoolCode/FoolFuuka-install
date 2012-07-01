@@ -2,12 +2,11 @@
 
 namespace Model;
 
-\Autoloader::add_classes(array(
-	'Model\\BoardMessagesNotFound' => APPPATH.'classes/model/board/error.php'
-));
+
+class CommentDeleteWrongPass extends \FuelException {}
 
 
-class Comment extends \Model
+class Comment extends \Model\Model_Base
 {
 
 	/**
@@ -51,7 +50,6 @@ class Comment extends \Model
 	public $board = null;
 
 	public $doc_id = 0;
-	public $media_id = 0;
 	public $poster_ip = null;
 	public $num = 0;
 	public $subnum = 0;
@@ -66,83 +64,9 @@ class Comment extends \Model
 	public $title = null;
 	public $comment = null;
 	public $delpass = null;
-	public $spoiler = 0;
 	public $poster_hash = null;
-	public $poster_orig = null;
-	public $preview_w = 0;
-	public $preview_h = 0;
-	public $media_filename = null;
-	public $media_w = 0;
-	public $media_h = 0;
-	public $media_size = 0;
-	public $media_hash = null;
-	public $media_orig = null;
-	public $exif = null;
 
-
-	/**
-	 * The functions with 'p_' prefix will respond to plugins before and after
-	 *
-	 * @param string $name
-	 * @param array $parameters
-	 */
-	public function __call($name, $parameters)
-	{
-		$before = Plugins::run_hook('model/comment/call/before/'.$name, $parameters);
-
-		if (is_array($before))
-		{
-			// if the value returned is an Array, a plugin was active
-			$parameters = $before['parameters'];
-		}
-
-		// if the replace is anything else than NULL for all the functions ran here, the
-		// replaced function wont' be run
-		$replace = Plugins::run_hook('model/comment/call/replace/'.$name, $parameters, array($parameters));
-
-		if ($replace['return'] !== NULL)
-		{
-			$return = $replace['return'];
-		}
-		else
-		{
-			switch (count($parameters))
-			{
-				case 0:
-					$return = $this->{'p_'.$name}();
-					break;
-				case 1:
-					$return = $this->{'p_'.$name}($parameters[0]);
-					break;
-				case 2:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1]);
-					break;
-				case 3:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2]);
-					break;
-				case 4:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3]);
-					break;
-				case 5:
-					$return = $this->{'p_'.$name}($parameters[0], $parameters[1], $parameters[2], $parameters[3], $parameters[4]);
-					break;
-				default:
-					$return = call_user_func_array(array(&$this, 'p_'.$name), $parameters);
-					break;
-			}
-		}
-
-		// in the after, the last parameter passed will be the result
-		array_push($parameters, $return);
-		$after = Plugins::run_hook('model/comment/call/after/'.$name, $parameters);
-
-		if (is_array($after))
-		{
-			return $after['return'];
-		}
-
-		return $return;
-	}
+	public $media = null;
 
 
 	public function __get($name)
@@ -158,50 +82,10 @@ class Comment extends \Model
 				return $this->original_timestamp;
 			case 'fourchan_date':
 				return $this->fourchan_date = gmdate('n/j/y(D)G:i', $this->original_timestamp);
-			case 'safe_media_hash':
-				return $this->safe_media_hash = $this->get_media_hash(true);
-			case 'remote_media_link':
-				return $this->remote_media_link = $this->get_remote_media_link();
-			case 'media_link':
-				return $this->media_link = $this->get_media_link();
-			case 'thumb_link':
-				return $this->thumb_link = $this->get_media_link(true);
 			case 'comment':
 				return $this->comment = @iconv('UTF-8', 'UTF-8//IGNORE', $this->comment);
 			case 'comment_processed':
 				return $this->comment_processed = @iconv('UTF-8', 'UTF-8//IGNORE', $this->process_comment());
-			case 'preview_w':
-			case 'preview_h':
-				if ($this->board->archive && $this->spoiler)
-				{
-					try
-					{
-						$imgsize = \Cache::get('comment.'.$this->board->id.'.'.$this->doc_id.'_spoiler_size');
-					}
-					catch (\CacheNotFoundException $e)
-					{
-						$imgpath = $this->get_media_dir(true);
-						$imgsize = false;
-
-						if ($imgpath)
-						{
-							$imgsize = @getimagesize($imgpath);
-						}
-
-						\Cache::set('comment.'.$this->board->id.'.'.$this->doc_id.'_spoiler_size', $imgsize, 86400);
-
-						if ($imgsize !== FALSE)
-						{
-							$post->preview_h = $imgsize[1];
-							$post->preview_w = $imgsize[0];
-						}
-
-						return $this->$name;
-					}
-				}
-				$this->preview_w = 0;
-				$this->preview_h = 0;
-				return 0;
 		}
 
 		if ($name != 'comment_processed' && substr($name, -10) === '_processed')
@@ -231,21 +115,26 @@ class Comment extends \Model
 	}
 
 
-	public function __construct($post, &$board, $options = array())
+	public function __construct($post, $board, $options = array())
 	{
 		//parent::__construct();
 
-		$this->board = $board;
+		$this->board = & $board;
 
 		if (\Auth::has_access('comment.reports'))
 		{
 			$this->_forced_entries[] = 'report_reason_processed';
 		}
 
+		$media = Media::get_fields();
+
 		foreach ($post as $key => $value)
 		{
-			$this->$key = $value;
+			if(!in_array($key, $media))
+				$this->$key = $value;
 		}
+
+		$this->media = Media::forge_from_comment($this);
 
 		foreach ($options as $key => $value)
 		{
@@ -256,238 +145,6 @@ class Comment extends \Model
 
 		$num = $this->thread_num.($this->subnum ? ',' - $this->subnum : '');
 		static::$_posts[$this->thread_num][] = $num;
-
-
-		if ($this->archive)
-		{
-			// archive entries for media_filename are already encoded and we risk overencoding
-			$this->media_filename = html_entity_decode($this->media_filename, ENT_QUOTES, 'UTF-8');
-		}
-
-		// let's unset 0 sizes so maybe the __get() can save the day
-		if ($this->preview_w === 0 || $this->preview_h === 0)
-		{
-			unset($this->preview_w, $this->preview_h);
-		}
-	}
-
-
-	/**
-	 * Get the path to the media
-	 *
-	 * @param bool $thumbnail if we're looking for a thumbnail
-	 * @return bool|string FALSE if it has no image in database, string for the path
-	 */
-	private function p_get_media_dir($thumbnail = false)
-	{
-		if (!$this->media_hash)
-		{
-			throw new \CommentMediaHashNotFound;
-		}
-
-		if ($thumbnail === true)
-		{
-			if ($this->op == 1)
-			{
-				$image = $this->preview_op ? $this->preview_op : $this->preview_reply;
-			}
-			else
-			{
-				$image = $this->preview_reply ? $this->preview_reply : $this->preview_op;
-			}
-		}
-		else
-		{
-			$image = $this->media;
-		}
-
-		// if we don't check, the return will return a valid folder that will evaluate file_exists() as TRUE
-		if (is_null($image))
-		{
-			throw new \CommentMediaDirNotAvailable;
-		}
-
-		return Preferences::get('fu.boards_directory').'/'.$this->board->shortname.'/'
-			.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
-	}
-
-
-	/**
-	 * Get the full URL to the media, and in case switch between multiple CDNs
-	 *
-	 * @param object $board
-	 * @param object $post the database row for the post
-	 * @param bool $thumbnail if it's a thumbnail we're looking for
-	 * @return bool|string FALSE on not found, a fallback image if not found for thumbnails, or the URL on success
-	 */
-	private function p_get_media_link($thumbnail = false)
-	{
-		if (!$this->media_hash)
-		{
-			throw new \CommentMediaHashNotFound;
-		}
-
-		$this->media_status = 'available';
-
-		// these features will only affect guest users
-		if ($this->board->hide_thumbnails && !\Auth::has_access('comment.show_hidden_thumbnails'))
-		{
-			// hide all thumbnails for the board
-			if (!$this->board->hide_thumbnails)
-			{
-				$this->media_status = 'forbidden';
-				throw \CommentMediaHidden;
-			}
-
-			// add a delay of 1 day to all thumbnails
-			if ($this->board->delay_thumbnails && ($this->timestamp + 86400) > time())
-			{
-				$this->media_status = 'forbidden-24h';
-				throw \CommentMediaHiddenDay;
-			}
-		}
-
-		// this post contain's a banned media, do not display
-		if ($this->banned == 1)
-		{
-			$this->media_status = 'banned';
-			throw \CommentMediaBanned;
-		}
-
-		// locate the image
-		if ($thumbnail && file_exists($this->get_media_dir($thumbnail)) !== false)
-		{
-			if ($post->op == 1)
-			{
-				$image = $this->preview_op ? : $this->preview_reply;
-			}
-			else
-			{
-				$image = $this->preview_reply ? : $this->preview_op;
-			}
-		}
-
-		// full image
-		if (!$thumbnail && file_exists($this->get_media_dir(false)))
-		{
-			$image = $this->media;
-		}
-
-		// fallback if we have the full image but not the thumbnail
-		if ($thumbnail && !isset($image) && file_exists($this->get_media_dir(false)))
-		{
-			$thumbnail = FALSE;
-			$image = $this->media;
-		}
-
-		if(isset($image))
-		{
-			$media_cdn = array();
-			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && Preferences::get('fu.boards_media_balancers_https'))
-			{
-				$balancers = Preferences::get('fu.boards_media_balancers_https');
-			}
-
-			if (!isset($balancers) && Preferences::get('fu.boards_media_balancers'))
-			{
-				$balancers = Preferences::get('fu.boards_media_balancers');
-			}
-
-			if(isset($balancers))
-			{
-				$media_cdn = array_filter(preg_split('/\r\n|\r|\n/', $balancers));
-			}
-
-			if(!empty($media_cdn) && $this->media_id > 0)
-			{
-				return $media_cdn[($this->media_id % count($media_cdn))] . '/' . $this->board->shortname . '/'
-					. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
-			}
-
-			return Preferences::get('fu.boards_url', \Uri::base()) . '/' . $this->board->shortname . '/'
-				. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
-		}
-
-		$this->media_status = 'not-available';
-		return FALSE;
-	}
-
-
-	/**
-	 * Get the remote link for media if it's not local
-	 *
-	 * @return bool|string FALSE if there's no media, local URL if it's not remote, or the remote URL
-	 */
-	private function p_get_remote_media_link()
-	{
-		if (!$this->media_hash)
-		{
-			throw new \CommentMediaHashNotFound;
-		}
-
-		if ($this->board->archive && $this->board->images_url != "")
-		{
-			// ignore webkit and opera user agents
-			if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(opera|webkit)/i', $_SERVER['HTTP_USER_AGENT']))
-			{
-				return $this->board->images_url . $this->media_orig;
-			}
-
-			return \Uri::create(array($this->board->shortname, 'redirect')) . $this->media_orig;
-		}
-		else
-		{
-			if (file_exists($this->get_media_dir()) !== false)
-			{
-				return $this->get_media_link();
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-
-
-	/**
-	 * Get the post's media hash
-	 *
-	 * @param mixed $media
-	 * @param bool $urlsafe if TRUE it will return a modified base64 compatible with URL
-	 * @return bool|string FALSE if media_hash not found, or the base64 string
-	 */
-	private static function p_get_media_hash($urlsafe = FALSE, $hash = null)
-	{
-		if(!is_null($hash))
-		{
-			$media_hash = $hash;
-		}
-		if (is_object($this) || is_array($this))
-		{
-			if (!$this->media_hash)
-			{
-				throw new \CommentMediaHashNotFound;
-			}
-
-			$media_hash = $this->media_hash;
-		}
-		else
-		{
-			if (strlen(trim($media_hash)) == 0)
-			{
-				return FALSE;
-			}
-		}
-
-		// return a safely escaped media hash for urls or un-altered media hash
-		if ($urlsafe === TRUE)
-		{
-			return static::urlsafe_b64encode(static::urlsafe_b64decode($media_hash));
-		}
-		else
-		{
-			return base64_encode(static::urlsafe_b64decode($media_hash));
-		}
 	}
 
 
@@ -889,67 +546,6 @@ class Comment extends \Model
 
 			foreach($posts as $post)
 				$post->delete(null, true);
-		}
-	}
-
-
-	/**
-	 * Delete media for the selected post
-	 *
-	 * @param bool $media if full media should be deleted
-	 * @param bool $thumb if thumbnail should be deleted
-	 * @return bool TRUE on success or if it didn't exist in first place, FALSE on failure
-	 */
-	private function p_delete_media($media = true, $thumb = true)
-	{
-		if (!$this->media_hash)
-		{
-			throw new \CommentMediaHashNotFound;
-		}
-
-		// delete media file only if there is only one image OR the image is banned
-		if ($this->total == 1 || $this->banned == 1 || \Auth::has_access('comment.passwordless_deletion'))
-		{
-			if ($media === true)
-			{
-				$media_file = $this->get_media_dir();
-				if (file_exists($media_file))
-				{
-					if (!unlink($media_file))
-					{
-						throw new \CommentMediaFileNotFound;
-					}
-				}
-			}
-
-			if ($thumb === true)
-			{
-				$temp = $this->op;
-
-				// remove OP thumbnail
-				$this->op = 1;
-				$thumb_file = $this->get_media_dir(true);
-				if (file_exists($thumb_file))
-				{
-					if (!unlink($thumb_file))
-					{
-						throw new \CommentMediaFileNotFound;
-					}
-				}
-
-				// remove reply thumbnail
-				$this->op = 0;
-				$thumb_file = $this->get_media_dir(TRUE);
-				if (file_exists($thumb_file))
-				{
-					if (!unlink($thumb_file))
-					{
-						throw new \CommentMediaFileNotFound;
-					}
-				}
-
-				$this->op = $temp;
-			}
 		}
 	}
 

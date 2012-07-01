@@ -29,7 +29,7 @@ return array(
 	 */
 
 	// default storage driver
-	'driver'      => 'apc',
+	'driver'      => 'file',
 
 	// default expiration (null = no expiration)
 	'expiration'  => 180,
