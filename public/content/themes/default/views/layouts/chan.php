@@ -160,11 +160,11 @@
 			<div role="main" id="main">
 				<?php if (isset($section_title)) : ?>
 					<h3 class="section_title"><?= $section_title ?></h3>
-				<?php elseif (Preferences::get('fs_theme_header_text')) : ?>
-					<section class="section_title"><?= Preferences::get('fs_theme_header_text') ?></section>
+				<?php elseif (Preferences::get('ff.theme_header_text')) : ?>
+					<section class="section_title"><?= Preferences::get('ff.theme_header_text') ?></section>
 				<?php endif; ?>
 
-				<?php if ($is_page) echo $template['partials']['tools_reply_box']; ?>
+				<?= isset($template['partials']['tools_new_thread_box']) ? $template['partials']['tools_new_thread_box'] : ''; ?>
 
 				<?= $template['body'] ?>
 

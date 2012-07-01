@@ -57,7 +57,6 @@ class Controller_Chan extends Controller_Common
 			'backend_vars' => array()
 		));
 
-		$this->_theme->set_partial('tools_reply_box', 'tools_reply_box');
 		$this->_theme->set_partial('tools_modal', 'tools_modal');
 		$this->_theme->set_partial('tools_search', 'tools_search');
 	}
@@ -109,8 +108,12 @@ class Controller_Chan extends Controller_Common
 	}
 
 
-	public function error($error)
+	public function error($error = null)
 	{
+		if (is_null($error))
+		{
+			return Response::forge($this->_theme->build('error', array('error' => __('Something unexpected happened.'))));
+		}
 		return Response::forge($this->_theme->build('error', array('error' => $error)));
 	}
 
@@ -156,17 +159,43 @@ class Controller_Chan extends Controller_Common
 			)
 		));
 
+		if (!$this->_radix->archive)
+		{
+			$this->_theme->set_partial('tools_new_thread_box', 'tools_reply_box');
+		}
+
 		return Response::forge($this->_theme->build('board'));
 	}
 
 
-	public function action_thread($num = 0, $limit = 0)
+	public function action_thread($num = 0)
+	{
+		return $this->thread($num);
+	}
+
+	public function action_last50($num = 0)
+	{
+		Response::redirect($this->_radix->shortname.'/last/50/'.$num);
+	}
+
+	public function action_last($limit = 0, $num = 0)
+	{
+		if (!Board::is_natural($limit) || $limit < 1)
+		{
+			return $this->action_404();
+		}
+
+		return $this->thread($num, array('type' => 'last_x', 'last_limit' => $limit));
+	}
+
+
+	public function thread($num = 0, $options = array())
 	{
 		$num = str_replace('S', '', $num);
 
 		try
 		{
-			$board = Board::forge()->get_thread($num)->set_radix($this->_radix);
+			$board = Board::forge()->get_thread($num)->set_radix($this->_radix)->set_options($options);
 
 			// execute in case there's more exceptions to handle
 			$thread = $board->get_comments();
@@ -180,54 +209,36 @@ class Controller_Chan extends Controller_Common
 			return $this->error($e->getMessage());
 		}
 
-		// get the latest doc_id and latest timestamp
-		$latest_doc_id = $board->get_highest('doc_id');
-		$latest_timestamp = $board->get_highest('timestamp');
+		// get the latest doc_id and latest timestamp for realtime stuff
+		$latest_doc_id = $board->get_highest('doc_id')->doc_id;
+		$latest_timestamp = $board->get_highest('timestamp')->timestamp;
 
 		// check if we can determine if posting is disabled
-		$tools_reply_box = TRUE;
-		$disable_image_upload = FALSE;
-		$thread_dead = FALSE;
-
-		// no image posting in archive, hide the file input
-		if (Radix::get_selected()->archive)
+		try
 		{
-			$disable_image_upload = TRUE;
+			$thread_status = $board->check_thread_status();
 		}
-
-		// in the archive you can only ghostpost, so it's an easy check
-		if (Radix::get_selected()->archive && Radix::get_selected()->disable_ghost)
+		catch (\Model\BoardThreadNotFoundException $e)
 		{
-			$tools_reply_box = FALSE;
-		}
-		else
-		{
-			// we're only interested in knowing if we should display the reply box
-			if (isset($thread_check['ghost_disabled']) && $thread_check['ghost_disabled'] == TRUE)
-				$tools_reply_box = FALSE;
-
-			if (isset($thread_check['disable_image_upload']) && $thread_check['disable_image_upload'] == TRUE)
-				$disable_image_upload = TRUE;
-
-			if (isset($thread_check['thread_dead']) && $thread_check['thread_dead'] == TRUE)
-				$thread_dead = TRUE;
+			return $this->error();
 		}
 
 		$this->_theme->set_title(Radix::get_selected()->formatted_title.' &raquo; '.__('Thread').' #'.$num);
-		$this->_theme->bind('thread_id', $num);
-		$this->_theme->bind('board', $board);
-		$this->_theme->bind('is_thread', TRUE);
-		$this->_theme->bind('disable_image_upload', $disable_image_upload);
-		$this->_theme->bind('thread_dead', $thread_dead);
-		if ($tools_reply_box)
-			$this->_theme->set_partial('tools_reply_box', 'tools_reply_box');
-
 		$this->_theme->bind(array(
 			'thread_id' => $num,
+			'board' => $board,
+			'is_thread' => TRUE,
+			'disable_image_upload' => $thread_status['disable_image_upload'],
+			'thread_dead' => $thread_status['dead'],
 			'latest_doc_id' => $latest_doc_id,
 			'latest_timestamp' => $latest_timestamp,
 			'thread_op_data' => $thread[$num]['op']
 		));
+
+		if (!$thread_status['dead'] || ($thread_status['dead'] && !$this->_radix->disable_ghost))
+		{
+			$this->_theme->set_partial('tools_reply_box', 'tools_reply_box');
+		}
 
 		return Response::forge($this->_theme->build('board'));
 	}

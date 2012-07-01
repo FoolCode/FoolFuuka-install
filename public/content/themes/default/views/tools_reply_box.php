@@ -1,11 +1,9 @@
 <?php
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
-
-if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->archive) || (isset($thread_id))) :
 ?>
 
-<div id="reply" class="thread_Form::wrap clearfix">
+<div id="reply" class="thread_form_wrap clearfix">
 <section class="thread_form clearfix">
 <?= Form::open(array('enctype' => 'multipart/form-data', 'action' => $radix->shortname . '/submit')) ?>
 <?= Form::hidden('reply_numero', isset($thread_id)?$thread_id:0) ?>
@@ -36,7 +34,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->arc
 			echo Form::input(array(
 				'name' => 'reply_bokunonome',
 				'id' => 'reply_bokunonome',
-				'value' => $this->fu->reply_name
+				'value' => $user_name
 			));
 			?>
 		</div>
@@ -52,7 +50,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->arc
 			echo Form::input(array(
 				'name' => 'reply_elitterae',
 				'id' => 'reply_elitterae',
-				'value' => $this->fu->reply_email
+				'value' => $user_email
 			));
 			?>
 		</div>
@@ -70,7 +68,7 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->arc
 			echo Form::password(array(
 				'name' => 'reply_nymphassword',
 				'id' => 'reply_nymphassword',
-				'value' => $this->fu->reply_password,
+				'value' => $user_pass,
 				'required' => 'required'
 			));
 			?>
@@ -159,5 +157,3 @@ if ((isset($enabled_tools_reply_box) && $enabled_tools_reply_box && !$radix->arc
 <?= Form::close() ?>
 </section>
 </div>
-
-<?php endif; ?>

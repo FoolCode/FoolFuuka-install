@@ -161,7 +161,7 @@ foreach ($board->get_comments() as $key => $post) :
 
 	<?php if (isset($thread_id)) : ?>
 	<div class="js_hook_realtimethread"></div>
-	<?= isset($tools_reply_box) ? $template['partials']['tools_reply_box'] : '' ?>
+	<?= isset($template['partials']['tools_reply_box']) ? $template['partials']['tools_reply_box'] : '' ?>
 	<?php endif; ?>
 <?php if (isset($post['op']) || isset($post['posts'])) : ?>
 </article>

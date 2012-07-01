@@ -6,6 +6,7 @@ namespace Model;
 class BoardException extends \FuelException {}
 class BoardThreadNotFoundException extends \Model\BoardException {}
 class BoardMalformedInputException extends \Model\BoardException {}
+class BoardNotCompatibleMethod extends \Model\BoardException {}
 
 
 /**
@@ -24,11 +25,18 @@ class Board extends \Model\Model_Base
 {
 
 	/**
-	 * Array of Comment
+	 * Array of Comment sorted for output
 	 *
 	 * @var array
 	 */
 	private $_comments = null;
+
+	/**
+	 * Array of Comment in a plain array
+	 *
+	 * @var array
+	 */
+	private $_comments_unsorted = null;
 
 	/**
 	 * The count of the query without LIMIT
@@ -189,7 +197,7 @@ class Board extends \Model\Model_Base
 	}
 
 
-	protected static function is_natural($num)
+	public static function is_natural($num)
 	{
 		return ctype_digit((string) $num);
 	}
@@ -211,7 +219,8 @@ class Board extends \Model\Model_Base
 		}
 
 		$query->join(\DB::expr(Radix::get_table($board, '_images').' AS `mg`'), 'LEFT')
-			->on(\DB::expr(Radix::get_table($board).'.`media_id`'), '=', \DB::expr('`mg`.`media_id`'));
+			->on(\DB::expr(($join_on ? '`'.$join_on.'`' : Radix::get_table($board)).'.`media_id`'),
+				'=', \DB::expr('`mg`.`media_id`'));
 	}
 
 
@@ -241,7 +250,7 @@ class Board extends \Model\Model_Base
 					WHERE `board_id` = '.$board->id.') AS r'),
 				'LEFT'
 			);
-			$query->on(\DB::expr(Radix::get_table($board).'.`doc_id`'), '=', \DB::expr('`r`.`report_doc_id`'));
+			$query->on(\DB::expr(($join_on ? '`'.$join_on.'`' : Radix::get_table($board)).'.`doc_id`'), '=', \DB::expr('`r`.`report_doc_id`'));
 		}
 	}
 
@@ -407,7 +416,7 @@ class Board extends \Model\Model_Base
 	{
 		// default variables
 		$this->set_method_fetching('get_thread_comments')
-			->set_options(array('type' => 'thread', 'realtime' => false, 'extra' => array()));
+			->set_options(array('type' => 'thread', 'realtime' => false));
 
 		if(!static::is_natural($num) || $num < 1)
 		{
@@ -430,7 +439,7 @@ class Board extends \Model\Model_Base
 				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
 				$this->sql_media_join($query);
 				$this->sql_report_join($query);
-				$query->where('thread_num', $num)->where('doc_id', '>', $type_extra['latest_doc_id'])
+				$query->where('thread_num', $num)->where('doc_id', '>', $latest_doc_id)
 					->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
@@ -450,11 +459,11 @@ class Board extends \Model\Model_Base
 						UNION
 						('.\DB::select()->from(\DB::expr(Radix::get_table($this->_radix)))->where('thread_num',
 								$num)
-							->order_by('num', 'desc')->order_by('subnum', 'desc')->limit($type_extra['last_limit']).')
+							->order_by('num', 'desc')->order_by('subnum', 'desc')->limit($last_limit).')
 					) AS x
 				'));
-				$this->sql_media_join($query);
-				$this->sql_report_join($query);
+				$this->sql_media_join($query,null, 'x');
+				$this->sql_report_join($query, null, 'x');
 				$query->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
@@ -524,49 +533,31 @@ class Board extends \Model\Model_Base
 	 * @param mixed $num if you send a $query->result() of a thread it will avoid another query
 	 * @return array statuses of the thread
 	 */
-	protected function p_check_thread($board, $num)
+	protected function p_check_thread_status()
 	{
-		if ($num == 0)
+		if ($this->_method_fetching != 'get_thread_comments')
 		{
-			return array('invalid_thread' => TRUE);
+			throw new BoardNotCompatibleMethod;
 		}
 
-		// of $num is an array it means we've sent a $query->result()
-		if (is_array($num))
-		{
-			$query_result = $num;
-		}
-		else
-		{
-			// grab the entire thread
-			$query_result = \DB::select()->from(\DB::expr(Radix::get_table($board)))
-					->where('thread_num', $num)->as_object()->execute()->as_array();
-
-			// thread was not found
-			if (!count($query_result))
-			{
-				return array('invalid_thread' => TRUE);
-			}
-		}
-
-		// define variables
-		$thread_op_present = FALSE;
-		$ghost_post_present = FALSE;
+		// define variables to override
+		$thread_op_present = false;
+		$ghost_post_present = false;
 		$thread_last_bump = 0;
 		$counter = array('posts' => 0, 'images' => 0);
 
-		foreach ($query_result as $post)
+		foreach ($this->_comments_unsorted as $post)
 		{
 			// we need to find if there's the OP in the list
 			// let's be strict, we want the $num to be the OP
 			if ($post->op == 1)
 			{
-				$thread_op_present = TRUE;
+				$thread_op_present = true;
 			}
 
 			if ($post->subnum > 0)
 			{
-				$ghost_post_present = TRUE;
+				$ghost_post_present = true;
 			}
 
 			if ($post->subnum == 0 && $thread_last_bump < $post->timestamp)
@@ -585,32 +576,40 @@ class Board extends \Model\Model_Base
 		// we didn't point to the thread OP, this is not a thread
 		if (!$thread_op_present)
 		{
-			return array('invalid_thread' => TRUE);
+			// this really should not happen here
+			throw new BoardThreadNotFoundException;
 		}
+
+		$result = array(
+			'dead' => false,
+			'disable_image_upload' => $this->_radix->archive,
+		);
 
 		// time check
 		if (time() - $thread_last_bump > 432000 || $ghost_post_present)
 		{
-			return array('thread_dead' => TRUE, 'disable_image_upload' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+			$result['dead'] = true;
+			$result['disable_image_upload'] = true;
 		}
 
-		if ($counter['posts'] > $board->max_posts_count)
+		if ($counter['posts'] > $this->_radix->max_posts_count)
 		{
-			if ($counter['images'] > $board->max_images_count)
+			if ($counter['images'] > $this->_radix->max_images_count)
 			{
-				return array('thread_dead' => TRUE, 'disable_image_upload' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+				$result['dead'] = true;
+				$result['disable_image_upload'] = true;
 			}
 			else
 			{
-				return array('thread_dead' => TRUE, 'ghost_disabled' => $board->disable_ghost);
+				$result['dead'] = true;
 			}
 		}
-		else if ($counter['images'] > $board->max_images_count)
+		else if ($counter['images'] > $this->_radix->max_images_count)
 		{
-			return array('disable_image_upload' => TRUE);
+			$result['disable_image_upload'] = true;
 		}
 
-		return array('valid_thread' => TRUE);
+		return $result;
 	}
 
 }
