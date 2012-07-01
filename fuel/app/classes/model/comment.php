@@ -456,8 +456,12 @@ class Comment extends \Model
 	 * @param bool $urlsafe if TRUE it will return a modified base64 compatible with URL
 	 * @return bool|string FALSE if media_hash not found, or the base64 string
 	 */
-	private function p_get_media_hash($urlsafe = FALSE)
+	private static function p_get_media_hash($urlsafe = FALSE, $hash = null)
 	{
+		if(!is_null($hash))
+		{
+			$media_hash = $hash;
+		}
 		if (is_object($this) || is_array($this))
 		{
 			if (!$this->media_hash)
@@ -465,11 +469,11 @@ class Comment extends \Model
 				throw new \CommentMediaHashNotFound;
 			}
 
-			$media = $this->media_hash;
+			$media_hash = $this->media_hash;
 		}
 		else
 		{
-			if (strlen(trim($media)) == 0)
+			if (strlen(trim($media_hash)) == 0)
 			{
 				return FALSE;
 			}
@@ -478,11 +482,11 @@ class Comment extends \Model
 		// return a safely escaped media hash for urls or un-altered media hash
 		if ($urlsafe === TRUE)
 		{
-			return static::urlsafe_b64encode(static::urlsafe_b64decode($media));
+			return static::urlsafe_b64encode(static::urlsafe_b64decode($media_hash));
 		}
 		else
 		{
-			return base64_encode(static::urlsafe_b64decode($media));
+			return base64_encode(static::urlsafe_b64decode($media_hash));
 		}
 	}
 

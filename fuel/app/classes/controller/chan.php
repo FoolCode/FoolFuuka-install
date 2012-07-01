@@ -336,4 +336,44 @@ class Controller_Chan extends Controller_Common
 		$this->_theme->set_layout('redirect');
 		return Response::forge($this->_theme->build('redirect', array('url' => $redirect)));
 	}
+
+
+	/**
+	 * Display all of the posts that contain the MEDIA HASH provided.
+	 * As of 2012-05-17, fetching of posts with same media hash is done via search system.
+	 * Due to backwards compatibility, this function will still be used for non-urlsafe and urlsafe hashes.
+	 */
+	public function action_image()
+	{
+		// support non-urlsafe hash
+		$uri = Uri::segments();
+		array_shift($uri);
+		array_shift($uri);
+
+		$imploded_uri = rawurldecode(implode('/', $uri));
+		if (mb_strlen($imploded_uri) < 22)
+		{
+			return $this->error(__('Your image hash is malformed.'));
+		}
+
+		// obtain actual media hash (non-urlsafe)
+		$hash = mb_substr($imploded_uri, 0, 22);
+		if (strpos($hash, '/') !== false || strpos($hash, '+') !== false)
+		{
+			$hash = Comment::get_media_hash(true, $hash);
+		}
+
+		// Obtain the PAGE from URI.
+		$page = 1;
+		if (mb_strlen($imploded_uri) > 28)
+		{
+			$page = substr($imploded_uri, 28);
+		}
+
+		// Fetch the POSTS with same media hash and generate the IMAGEPOSTS.
+		$page = intval($page);
+		Response::redirect(Uri::create(array(
+			get_selected_radix()->shortname, 'search', 'image', $hash, 'order', 'desc', 'page', $page))
+			, 'location', 301);
+	}
 }
