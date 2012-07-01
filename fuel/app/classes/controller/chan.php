@@ -285,6 +285,26 @@ class Controller_Chan extends Controller_Common
 	}
 
 
+	public function action_gallery($page = 1)
+	{
+		try
+		{
+			$board = Board::forge()->get_threads()->set_radix($this->_radix)->set_page($page)
+				->set_options('per_page', 100);
+
+			$comments = $board->get_comments();
+		}
+		catch (\Model\BoardException $e)
+		{
+			return $this->error($e->getMessage());
+		}
+
+		$this->_theme->bind('board', $board);
+		return Response::forge($this->_theme->build('gallery'));
+
+	}
+
+
 	public function action_post($num)
 	{
 		try

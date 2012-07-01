@@ -6,7 +6,7 @@ if (!defined('DOCROOT'))
 <div id="thread_o_matic" class="clearfix">
 <?php
 $separator = 0;
-foreach ($threads as $k => $p) :
+foreach ($board->get_comments() as $k => $p) :
 	$separator++;
 ?>
 	<article id="<?= $p->num ?>" class="thread doc_id_<?= $p->doc_id ?>">
@@ -46,7 +46,7 @@ foreach ($threads as $k => $p) :
 			</a>
 			<?php endif; ?>
 			<div class="post_file" style="padding-left: 2px"><?= \Num::format_bytes($p->media_size, 0) . ', ' . $p->media_w . 'x' . $p->media_h . ', ' . $p->media_filename ?></div>
-			
+
 			<?php if ($p->media_status == 'banned') : ?>
 				<div class="post_file_controls">
 					<a href="<?= ($p->media_link) ? $p->media_link : $p->remote_media_link ?>" class="btnr" target="_blank">Full</a><a href="<?= Uri::create($radix->shortname . '/search/image/' . urlencode(substr($p->media_hash, 0, -2))) ?>" class="btnr parent"><?= __('View Same') ?></a><a target="_blank" href="http://iqdb.org/?url=<?= $p->thumb_link ?>" class="btnr parent">iqdb</a><a target="_blank" href="http://saucenao.com/search.php?url=<?= $p->thumb_link ?>" class="btnr parent">SauceNAO</a><a target="_blank" href="http://google.com/searchbyimage?image_url=<?= $p->thumb_link ?>" class="btnr parent">Google</a>

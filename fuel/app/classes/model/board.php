@@ -323,7 +323,7 @@ class Board extends \Model\Model_Base
 				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
 						->order_by('time_bump', 'desc')
-						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->limit($per_page)->offset(($page * $per_page) - $per_page);
 				break;
 
 			case 'by_thread':
@@ -331,7 +331,7 @@ class Board extends \Model\Model_Base
 				$query = \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
 						->order_by('thread_num', 'desc')
-						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->limit($per_page)->offset(($page * $per_page) - $per_page);
 				break;
 
 			case 'ghost':
@@ -340,7 +340,7 @@ class Board extends \Model\Model_Base
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
 						->where('time_ghost_bump', '', \DB::expr('IS NOT NULL'))
 						->order_by('time_ghost_bump', 'desc')
-						->limit(intval($per_page))->offset(intval(($page * $per_page) - $per_page));
+						->limit($per_page)->offset(($page * $per_page) - $per_page);
 				break;
 		}
 
@@ -421,15 +421,71 @@ class Board extends \Model\Model_Base
 			case 'by_post':
 			case 'by_thread':
 				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
-						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))->cached(1800);
+						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))->cached(300);
 				break;
 
 			case 'ghost':
 				$query_threads = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
 						->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
-						->where('time_ghost_bump', \DB::expr('IS NOT NULL'))->cached(1800);
+						->where('time_ghost_bump', \DB::expr('IS NOT NULL'))->cached(300);
 				break;
 		}
+
+		$this->_total_count = $query_threads->as_object()->execute()->current()->threads;
+
+		return $this;
+	}
+
+
+	protected function p_get_threads()
+	{
+		// prepare
+		$this->set_method_fetching('get_threads_comments')
+			->set_method_counting('get_threads_count')
+			->set_options(array(
+				'per_page' => 20,
+				'order' => 'by_post'
+			));
+
+		return $this;
+	}
+
+
+	protected function p_get_threads_comments()
+	{
+		extract($this->_options);
+
+		$inner_query =  \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
+			->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))
+			->order_by('time_op', 'desc')->limit($per_page)->offset(($page * $per_page) - $per_page);
+
+		$query = \DB::select()->from(\DB::expr('('.$inner_query.') AS t'))
+			->join(\DB::expr(Radix::get_table($this->_radix).' AS g'), 'LEFT')
+			->on(\DB::expr('g.num'), '=', \DB::expr('t.unq_thread_num AND g.subnum = 0'));
+
+		static::sql_media_join($query, null, 'g');
+		static::sql_report_join($query, null, 'g');
+
+		$result = $query->as_object()->execute()->as_array();
+
+		if(!count($result))
+		{
+			return array();
+		}
+
+		$this->_comments_unsorted = Comment::forge($result, $this->_radix);
+		$this->_comments = $this->_comments_unsorted;
+
+		return $this;
+	}
+
+
+	protected function p_get_threads_count()
+	{
+		extract($this->_options);
+
+		$query = \DB::select(\DB::expr('COUNT(thread_num) AS threads'))
+			->from(\DB::expr(Radix::get_table($this->_radix, '_threads')))->cached(300);
 
 		$this->_total_count = $query_threads->as_object()->execute()->current()->threads;
 
