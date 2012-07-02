@@ -671,8 +671,8 @@ class Board extends \Model\Model_Base
 		}
 
 		$result = array(
-			'dead' => false,
-			'disable_image_upload' => $this->_radix->archive,
+			'dead' => (bool) $this->_radix->archive,
+			'disable_image_upload' => (bool) $this->_radix->archive,
 		);
 
 		// time check

@@ -3,8 +3,22 @@
 namespace Model;
 
 
-class CommentDeleteWrongPass extends \FuelException {}
+class CommentDeleteWrongPassException extends \FuelException {}
 
+
+class CommentException extends \FuelException {}
+class CommentSendingException extends \Model\CommentException {}
+class CommentSendingDuplicateException extends \Model\CommentSendingException {}
+class CommentSendingThreadWithoutMediaException extends \Model\CommentSendingException {}
+class CommentSendingUnallowedCapcodeException extends \Model\CommentSendingException {}
+class CommentSendingNoDelPassException extends \Model\CommentSendingException {}
+class CommentSendingDisplaysEmptyException extends \Model\CommentSendingException {}
+class CommentSendingTooManyLinesException extends \Model\CommentSendingException {}
+class CommentSendingTooManyCharactersException extends \Model\CommentSendingException {}
+class CommentSendingSpamException extends \Model\CommentSendingException {}
+class CommentSendingTimeLimitException extends \Model\CommentSendingException {}
+class CommentSendingSameCommentException extends \Model\CommentSendingException {}
+class CommentSendingBannedException extends \Model\CommentSendingException {}
 
 class Comment extends \Model\Model_Base
 {
@@ -516,7 +530,7 @@ class Comment extends \Model\Model_Base
 
 			if($this->delpass != $hashed)
 			{
-				throw new \CommentDeleteWrongPass;
+				throw new \CommentDeleteWrongPassException;
 			}
 		}
 
@@ -634,120 +648,160 @@ class Comment extends \Model\Model_Base
 	 */
 	protected function p_comment()
 	{
-		// check: if passed stopforumspam, check if banned internally
-		$check = \DB::select()->from('posters')->where('ip', \Input::ip_decimal())
-			->limit(1)->as_object()->execute();
-
-		if (count($check))
+		// check that the user isn't starting more than a thread in 5 minutes
+		if(!\Auth::has_access('comment.limitless_comment'))
 		{
-			$row = $check->current();
+			// check if the user is banned
+			$banned = \DB::select()->from('banned_posters')->where('ip', Input::ip_decimal())
+				->as_object()->execute()->as_array();
 
-			if ($row->banned && !\Auth::has_access('comment.limitless_comment'))
+			if(count($banned))
 			{
-				if ($this->media)
+				$is_banned = false;
+				$banned = $banned->current();
+				if (strtotime($banned) + $banned->banned_length > time())
 				{
-					if (!unlink($this->media['full_path']))
+					// if null user is banned through all the boards, else there's a serialized array of board_ids
+					if (!is_null($banned->board_ids))
 					{
-						throw new \CommentImpossibleDeletingTempImage;
+						$ids = json_decode($banned->board_ids);
+						if (is_null($ids))
+						{
+							// error in decode, let it pass
+						}
+						else
+						{
+							if (in_array($this->board->id, $ids))
+							{
+								$banned_string = __('It looks like you were banned on /'.$this->board->shortname.'/.');
+								$is_banned = true;
+							}
+						}
+					}
+					else
+					{
+						$banned_string = __('It looks like you were banned on all boards.');
+						$is_banned = true;
 					}
 				}
 
-				throw new \CommentSendingWhileBanned;
+				if ($is_banned)
+				{
+					if ($banned->banned_length)
+					{
+						$banned_string .= ' '.__('This ban will last until:').' '.date(DATE_COOKIE, strtotime($banned) + $banned->banned_length).'.';
+					}
+					else
+					{
+						$banned_string .= ' '.__('This ban will last forever.');
+					}
+
+					if ($this->banned_reason)
+					{
+						$banned_string .= ' '.__('The reason for this ban is:').' «'.$this->banned_reason.'».';
+					}
+
+					throw new CommentSendingBannedException($banned_string);
+				}
+			}
+
+			if ($data['num'] == 0)
+			{
+				// one can create a new thread only once every 5 minutes
+				$check_op = \DB::select()->from(DB::expr(Radix::get_table($this->board)))
+					->where('poster_ip', Input::ip_decimal())->where('timestamp', '>', time() - 300)
+					->where('op', 1)->limit(1)->execute();
+
+				if(count($check_op))
+				{
+					throw new CommentSendingTimeLimitException(__('You must wait up to 5 minutes to make another new thread.'));
+				}
+			}
+
+			// check the latest posts by the user to see if he's posting the same message or if he's posting too fast
+			$check = \DB::select()->from(DB::expr(Radix::get_table($this->board)))
+				->where('poster_ip', Input::ip_decimal())->order_by('timestamp', 'desc')->limit(1)
+				->as_object()->execute();
+
+			if (count($check))
+			{
+				$row = $check->current();
+
+				if ($this->comment && $row->comment == $this->comment && \Auth::has_access('comment.limitless_comment'))
+				{
+					throw new CommentSendingSameCommentException(__('You\'re sending the same comment as the last time'));
+				}
+
+				if (time() - $row->timestamp < 10 && time() - $row->timestamp > 0 && !\Auth::has_access('comment.limitless_comment'))
+				{
+					throw new CommentSendingTimeLimitException(__('You must wait up to 10 seconds to post again.'));
+				}
+			}
+
+			// load the spam list and check comment, name, subject and email
+			$spam = array_filter(preg_split('/\r\n|\r|\n/', file_get_contents(DOCROOT.'assets/anti-spam/databases')));
+			foreach($spam as $s)
+			{
+				if(strpos($comment, $s) !== FALSE || strpos($name, $s) !== FALSE
+					|| strpos($subject, $s) !== FALSE || strpos($email, $s) !== FALSE)
+				{
+					throw new CommentSendingSpamException(__('Your post has undesidered content.'));
+				}
+			}
+
+			// check entire length of comment
+			if (mb_strlen($this->comment) > 4096)
+			{
+				throw new CommentSendingTooManyCharactersException(__('Your comment has too many characters'));
+			}
+
+			// check total numbers of lines in comment
+			if (count(explode("\n", $this->comment)) > 20)
+			{
+				throw new CommentSendingTooManyLinesException(__('Your comment has too many lines.'));
 			}
 		}
 
-		if($data['num'] == 0 && !\Auth::has_access('comment.limitless_comment'))
+		$this->ghost = false;
+		$this->allow_media = true;
+
+		// check if it's a thread and its status
+		if (!$this->num)
 		{
-			// one can create a new thread only once every 5 minutes
-			$check_op = \DB::select()->from(DB::expr(Radix::get_table($board)))
-				->where('poster_ip', Input::ip_decimal())->where('timestamp', '>', time() - 300)
-				->where('op', 1)->limit(1);
-
-			if(count($check_op))
+			try
 			{
-				throw new \CommentSendingNewThreadTimeLimit;
+				$thread = Board::forge()->get_thread($this->num)->set_radix($this->board);
+				$thread->get_comments();
+				$status = $thread->check_thread();
 			}
+			catch (\Model\BoardException $e)
+			{
+				throw new \Model\CommentSendingException($e->getMessage());
+			}
+
+			$this->ghost = $status['dead'];
+			$this->allow_media = $status['disable_image_upload'];
 		}
 
-		// check the latest posts by the user to see if he's posting the same message or if he's posting too fast
-		$check = \DB::select()->from(DB::expr(Radix::get_table($this->board)))
-			->where('poster_ip', Input::ip_decimal())
-			->order_by('timestamp', 'desc')->limit(1)
-			->as_object()->execute();
-
-		if (count($check))
-		{
-			$row = $check->current();
-
-			if ($this->comment && $row->comment == $this->comment && \Auth::has_access('comment.limitless_comment'))
-			{
-				throw new \CommentSendingSameComment;
-			}
-
-			if (time() - $row->timestamp < 10 && time() - $row->timestamp > 0 && !\Auth::has_access('comment.limitless_comment'))
-			{
-				throw new \CommentSendingNewCommentTimeLimit;
-			}
-
-		}
 
 		// hook entire comment data to alter in plugin
 		Plugins::run_hook('fu.comment.comment.input', array(&$this), 'simple');
 
-		// process comment name+trip
-		if ($this->name === FALSE || $this->name == '')
+		foreach(array('name', 'email', 'subject', 'delpass', 'spoiler', 'comment', 'capcode') as $key)
 		{
-			\Cookie::set('reply_name', '', 0);
+			$this->$key = (string) $this->$key;
+		}
+
+		// process comment name+trip
+		if ($this->name === '')
+		{
 			$this->name = $this->board->anonymous_default_name;
 			$this->trip = '';
 		}
 		else
 		{
-			// store name in cookie to repopulate forms
-			\Cookie::set('reply_name', $data['name'], 60 * 60 * 24 * 30);
 			$this->process_name();
 		}
-
-		// process comment email
-		if ($this->email === FALSE || $this->email == '')
-		{
-			\Cookie::set('reply_email', '', 0);
-			$this->email = '';
-		}
-		else
-		{
-			// store email in cookie to repopulate forms
-			if ($this->email != 'sage')
-			{
-				\Cookie::set('reply_email', $this->email, 60 * 60 * 24 * 30);
-			}
-
-		}
-
-		// process comment password
-		if ($this->delpass === FALSE || $this->delpass == '')
-		{
-			throw new \CommentSendingNoDelPass;
-		}
-		else
-		{
-			// store password in cookie to repopulate forms
-			\Cookie::set('reply_password', $data['password'], 60 * 60 * 24 * 30);
-		}
-
-		// load the spam list and check comment, name, subject and email
-		$spam = array_filter(preg_split('/\r\n|\r|\n/', file_get_contents(DOCROOT.'assets/anti-spam/databases')));
-		foreach($spam as $s)
-		{
-			if(strpos($comment, $s) !== FALSE || strpos($name, $s) !== FALSE
-				|| strpos($subject, $s) !== FALSE || strpos($email, $s) !== FALSE)
-			{
-				throw new \CommentSendingSpam;
-			}
-		}
-
-		// process comment ghost+spoiler
-		$ghost = isset($this->ghost) && $this->ghost === TRUE;
 
 		// we want to know if the comment will display empty, and in case we won't let it pass
 		if($this->comment !== '')
@@ -755,73 +809,18 @@ class Comment extends \Model\Model_Base
 			$comment_parsed = $this->process_comment();
 			if(!$comment_parsed)
 			{
-				throw new \CommentSendingDisplaysEmpty;
+				throw new CommentSendingDisplaysEmptyException(__('This comment would display empty.'));
 			}
 
 		}
 
-		// process comment media
-		if (!isset($this->media))
+		// process comment password
+		if ($this->delpass == '')
 		{
-			// if no media is present, remove spoiler setting
-			$this->spoiler = 0;
-
-			// if no media is present and post is op, stop processing
-			if ($data['num'] == 0)
-			{
-				throw new \CommentSendingThreadWithoutMedia;
-			}
-		}
-		else
-		{
-			// check other media errors
-			if (isset($this->media['media_error']))
-			{
-				// invalid file type
-				if (strlen($this->media['media_error']) == 64)
-				{
-					throw new \CommentSendingMimeNotAllowed;
-				}
-
-				// media file is too large
-				if (strlen($this->media['media_error']) == 79)
-				{
-					throw new \CommentSendingFileTooLarge;
-				}
-			}
-
-			// check for valid media dimensions
-			if ($this->media['image_width'] > 25 || $this->media['image_height'] > 25)
-			{
-				throw new \CommentSendingImageTooSmall;
-			}
-
-			// generate media hash
-			$media_hash = base64_encode(pack("H*", md5(file_get_contents($this->media['full_path']))));
-
-
-			// check if media is banned
-			$media_banned_check = \DB::select()->from('banned_md5')->where('md5', $this->media['media_hash'])->execute();
-
-			if (count($media_banned_check))
-			{
-				throw new \CommentSendingBannedMedia;
-			}
+			throw new CommentSendingNoDelPassException(__('You must submit a deletion password.'));
 		}
 
-		// check entire length of comment
-		if (mb_strlen($comment) > 4096)
-		{
-			throw new \CommentSendingTooManyCharacters;
-		}
-
-		// check total numbers of lines in comment
-		if (count(explode("\n", $comment)) > 20)
-		{
-			throw new \CommentSendingTooManyLines;
-		}
-
-		if ( ! class_exists('PHPSecLib\\Crypt_Hash', false))
+		if (!class_exists('PHPSecLib\\Crypt_Hash', false))
 		{
 			import('phpseclib/Crypt/Hash', 'vendor');
 		}
@@ -829,10 +828,58 @@ class Comment extends \Model\Model_Base
 		$hasher = new \PHPSecLib\Crypt_Hash();
 		$this->delpass = base64_encode($hasher->hasher()->pbkdf2($password, \Config::get('auth.salt'), 10000, 32));
 
+		if ($this->capcode != '')
+		{
+			$allowed_capcodes = array('N');
+
+			if(\Auth::has_access('comment.mod_capcode'))
+			{
+				$allowed_capcodes[] = 'M';
+			}
+
+			if(\Auth::has_access('comment.admin_capcode'))
+			{
+				$allowed_capcodes[] = 'A';
+			}
+
+			if(!in_array($this->capcode, $allowed_capcodes))
+			{
+				throw new CommentSendingUnallowedCapcodeException(__('You\'re not allowed to use this capcode.'));
+			}
+		}
+		else
+		{
+			$this->capcode = 'N';
+		}
+
+		// process comment media
+		if (!isset($this->media))
+		{
+			// if no media is present and post is op, stop processing
+			if (!$this->num)
+			{
+				throw new CommentSendingThreadWithoutMediaException(__('You can\'t start a new thread without an image.'));
+			}
+
+			$this->media = Media::forge_empty();
+		}
+		else
+		{
+			try
+			{
+				$this->media->insert();
+			}
+			catch (MediaInsertException $e)
+			{
+				throw new CommentSendingException($e->getMessage());
+			}
+		}
+
 		$this->timestamp = time();
+		$this->op = (bool) !$this->num;
 
 		// 2ch-style codes, only if enabled
-		if($this->board->enable_poster_hash)
+		if($this->num && $this->board->enable_poster_hash)
 		{
 			$this->poster_hash = substr(substr(crypt(md5(\Input::ip().'id'.$num),'id'),+3), 0, 8);
 		}
@@ -846,23 +893,16 @@ class Comment extends \Model\Model_Base
 			$timestamp = time() - ($diff * 60 * 60);
 		}
 
-
-
-
 		$media_file = $this->process_media($board, $num, $media, $media_hash);
 		$default_post_arr[4] = substr($media_file['unixtime'],0,10);
-				unset($media_file['unixtime']);
-				$default_post_arr = array_merge($default_post_arr, array_values($media_file));
+		unset($media_file['unixtime']);
+		$default_post_arr = array_merge($default_post_arr, array_values($media_file));
 
-
-
-
-
-		$this->db->trans_begin();
+		DB::start_transaction();
 
 		// being processing insert...
 
-		if($ghost)
+		if($this->ghost)
 		{
 			$num = \DB::expr('
 				(SELECT MAX(num)
@@ -915,8 +955,6 @@ class Comment extends \Model\Model_Base
 			');
 		}
 
-
-
 		list($last_id, $num_affected) =
 			\DB::insert(\DB::expr(Radix::get_table($this->board)))
 			->set(array(
@@ -954,22 +992,28 @@ class Comment extends \Model\Model_Base
 
 		if(count($check_duplicate) > 1)
 		{
-			$this->db->trans_rollback();
-			throw new \CommentSendingDuplicate;
+			DB::rollback_transaction();
+			throw new CommentSendingDuplicateException(__('You are sending the same post twice.'));
 		}
 
 		$comment = $check_duplicate->current();
 
+		// refresh the current comment object with the one finalized fetched from DB
+		foreach ($comment as $key => $item)
+		{
+			$this->$key = $item;
+		}
+
 		// update poster_hash for non-ghost posts
 		if (!$ghost && $this->op && $this->board->enable_poster_hash)
 		{
-			$hash = substr(substr(crypt(md5(Input::ip().'id'.$comment->thread_num),'id'),+3), 0, 8);
+			$this->poster_hash = substr(substr(crypt(md5(Input::ip().'id'.$comment->thread_num),'id'),+3), 0, 8);
 
 			\DB::update(\DB::exec(Radix::get_table($this->board)))
-				->value('poster_hash', $hash)->where('doc_id', $comment->doc_id)->execute();
+				->value('poster_hash', $this->poster_hash)->where('doc_id', $comment->doc_id)->execute();
 		}
 
-		$this->db->trans_commit();
+		DB::commit_transaction();
 
 		// success, now check if there's extra work to do
 
@@ -988,7 +1032,7 @@ class Comment extends \Model\Model_Base
 				))->execute();
 		}
 
-		return array('success' => TRUE, 'posted' => $comment);
+		return $this;
 	}
 
 }

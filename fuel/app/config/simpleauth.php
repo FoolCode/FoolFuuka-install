@@ -60,13 +60,13 @@ return array(
 		'mod' => array(
 			'access' => array('mod'),
 			'maccess' => array('user', 'mod'),
-			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports')
+			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports', 'mod_capcode')
 		),
 		'admin' => array(
 			'access' => array('admin'),
 			'maccess' => array('user', 'mod', 'admin'),
 			'boards' => array('edit'),
-			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports')
+			'comment' => array('passwordless_deletion', 'limitless_comment', 'reports'. 'mod_capcode', 'admin_capcode')
 		),
 		/**
 		 * Examples
