@@ -28,6 +28,9 @@ class Media extends \Model\Model_Base
 	public $exif = null;
 
 	public $board = null;
+	public $temp_path = null;
+	public $temp_filename = null;
+	public $temp_extension = null;
 
 	public static $_fields = array(
 		'media_id',
@@ -83,6 +86,139 @@ class Media extends \Model\Model_Base
 
 		return new Media($comment, $board);
 	}
+
+	protected static function p_forge_from_upload($board)
+	{
+		$this->board = $board;
+		Upload::process(array(
+			'path' => DOCROOT.'/cache/media_upload/',
+			'max_size' => $this->board->max_image_size_kilobytes * 1024,
+			'randomize' => true,
+			'max_length' => 64,
+			'ext_whitelist' => array('jpg', 'jpeg', 'gif', 'png'),
+			'mime_whitelist' => array('image/jpeg', 'image/png', 'image/gif')
+		));
+
+		if(count(Upload::get_files()) == 0)
+		{
+			throw new MediaUploadNoFileException(__('You must upload an image.'));
+		}
+
+		if(count(Upload::get_files()) != 1)
+		{
+			throw new MediaUploadMultipleNotAllowedException(__('You can\'t upload multiple images.'));
+		}
+
+		if (!Upload::is_valid())
+		{
+			if(in_array($file['errors'], UPLOAD_ERR_INI_SIZE))
+				throw new MediaUploadInvalidException(
+					__('The server is misconfigured: the FoOlFuuka upload size should be lower than PHP\'s upload limit.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_PARTIAL))
+				throw new MediaUploadInvalidException(__('You uploaded the file partially.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_CANT_WRITE))
+				throw new MediaUploadInvalidException(__('The image couldn\'t be saved on the disk.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_EXTENSION))
+				throw new MediaUploadInvalidException(__('A PHP extension broke and made processing the image impossible.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_MAX_SIZE))
+				throw new MediaUploadInvalidException(
+					\Str::tr(__('You uploaded a too big file. The maxmimum allowed filesize is :sizekb'),
+						array('size' => $this->board->max_image_size_kilobytes)));
+
+			if(in_array($file['errors'], UPLOAD_ERR_EXT_NOT_WHITELISTED))
+				throw new MediaUploadInvalidException(__('You uploaded a file with an invalid extension.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_MAX_FILENAME_LENGTH))
+				throw new MediaUploadInvalidException(__('You uploaded a file with a too long filename.'));
+
+			if(in_array($file['errors'], UPLOAD_ERR_MOVE_FAILED))
+				throw new MediaUploadInvalidException(__('Your uploaded file couldn\'t me moved on the server.'));
+
+			throw new MediaUploadInvalidException;
+		}
+
+		// save them according to the config
+		Upload::save();
+		$file = Upload::get_files(0);
+
+		$media = new stdClass();
+		$media->media_filename = $file['name'];
+		$media->media_size = $file['size'];
+		$media->temp_path = $file['saved_to'];
+		$media->temp_filename = $file['saved_as'];
+		$media->temp_extension = $file['extension'];
+
+		return new Media($media, $board);
+	}
+
+	public function rollback_upload()
+	{
+		if (file_exists($media->temp_path.$media->temp_filename))
+			unlink($media->temp_path.$media->temp_filename);
+	}
+
+	public function process_upload($microtime, $spoiler, $is_op)
+	{
+		$full_path = $media->temp_path.$media->temp_filename;
+
+		$getimagesize = getimagesize($full_path);
+
+		if(!$getimagesize)
+		{
+			throw new MediaUploadNotImageException(__('The file you uploaded is not an image.'));
+		}
+
+		// if width and height are lower than 25 reject the image
+		if($getimagesize[0] < 25 || $getimagesize[1] < 25)
+		{
+			throw new MediaUploadImageSizeSmall(__('The image you uploaded is too small.'));
+		}
+
+		$this->spoiler = $spoiler;
+		$this->media_w = $getimagesize[0];
+		$this->media_h = $getimagesize[1];
+		$this->media_orig = $microtime.'.'.$this->extension;
+		$this->preview_orig = $microtime.'.'.$this->extension;
+		$this->media_hash = base64_encode(pack("H*", md5(file_get_contents($full_path))));
+
+		$hash_query = \DB::select()->from(\DB::expr(Radix::get_table($this->board, '_images')))
+			->where('media_hash', $this->media_hash)->as_object()->execute()->as_array();
+
+		$do_thumb = true;
+		$do_full = true;
+
+		// do we have this file already in database?
+		if(count($hash_query) === 1)
+		{
+			$duplicate = $hash_query->current();
+			$duplicate = new Media($duplicate, $this->board);
+
+			$duplicate_dir = $duplicate->get_media_dir();
+			if (file_exists($duplicate_dir))
+			{
+				$do_full = false;
+				//$this->rollback_upload();
+			}
+
+			$duplicate_dir_thumb = $duplicate->get_media_dir(TRUE, $is_op);
+			if (file_exists($duplicate_dir_thumb))
+			{
+				$do_thumb = false;
+			}
+		}
+
+
+		$this->preview_orig = null;
+		$this->preview_w = 0;
+		$this->preview_h = 0;
+
+		$this->exif = null;
+	}
+
 
 
 	public function __get($name)
@@ -155,7 +291,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	protected function p_get_media_dir($thumbnail = false)
+	protected function p_get_media_dir($thumbnail = false, $op = FALSE)
 	{
 		if (!$this->media_hash)
 		{

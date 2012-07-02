@@ -875,7 +875,8 @@ class Comment extends \Model\Model_Base
 			}
 		}
 
-		$this->timestamp = time();
+		$microtime = microtime();
+		$this->timestamp = substr($microtime, 0, 10);
 		$this->op = (bool) !$this->num;
 
 		// 2ch-style codes, only if enabled
