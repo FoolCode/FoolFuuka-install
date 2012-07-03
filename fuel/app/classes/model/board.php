@@ -346,6 +346,13 @@ class Board extends \Model\Model_Base
 
 		$threads = $query->as_object()->execute()->as_array();
 
+		if (!count($threads))
+		{
+			$this->_comments = array();
+			$this->_comments_unsorted = array();
+			return $this;
+		}
+
 		// populate arrays with posts
 		$threads_arr = array();
 		$sql_arr = array();

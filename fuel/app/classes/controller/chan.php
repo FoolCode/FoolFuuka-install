@@ -434,24 +434,25 @@ class Controller_Chan extends Controller_Common
 	}
 
 
-	public function action_sending()
+	public function action_submit()
 	{
 		// adapter
-
-		if(!$post = Input::post())
+		if(!Input::post())
 		{
 			return $this->error(__('You aren\'t sending the required fields for creating a new message.'));
 		}
 
 		// Determine if the invalid post fields are populated by bots.
-		if (isset($post['name']) || mb_strlen($post['name']) > 0)
+		if (isset($post['name']) && mb_strlen($post['name']) > 0)
 			return $this->error();
-		if (isset($post['reply']) || mb_strlen($post['reply']) > 0)
+		if (isset($post['reply']) && mb_strlen($post['reply']) > 0)
 			return $this->error();
-		if (isset($post['email']) || mb_strlen($post['email']) > 0)
+		if (isset($post['email']) && mb_strlen($post['email']) > 0)
 			return $this->error();
 
 		$data = array();
+
+		$post = Input::post();
 
 		if(isset($post['reply_numero']))
 			$data['thread_num'] = $post['reply_numero'];
@@ -460,44 +461,67 @@ class Controller_Chan extends Controller_Common
 		if(isset($post['reply_elitterae']))
 			$data['email'] = $post['reply_elitterae'];
 		if(isset($post['reply_talkingde']))
-			$data['subject'] = $post['reply_talkingde'];
+			$data['title'] = $post['reply_talkingde'];
 		if(isset($post['reply_chennodiscursus']))
 			$data['comment'] = $post['reply_chennodiscursus'];
 		if(isset($post['reply_nymphassword']))
 			$data['delpass'] = $post['reply_nymphassword'];
+		if(isset($post['reply_nymphassword']))
+			$data['delpass'] = $post['reply_nymphassword'];
+		if(isset($post['reply_nymphblind']))
+			$data['spoiler'] = $post['reply_nymphblind'];
 		if(isset($post['reply_postas']))
 			$data['capcode'] = $post['reply_postas'];
 
 		$media = null;
 
-		if (Upload::get_files(0))
+		if (count(Upload::get_files()))
 		{
-			$media = Media::forge_from_upload($this->_radix);
+			try
+			{
+				$media = Media::forge_from_upload($this->_radix);
+			}
+			catch (\Model\MediaUploadNoFileException $e)
+			{
+				$media = null;
+			}
+			catch (\Model\MediaUploadException $e)
+			{
+				return $this->error($e->getMessage());
+			}
 		}
 
-		return $this->sending($data, $media);
+		return $this->submit($data, $media);
 	}
 
-	public function sending($data)
+	public function submit($data, $media)
 	{
-		$val = Validation::forge()
-			->add_field('thread_num', 'Thread no.', 'required|is_natural|xss_clean')
-			->add_field('name', 'Username', 'trim|xss_clean|max_length[64]')
-			->add_field('email', 'Email', 'trim|xss_clean|max_length[64]')
-			->add_field('subject', 'Subject', 'trim|xss_clean|max_length[64]')
-			->add_field('comment', 'Comment', 'trim|min_length[3]|max_length[4096]|xss_clean')
-			->add_field('delpass', 'Password', 'required|min_length[3]|max_length[32]|xss_clean');
+		// some beginners' validation, while through validation will happen in the Comment model
+		$val = Validation::forge();
+		$val->add_field('thread_num', __('Thread Number'), 'required');
+		$val->add_field('name', __('Username'), 'trim|max_length[64]');
+		$val->add_field('email', __('Email'), 'trim|max_length[64]');
+		$val->add_field('title', __('Subject'), 'trim|max_length[64]');
+		$val->add_field('comment', __('Comment'), 'trim|min_length[3]|max_length[4096]');
+		$val->add_field('delpass', __('Password'), 'required|min_length[3]|max_length[32]');
 
-		// Verify if the user posting is a moderator or administrator and apply form validation.
-		if ($this->auth->is_mod_admin())
+		// leave the capcode check to the model
+
+		if($val->run($data))
 		{
-			$this->form_validation->set_rules('reply_postas', 'Post as',
-				'required|callback__is_valid_allowed_level|xss_clean');
-			$this->form_validation->set_message('_is_valid_allowed_level',
-				'You did not specify a valid user level to post as.');
+			$comment = \Comment::forge((object) $data, $this->_radix, array('clean' => false));
+			$comment->media = $media;
+			$comment->insert();
+		}
+		else
+		{
+			return $this->error(implode(' ', $val->error()));
 		}
 
-		$comment = Comment::forge($data, $this->_radix);
+		//Response::redirect($this->_radix->shortname.'/thread/'.$comment->thread_num.'/')
+		$this->_theme->set_layout('redirect');
+		return Response::forge($this->_theme->build('redirect',
+			array('url' => Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/'.$comment->num))));
 
 	}
 }

@@ -75,7 +75,7 @@ class Radix extends \Model_Base
 				'help' => __('Insert the shorter name of the board. Reserved: "api", "cli", "admin".'),
 				'placeholder' => __('Req.'),
 				'class' => 'span1',
-				'validation' => 'required|max_length[5]|valid_string[alpha,dashesnumeric]',
+				'validation' => 'required|max_length[5]|valid_string[alpha,dashes,numeric]',
 				'validation_func' => function($input, $form_internal)
 				{
 					// if we're not using the special subdomain for peripherals
@@ -439,7 +439,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_clear_cache()
 	{
-		$all = self::get_all();
+		$all = static::get_all();
 
 		\Cache::delete('mode.radix.preload');
 
@@ -459,7 +459,7 @@ class Radix extends \Model_Base
 	protected static function p_save($data)
 	{
 		// filter _boards data from _boards_preferences data
-		$structure = self::structure();
+		$structure = static::structure();
 		$data_boards = array();
 		$data_boards_preferences = array();
 
@@ -493,7 +493,7 @@ class Radix extends \Model_Base
 		// data must be already sanitized through the form array
 		if (isset($data['id']))
 		{
-			if (!$radix = self::get_by_id($data['id']))
+			if (!$radix = static::get_by_id($data['id']))
 			{
 				show_404();
 			}
@@ -519,8 +519,8 @@ class Radix extends \Model_Base
 				}
 			}
 
-			self::clear_cache();
-			self::preload(TRUE);
+			static::clear_cache();
+			static::preload(TRUE);
 		}
 		else
 		{
@@ -544,20 +544,20 @@ class Radix extends \Model_Base
 				}
 			}
 
-			self::clear_cache();
-			self::preload(TRUE);
-			$board = self::get_by_shortname($data['shortname']);
+			static::clear_cache();
+			static::preload(TRUE);
+			$board = static::get_by_shortname($data['shortname']);
 
 			// remove the triggers just to be safe
-			self::mysql_remove_triggers($board);
-			self::mysql_create_tables($board);
-			self::mysql_create_extra($board);
-			self::mysql_create_triggers($board);
+			static::mysql_remove_triggers($board);
+			static::mysql_create_tables($board);
+			static::mysql_create_extra($board);
+			static::mysql_create_triggers($board);
 
 			// if the user didn't select sphinx for search, enable the table _search silently
 			if (!$board->sphinx)
 			{
-				self::mysql_create_search($board);
+				static::mysql_create_search($board);
 			}
 		}
 	}
@@ -572,10 +572,10 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_remove($id)
 	{
-		$board = self::get_by_id($id);
+		$board = static::get_by_id($id);
 
 		// always remove the triggers first
-		self::mysql_remove_triggers($board);
+		static::mysql_remove_triggers($board);
 		\DB::delete('boards_preferences')->where('board_id', $id)->execute();
 		\DB::delete('boards')->where('id', $id)->execute();
 
@@ -599,9 +599,9 @@ class Radix extends \Model_Base
 		rename($base, $rename_to);
 
 		// for huge boards, this may time out with PHP, while MySQL will keep going
-		self::mysql_remove_tables($board);
+		static::mysql_remove_tables($board);
 
-		self::clear_cache();
+		static::clear_cache();
 
 		return true;
 	}
@@ -615,7 +615,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_remove_leftover_dirs($echo = FALSE)
 	{
-		$all = self::get_all();
+		$all = static::get_all();
 
 		$array = array();
 
@@ -706,13 +706,13 @@ class Radix extends \Model_Base
 
 		if (!is_array($object) || empty($object))
 		{
-			self::$preloaded_radixes = array();
+			static::$preloaded_radixes = array();
 			return false;
 		}
 
 		foreach ($object as $item)
 		{
-			$structure = self::structure($item);
+			$structure = static::structure($item);
 
 			$result_object[$item->id] = $item;
 			$result_object[$item->id]->formatted_title = ($item->name) ?
@@ -776,7 +776,7 @@ class Radix extends \Model_Base
 	{
 		if (is_null($board))
 		{
-			$ids = array_keys(self::$preloaded_radixes);
+			$ids = array_keys(static::$preloaded_radixes);
 		}
 		else if (is_array($board))
 		{
@@ -849,14 +849,14 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_set_selected_by_shortname($shortname)
 	{
-		if (false != ($val = self::get_by_shortname($shortname)))
+		if (false != ($val = static::get_by_shortname($shortname)))
 		{
-			$val = self::load_preferences($val);
-			self::$selected_radix = $val;
+			$val = static::load_preferences($val);
+			static::$selected_radix = $val;
 			return $val;
 		}
 
-		self::$selected_radix = false;
+		static::$selected_radix = false;
 
 		return false;
 	}
@@ -869,12 +869,12 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_selected()
 	{
-		if (is_null(self::$selected_radix))
+		if (is_null(static::$selected_radix))
 		{
 			return false;
 		}
 
-		return self::$selected_radix;
+		return static::$selected_radix;
 	}
 
 
@@ -885,7 +885,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_all()
 	{
-		return self::$preloaded_radixes;
+		return static::$preloaded_radixes;
 	}
 
 
@@ -897,7 +897,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_by_id($radix_id)
 	{
-		$items = self::get_all();
+		$items = static::get_all();
 
 		if (isset($items[$radix_id]))
 			return $items[$radix_id];
@@ -916,7 +916,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_by_type($value, $type, $switch = true)
 	{
-		$items = self::get_all();
+		$items = static::get_all();
 
 		foreach ($items as $item)
 		{
@@ -950,7 +950,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_filter_by_type($type, $switch)
 	{
-		$items = self::get_all();
+		$items = static::get_all();
 
 		foreach ($items as $key => $item)
 		{
@@ -969,7 +969,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_archives()
 	{
-		return self::filter_by_type('archive', true);
+		return static::filter_by_type('archive', true);
 	}
 
 
@@ -980,7 +980,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_get_boards()
 	{
-		return self::filter_by_type('archive', false);
+		return static::filter_by_type('archive', false);
 	}
 
 
@@ -992,7 +992,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_mysql_check_multibyte($as_string = false)
 	{
-		$query = \DB::query("SHOW CHARACTER SET WHERE Charset = 'utf8mb4';")->execute();
+		$query = \DB::query("SHOW CHARACTER SET WHERE Charset = 'utf8mb4'", \DB::SELECT)->execute();
 
 		if (!$as_string)
 		{
@@ -1013,10 +1013,10 @@ class Radix extends \Model_Base
 	protected static function p_mysql_create_tables($board)
 	{
 		// with true it gives the charset string directly
-		$charset = $this->mysql_check_multibyte(true);
+		$charset = static::mysql_check_multibyte(true);
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board)." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board)." (
 				doc_id int unsigned NOT NULL auto_increment,
 				media_id int unsigned NOT NULL DEFAULT '0',
 				poster_ip decimal(39,0) unsigned NOT NULL DEFAULT '0',
@@ -1062,10 +1062,10 @@ class Radix extends \Model_Base
 				INDEX poster_ip_index (`poster_ip`),
 				INDEX timestamp_index (`timestamp`)
 			) engine=InnoDB CHARSET=".$charset.";
-		")->execute();
+		", \Fuel\Core\DB::INSERT)->execute();
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_threads')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_threads')." (
 				`thread_num` int unsigned NOT NULL,
 				`time_op` int unsigned NOT NULL,
 				`time_last` int unsigned NOT NULL,
@@ -1084,7 +1084,7 @@ class Radix extends \Model_Base
 
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_users')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_users')." (
 				`user_id` int unsigned NOT NULL auto_increment,
 				`name` varchar(100) NOT NULL DEFAULT '',
 				`trip` varchar(25) NOT NULL DEFAULT '',
@@ -1099,7 +1099,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_images')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_images')." (
 				`media_id` int unsigned NOT NULL auto_increment,
 				`media_hash` varchar(25) NOT NULL,
 				`media` varchar(20),
@@ -1116,7 +1116,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_daily')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_daily')." (
 				`day` int(10) unsigned NOT NULL,
 				`posts` int(10) unsigned NOT NULL,
 				`images` int(10) unsigned NOT NULL,
@@ -1131,14 +1131,13 @@ class Radix extends \Model_Base
 
 		// populate _images table with banned media from global table
 		\DB::query('
-			INSERT INTO '.$this->radix->get_table($board, '_images').'
+			INSERT INTO '.static::get_table($board, '_images').'
 			(
 				media_hash, media, preview_op, preview_reply, total, banned
 			)
 			(
 				SELECT md5, NULL, NULL, NULL, 0, 1
-				FROM '.$this->db->protect_identifiers('banned_md5',
-				TRUE).'
+				FROM '.\DB::quote_identifier(\DB::table_prefix('banned_md5')).'
 			)
 			ON DUPLICATE KEY UPDATE banned = 1
 		')->execute();
@@ -1153,18 +1152,16 @@ class Radix extends \Model_Base
 	protected static function p_mysql_create_extra($board)
 	{
 		// with true it gives the charset string directly
-		$charset = $this->mysql_check_multibyte(TRUE);
+		$charset = static::mysql_check_multibyte(TRUE);
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_extra')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_extra')." (
 				doc_id int unsigned NOT NULL,
 				json text,
 
 				PRIMARY KEY (`doc_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=".$charset.";
 		")->execute();
-
-		Plugins::run_hook('model/radix/mysql_create_extra/columns');
 	}
 
 
@@ -1184,37 +1181,37 @@ class Radix extends \Model_Base
 			CREATE PROCEDURE `update_thread_".$board->shortname."` (tnum INT)
 			BEGIN
 			UPDATE
-				".$this->get_table($board,
+				".static::get_table($board,
 				'_threads')." op
 			SET
 				op.time_last = (
 				COALESCE(GREATEST(
 					op.time_op,
-					(SELECT MAX(timestamp) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index)
+					(SELECT MAX(timestamp) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index)
 					WHERE re.thread_num = tnum AND re.subnum = 0)
 					), op.time_op)
 				),
 				op.time_bump = (
 					COALESCE(GREATEST(
 					op.time_op,
-					(SELECT MAX(timestamp) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index)
+					(SELECT MAX(timestamp) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index)
 					WHERE re.thread_num = tnum AND (re.email <> 'sage' OR re.email IS NULL) AND re.subnum = 0)
 					), op.time_op)
 				),
 				op.time_ghost = (
-					SELECT MAX(timestamp) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index)
+					SELECT MAX(timestamp) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index)
 					WHERE re.thread_num = tnum AND re.subnum <> 0
 				),
 				op.time_ghost_bump = (
-					SELECT MAX(timestamp) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index)
+					SELECT MAX(timestamp) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index)
 					WHERE re.thread_num = tnum AND re.subnum <> 0 AND (re.email <> 'sage' OR re.email IS NULL)
 				),
 				op.nreplies = (
-					SELECT COUNT(*) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index) WHERE
+					SELECT COUNT(*) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index) WHERE
 					re.thread_num = tnum
 				),
 				op.nimages = (
-					SELECT COUNT(media_hash) FROM ".$this->get_table($board)." re FORCE INDEX(thread_num_subnum_index)
+					SELECT COUNT(media_hash) FROM ".static::get_table($board)." re FORCE INDEX(thread_num_subnum_index)
 					WHERE re.thread_num = tnum
 				)
 				WHERE op.thread_num = tnum;
@@ -1224,7 +1221,7 @@ class Radix extends \Model_Base
 		\DB::query("
 			CREATE PROCEDURE `create_thread_".$board->shortname."` (num INT, timestamp INT)
 			BEGIN
-				INSERT IGNORE INTO ".$this->get_table($board,
+				INSERT IGNORE INTO ".static::get_table($board,
 				'_threads')." VALUES (num, timestamp, timestamp,
 					timestamp, NULL, NULL, 0, 0);
 			END;
@@ -1233,7 +1230,7 @@ class Radix extends \Model_Base
 		\DB::query("
 			CREATE PROCEDURE `delete_thread_".$board->shortname."` (tnum INT)
 			BEGIN
-				DELETE FROM ".$this->get_table($board,
+				DELETE FROM ".static::get_table($board,
 				'_threads')." WHERE thread_num = tnum;
 			END;
 		")->execute();
@@ -1243,7 +1240,7 @@ class Radix extends \Model_Base
 			n_media VARCHAR(20), n_preview VARCHAR(20), n_op INT)
 			BEGIN
 				IF n_op = 1 THEN
-					INSERT INTO ".$this->get_table($board,
+					INSERT INTO ".static::get_table($board,
 				'_images')." (media_hash, media, preview_op, total)
 					VALUES (n_media_hash, n_media, n_preview, 1)
 					ON DUPLICATE KEY UPDATE
@@ -1252,7 +1249,7 @@ class Radix extends \Model_Base
 					preview_op = COALESCE(preview_op, VALUES(preview_op)),
 					media = COALESCE(media, VALUES(media));
 				ELSE
-					INSERT INTO ".$this->get_table($board,
+					INSERT INTO ".static::get_table($board,
 				'_images')." (media_hash, media, preview_reply, total)
 					VALUES (n_media_hash, n_media, n_preview, 1)
 					ON DUPLICATE KEY UPDATE
@@ -1267,7 +1264,7 @@ class Radix extends \Model_Base
 		\DB::query("
 			CREATE PROCEDURE `delete_image_".$board->shortname."` (n_media_id INT)
 			BEGIN
-			UPDATE ".$this->get_table($board,
+			UPDATE ".static::get_table($board,
 				'_images')." SET total = (total - 1) WHERE media_id = n_media_id;
 			END;
 		")->execute();
@@ -1290,21 +1287,21 @@ class Radix extends \Model_Base
 				SET d_trip = p_trip IS NOT NULL;
 				SET d_name = COALESCE(p_name <> 'Anonymous' AND p_trip IS NULL, 1);
 
-				INSERT INTO ".$this->get_table($board,
+				INSERT INTO ".static::get_table($board,
 				'_daily')." VALUES(d_day, 1, d_image, d_sage, d_anon, d_trip,
 					d_name)
 					ON DUPLICATE KEY UPDATE posts=posts+1, images=images+d_image,
 					sage=sage+d_sage, anons=anons+d_anon, trips=trips+d_trip,
 					names=names+d_name;
 
-				IF (SELECT trip FROM ".$this->get_table($board,
+				IF (SELECT trip FROM ".static::get_table($board,
 				'_users')." WHERE trip = p_trip) IS NOT NULL THEN
-					UPDATE ".$this->get_table($board, '_users')." SET postcount=postcount+1,
+					UPDATE ".static::get_table($board, '_users')." SET postcount=postcount+1,
 						firstseen = LEAST(p_timestamp, firstseen),
 						name = COALESCE(p_name, '')
 					WHERE trip = p_trip;
 				ELSE
-					INSERT INTO ".$this->get_table($board,
+					INSERT INTO ".static::get_table($board,
 				'_users')." VALUES(
 						NULL, COALESCE(p_name,''), COALESCE(p_trip,''), p_timestamp, 1)
 					ON DUPLICATE KEY UPDATE postcount=postcount+1,
@@ -1331,16 +1328,16 @@ class Radix extends \Model_Base
 				SET d_trip = p_trip IS NOT NULL;
 				SET d_name = COALESCE(p_name <> 'Anonymous' AND p_trip IS NULL, 1);
 
-				UPDATE ".$this->get_table($board,
+				UPDATE ".static::get_table($board,
 				'_daily')." SET posts=posts-1, images=images-d_image,
 					sage=sage-d_sage, anons=anons-d_anon, trips=trips-d_trip,
 					names=names-d_name WHERE day = d_day;
 
-				IF (SELECT trip FROM ".$this->get_table($board,
+				IF (SELECT trip FROM ".static::get_table($board,
 				'_users')." WHERE trip = p_trip) IS NOT NULL THEN
-					UPDATE ".$this->get_table($board, '_users')." SET postcount = postcount-1 WHERE trip = p_trip;
+					UPDATE ".static::get_table($board, '_users')." SET postcount = postcount-1 WHERE trip = p_trip;
 				ELSE
-					UPDATE ".$this->get_table($board,
+					UPDATE ".static::get_table($board,
 				'_users')." SET postcount = postcount-1
 						WHERE name = COALESCE(p_name, '') AND trip = COALESCE(p_trip, '');
 				END IF;
@@ -1348,7 +1345,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		\DB::query("
-			CREATE TRIGGER `before_ins_".$board->shortname."` BEFORE INSERT ON ".$this->get_table($board)."
+			CREATE TRIGGER `before_ins_".$board->shortname."` BEFORE INSERT ON ".static::get_table($board)."
 			FOR EACH ROW
 			BEGIN
 				IF NEW.media_hash IS NOT NULL THEN
@@ -1359,7 +1356,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		\DB::query("
-			CREATE TRIGGER `after_ins_".$board->shortname."` AFTER INSERT ON ".$this->get_table($board)."
+			CREATE TRIGGER `after_ins_".$board->shortname."` AFTER INSERT ON ".static::get_table($board)."
 			FOR EACH ROW
 			BEGIN
 				IF NEW.op = 1 THEN
@@ -1371,7 +1368,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		\DB::query("
-			CREATE TRIGGER `after_del_".$board->shortname."` AFTER DELETE ON ".$this->get_table($board)."
+			CREATE TRIGGER `after_del_".$board->shortname."` AFTER DELETE ON ".static::get_table($board)."
 			FOR EACH ROW
 			BEGIN
 				CALL update_thread_".$board->shortname."(OLD.thread_num);
@@ -1386,7 +1383,7 @@ class Radix extends \Model_Base
 		")->execute();
 
 		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.$this->db->database)->execute();
+			\DB::query('USE '.\Config::get('db.default.connection.database'))->execute();
 	}
 
 
@@ -1408,7 +1405,7 @@ class Radix extends \Model_Base
 		);
 
 		foreach ($tables as $table)
-			\DB::query("DROP TABLE IF EXISTS ".$this->get_table($board, $table))->execute();
+			\DB::query("DROP TABLE IF EXISTS ".static::get_table($board, $table))->execute();
 	}
 
 
@@ -1445,7 +1442,7 @@ class Radix extends \Model_Base
 			\DB::query("DROP TRIGGER IF EXISTS `".$prefix.$board->shortname."`")->execute();
 
 		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.\Config::get('db.default.connection.Database'))->execute();
+			\DB::query('USE '.\Config::get('db.default.connection.database'))->execute();
 	}
 
 
@@ -1472,7 +1469,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_create_search($board)
 	{
-		return $this->mysql_create_search($board);
+		return static::mysql_create_search($board);
 	}
 
 
@@ -1485,10 +1482,10 @@ class Radix extends \Model_Base
 	protected static function p_mysql_create_search($board)
 	{
 		// with true it gives the charset string directly
-		$charset = $this->mysql_check_multibyte(true);
+		$charset = static::mysql_check_multibyte(true);
 
 		\DB::query("
-			CREATE TABLE IF NOT EXISTS ".$this->get_table($board, '_search')." (
+			CREATE TABLE IF NOT EXISTS ".static::get_table($board, '_search')." (
 				doc_id int unsigned NOT NULL auto_increment,
 				num int unsigned NOT NULL,
 				subnum int unsigned NOT NULL,
@@ -1506,16 +1503,16 @@ class Radix extends \Model_Base
 		")->execute();
 
 		// get the minumum word length
-		$word_length = $this->mysql_get_min_word_length();
+		$word_length = static::mysql_get_min_word_length();
 
 		// save in the database the fact that this is a MyISAM
-		$this->save(array('id' => $board->id, 'myisam_search' => 1));
+		static::save(array('id' => $board->id, 'myisam_search' => 1));
 
 		// fill only where there's a point to
 		\DB::query("
-			INSERT IGNORE INTO ".$this->get_table($board, '_search')."
+			INSERT IGNORE INTO ".static::get_table($board, '_search')."
 			SELECT doc_id, num, subnum, thread_num, media_filename, comment
-			FROM ".$this->get_table($board)."
+			FROM ".static::get_table($board)."
 			WHERE
 				CHAR_LENGTH(media_filename) > :len
 					OR
@@ -1547,7 +1544,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_mysql_remove_search($board)
 	{
-		\DB::query("DROP TABLE IF EXISTS ".$this->get_table($board, '_search'))->execute();
+		\DB::query("DROP TABLE IF EXISTS ".static::get_table($board, '_search'))->execute();
 
 		// set in preferences that this is not a board with MyISAM search
 		$this->save(array('id' => $board->id, 'myisam_search' => 0));
@@ -1566,7 +1563,7 @@ class Radix extends \Model_Base
 	protected static function p_mysql_check_charset($board, $suffix)
 	{
 		// rather than using information_schema, for ease let's just check the output of the create table
-		\DB::query('SHOW CREATE TABLE '.$this->get_table($board, $suffix))->execute();
+		\DB::query('SHOW CREATE TABLE '.static::get_table($board, $suffix))->execute();
 
 		$row = $this->row_array();
 
@@ -1585,7 +1582,7 @@ class Radix extends \Model_Base
 	protected static function p_mysql_change_charset($board)
 	{
 		// if utf8mb4 is not supported, stop the machines
-		if (!$this->mysql_check_multibyte())
+		if (!static::mysql_check_multibyte())
 		{
 			cli_notice('error',
 				__('Your MySQL installation doesn\'t support multibyte characters. Update MySQL to version 5.5 or higher.'));
@@ -1605,12 +1602,10 @@ class Radix extends \Model_Base
 		{
 			if ($this->mysql_check_charset($board, $table))
 			{
-				cli_notice('notice', sprintf(__('Converting %s to utfmb4'), $this->get_table($board, $table)));
-				\DB::query("ALTER TABLE ".$this->get_table($board, $table)." CONVERT TO CHARACTER SET utf8mb4")->execute();
+				\DB::query("ALTER TABLE ".static::get_table($board, $table)." CONVERT TO CHARACTER SET utf8mb4")->execute();
 			}
 		}
 
-		cli_notice('notice', __('The tables have all been converted to utf8mb4'));
 		return TRUE;
 	}
 

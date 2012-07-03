@@ -222,7 +222,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			throw new HttpNotFoundException;
 		}
 
-		if (Input::post)
+		if (Input::post())
 		{
 			switch ($type)
 			{
@@ -248,7 +248,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 					__('Notice: due to its size, you will have to remove the image directory manually. The directory will have the "_removed" suffix. You can remove all the leftover "_removed" directories with the following command:').
 					' <code>php index.php cli boards remove_leftover_dirs</code>';
 
-				$this->_views["main_content_view"] = Response::forge('admin/confirm', $data);
+				$this->_views["main_content_view"] = View::forge('admin/confirm', $data);
 				return Response::forge(View::forge('admin/default', $this->_views));
 		}
 	}

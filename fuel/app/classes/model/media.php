@@ -3,17 +3,22 @@
 namespace Model;
 
 class MediaNotFoundException extends \FuelException {}
-
 class MediaHashNotFoundException extends \Model\MediaNotFoundException {}
 class MediaDirNotAvailableException extends \Model\MediaNotFoundException {}
 class MediaFileNotFoundException extends \Model\MediaNotFoundException {}
 class MediaHiddenException extends \Model\MediaNotFoundException {}
 class MediaHiddenDayException extends \Model\MediaNotFoundException {}
 
-
+class MediaInsertException extends \FuelException {}
+class MediaInsertNoFileException extends \Model\MediaInsertException {}
+class MediaInsertMultipleNotAllowedException extends \Model\MediaInsertException {}
+class MediaInsertInvalidException extends \Model\MediaInsertException {}
 
 class Media extends \Model\Model_Base
 {
+
+	public $op; // required to know the size of the thumbnail
+
 	public $media_id = 0;
 	public $spoiler = 0;
 	public $preview_orig = null;
@@ -27,11 +32,15 @@ class Media extends \Model\Model_Base
 	public $media_orig = null;
 	public $exif = null;
 
+	public $media = null;
+	public $preview_op = null;
+	public $preview_reply = null;
+
 	public $board = null;
+
 	public $temp_path = null;
 	public $temp_filename = null;
 	public $temp_extension = null;
-
 	public static $_fields = array(
 		'media_id',
 		'spoiler',
@@ -47,6 +56,7 @@ class Media extends \Model\Model_Base
 		'exif'
 	);
 
+
 	protected static function p_get_fields()
 	{
 		return static::$_fields;
@@ -57,7 +67,7 @@ class Media extends \Model\Model_Base
 	{
 		$this->board = $board;
 
-		foreach($comment as $key => $item)
+		foreach ($comment as $key => $item)
 		{
 			$this->$key = $item;
 		}
@@ -76,6 +86,12 @@ class Media extends \Model\Model_Base
 	}
 
 
+	public function __destruct()
+	{
+		$this->rollback_upload();
+	}
+
+
 	protected static function p_forge_from_comment($comment, $board)
 	{
 		// if this comment doesn't have media data
@@ -87,65 +103,74 @@ class Media extends \Model\Model_Base
 		return new Media($comment, $board);
 	}
 
+
+	protected static function p_forge_empty($board)
+	{
+		$media = new \stdClass();
+		return new Media($media, $board);
+	}
+
+
+
 	protected static function p_forge_from_upload($board)
 	{
-		$this->board = $board;
-		Upload::process(array(
-			'path' => DOCROOT.'/cache/media_upload/',
-			'max_size' => $this->board->max_image_size_kilobytes * 1024,
+		\Upload::process(array(
+			'path' => APPPATH.'tmp/media_upload/',
+			'max_size' => $board->max_image_size_kilobytes * 1024,
 			'randomize' => true,
 			'max_length' => 64,
 			'ext_whitelist' => array('jpg', 'jpeg', 'gif', 'png'),
 			'mime_whitelist' => array('image/jpeg', 'image/png', 'image/gif')
 		));
 
-		if(count(Upload::get_files()) == 0)
+		if (count(\Upload::get_files()) == 0)
 		{
 			throw new MediaUploadNoFileException(__('You must upload an image.'));
 		}
 
-		if(count(Upload::get_files()) != 1)
+		if (count(\Upload::get_files()) != 1)
 		{
 			throw new MediaUploadMultipleNotAllowedException(__('You can\'t upload multiple images.'));
 		}
 
-		if (!Upload::is_valid())
+		if (!\Upload::is_valid())
 		{
-			if(in_array($file['errors'], UPLOAD_ERR_INI_SIZE))
+			if (in_array($file['errors'], UPLOAD_ERR_INI_SIZE))
 				throw new MediaUploadInvalidException(
 					__('The server is misconfigured: the FoOlFuuka upload size should be lower than PHP\'s upload limit.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_PARTIAL))
+			if (in_array($file['errors'], UPLOAD_ERR_PARTIAL))
 				throw new MediaUploadInvalidException(__('You uploaded the file partially.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_CANT_WRITE))
+			if (in_array($file['errors'], UPLOAD_ERR_CANT_WRITE))
 				throw new MediaUploadInvalidException(__('The image couldn\'t be saved on the disk.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_EXTENSION))
+			if (in_array($file['errors'], UPLOAD_ERR_EXTENSION))
 				throw new MediaUploadInvalidException(__('A PHP extension broke and made processing the image impossible.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_MAX_SIZE))
+			if (in_array($file['errors'], UPLOAD_ERR_MAX_SIZE))
 				throw new MediaUploadInvalidException(
 					\Str::tr(__('You uploaded a too big file. The maxmimum allowed filesize is :sizekb'),
 						array('size' => $this->board->max_image_size_kilobytes)));
 
-			if(in_array($file['errors'], UPLOAD_ERR_EXT_NOT_WHITELISTED))
+			if (in_array($file['errors'], UPLOAD_ERR_EXT_NOT_WHITELISTED))
 				throw new MediaUploadInvalidException(__('You uploaded a file with an invalid extension.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_MAX_FILENAME_LENGTH))
+			if (in_array($file['errors'], UPLOAD_ERR_MAX_FILENAME_LENGTH))
 				throw new MediaUploadInvalidException(__('You uploaded a file with a too long filename.'));
 
-			if(in_array($file['errors'], UPLOAD_ERR_MOVE_FAILED))
+			if (in_array($file['errors'], UPLOAD_ERR_MOVE_FAILED))
 				throw new MediaUploadInvalidException(__('Your uploaded file couldn\'t me moved on the server.'));
 
-			throw new MediaUploadInvalidException;
+			throw new MediaUploadInvalidException(__('Unexpected upload error.'));
 		}
 
 		// save them according to the config
-		Upload::save();
-		$file = Upload::get_files(0);
+		\Upload::save();
+		$file = \Upload::get_files(0);
 
-		$media = new stdClass();
+		$media = new \stdClass();
+		$media->board = $board;
 		$media->media_filename = $file['name'];
 		$media->media_size = $file['size'];
 		$media->temp_path = $file['saved_to'];
@@ -155,70 +180,133 @@ class Media extends \Model\Model_Base
 		return new Media($media, $board);
 	}
 
+
 	public function rollback_upload()
 	{
-		if (file_exists($media->temp_path.$media->temp_filename))
-			unlink($media->temp_path.$media->temp_filename);
+		if (!is_null($this->temp_filename) && file_exists($this->temp_path.$this->temp_filename))
+			unlink($this->temp_path.$this->temp_filename);
 	}
 
-	public function process_upload($microtime, $spoiler, $is_op)
+
+	public function insert($microtime, $spoiler, $is_op)
 	{
-		$full_path = $media->temp_path.$media->temp_filename;
+		$this->op = $is_op;
+		$full_path = $this->temp_path.$this->temp_filename;
 
 		$getimagesize = getimagesize($full_path);
 
-		if(!$getimagesize)
+		if (!$getimagesize)
 		{
-			throw new MediaUploadNotImageException(__('The file you uploaded is not an image.'));
+			throw new MediaInsertNotImageException(__('The file you uploaded is not an image.'));
 		}
 
 		// if width and height are lower than 25 reject the image
-		if($getimagesize[0] < 25 || $getimagesize[1] < 25)
+		if ($getimagesize[0] < 25 || $getimagesize[1] < 25)
 		{
-			throw new MediaUploadImageSizeSmall(__('The image you uploaded is too small.'));
+			throw new MediaInsertImageSizeSmall(__('The image you uploaded is too small.'));
 		}
+
 
 		$this->spoiler = $spoiler;
 		$this->media_w = $getimagesize[0];
 		$this->media_h = $getimagesize[1];
-		$this->media_orig = $microtime.'.'.$this->extension;
-		$this->preview_orig = $microtime.'.'.$this->extension;
+		$this->media_orig = $microtime.'.'.$this->temp_extension;
+		$this->preview_orig = $microtime.'s.'.$this->temp_extension;
 		$this->media_hash = base64_encode(pack("H*", md5(file_get_contents($full_path))));
 
 		$hash_query = \DB::select()->from(\DB::expr(Radix::get_table($this->board, '_images')))
-			->where('media_hash', $this->media_hash)->as_object()->execute()->as_array();
+				->where('media_hash', $this->media_hash)->as_object()->execute();
 
 		$do_thumb = true;
 		$do_full = true;
 
 		// do we have this file already in database?
-		if(count($hash_query) === 1)
+		if (count($hash_query) === 1)
 		{
 			$duplicate = $hash_query->current();
 			$duplicate = new Media($duplicate, $this->board);
 
-			$duplicate_dir = $duplicate->get_media_dir();
-			if (file_exists($duplicate_dir))
+			try
 			{
-				$do_full = false;
-				//$this->rollback_upload();
+				$duplicate_dir = $duplicate->get_media_dir();
+				if (file_exists($duplicate_dir))
+				{
+					$do_full = false;
+				}
+			}
+			catch (MediaDirNotAvailableException $e)
+			{}
+
+			try
+			{
+				$duplicate_dir_thumb = $duplicate->get_media_dir(true, true);
+				if (file_exists($duplicate_dir_thumb))
+				{
+					$duplicate_dir_thumb_size = getimagesize($duplicate_dir_thumb);
+					$this->preview_w = $duplicate_dir_thumb_size[0];
+					$this->preview_h = $duplicate_dir_thumb_size[1];
+					$do_thumb = false;
+				}
+			}
+			catch (MediaDirNotAvailableException $e)
+			{}
+		}
+
+		if ($do_thumb)
+		{
+			$thumb_width = $this->board->thumbnail_reply_width;
+			$thumb_height = $this->board->thumbnail_reply_height;
+			if ($is_op)
+			{
+				$thumb_width = $this->board->thumbnail_op_width;
+				$thumb_height = $this->board->thumbnail_op_height;
 			}
 
-			$duplicate_dir_thumb = $duplicate->get_media_dir(TRUE, $is_op);
-			if (file_exists($duplicate_dir_thumb))
+			if (!file_exists($this->path_from_filename(true)))
 			{
-				$do_thumb = false;
+				mkdir($this->path_from_filename(true), 0777, true);
+			}
+
+			\Image::forge(array('driver' => 'imagemagick', 'quality' => 80, 'temp_dir' => APPPATH.'/tmp/'))
+				->load($full_path)
+				->resize($thumb_width, $thumb_height)
+				->save($this->path_from_filename(true).$this->preview_orig);
+
+			$thumb_getimagesize = getimagesize($this->path_from_filename(true).$this->preview_orig);
+			$this->preview_w = $thumb_getimagesize[0];
+			$this->preview_h = $thumb_getimagesize[1];
+		}
+
+		if ($do_full)
+		{
+			if (!file_exists($this->path_from_filename()))
+			{
+				mkdir($this->path_from_filename(), 0777, true);
+			}
+
+			copy($full_path, $this->path_from_filename().$this->media_orig);
+		}
+
+		if (function_exists('exif_read_data') && in_array(strtolower($this->temp_extension), array('jpg', 'jpeg', 'tiff')))
+		{
+			$exif = exif_read_data($full_path);
+
+			if ($exif !== FALSE)
+			{
+				$this->exif = $exif;
 			}
 		}
 
-
-		$this->preview_orig = null;
-		$this->preview_w = 0;
-		$this->preview_h = 0;
-
-		$this->exif = null;
+		return $this;
 	}
 
+
+	public function path_from_filename($thumbnail = false)
+	{
+		return Preferences::get('fu.boards_directory', DOCROOT.'content/boards').'/'.$this->board->shortname.'/'.
+			($thumbnail ? 'thumb' : 'image').'/'.
+			substr($this->media_orig, 0, 4).'/'.substr($this->media_orig, 4, 2).'/';
+	}
 
 
 	public function __get($name)
@@ -267,7 +355,9 @@ class Media extends \Model\Model_Base
 							return $this->$name;
 						}
 						catch (MediaNotFoundException $e)
-						{}
+						{
+
+						}
 					}
 				}
 				$this->preview_w = 0;
@@ -291,7 +381,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	protected function p_get_media_dir($thumbnail = false, $op = FALSE)
+	protected function p_get_media_dir($thumbnail = false, $precise = FALSE)
 	{
 		if (!$this->media_hash)
 		{
@@ -302,11 +392,25 @@ class Media extends \Model\Model_Base
 		{
 			if ($this->op == 1)
 			{
-				$image = $this->preview_op ? $this->preview_op : $this->preview_reply;
+				if ($precise)
+				{
+					$image = $this->preview_op;
+				}
+				else
+				{
+					$image = $this->preview_op ? $this->preview_op : $this->preview_reply;
+				}
 			}
 			else
 			{
-				$image = $this->preview_reply ? $this->preview_reply : $this->preview_op;
+				if ($precise)
+				{
+					$image = $this->preview_reply;
+				}
+				else
+				{
+					$image = $this->preview_reply ? $this->preview_reply : $this->preview_op;
+				}
 			}
 		}
 		else
@@ -383,7 +487,9 @@ class Media extends \Model\Model_Base
 			}
 		}
 		catch (MediaNotFoundException $e)
-		{}
+		{
+
+		}
 
 		try
 		{
@@ -394,7 +500,9 @@ class Media extends \Model\Model_Base
 			}
 		}
 		catch (MediaNotFoundException $e)
-		{}
+		{
+
+		}
 
 
 		try
@@ -407,12 +515,14 @@ class Media extends \Model\Model_Base
 			}
 		}
 		catch (MediaNotFoundException $e)
-		{}
+		{
 
-		if(isset($image))
+		}
+
+		if (isset($image))
 		{
 			$media_cdn = array();
-			if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && Preferences::get('fu.boards_media_balancers_https'))
+			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && Preferences::get('fu.boards_media_balancers_https'))
 			{
 				$balancers = Preferences::get('fu.boards_media_balancers_https');
 			}
@@ -422,19 +532,19 @@ class Media extends \Model\Model_Base
 				$balancers = Preferences::get('fu.boards_media_balancers');
 			}
 
-			if(isset($balancers))
+			if (isset($balancers))
 			{
 				$media_cdn = array_filter(preg_split('/\r\n|\r|\n/', $balancers));
 			}
 
-			if(!empty($media_cdn) && $this->media_id > 0)
+			if (!empty($media_cdn) && $this->media_id > 0)
 			{
-				return $media_cdn[($this->media_id % count($media_cdn))] . '/' . $this->board->shortname . '/'
-					. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
+				return $media_cdn[($this->media_id % count($media_cdn))].'/'.$this->board->shortname.'/'
+					.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 			}
 
-			return Preferences::get('fu.boards_url', \Uri::base()) . '/' . $this->board->shortname . '/'
-				. ($thumbnail ? 'thumb' : 'image') . '/' . substr($image, 0, 4) . '/' . substr($image, 4, 2) . '/' . $image;
+			return Preferences::get('fu.boards_url', \Uri::base()).'/'.$this->board->shortname.'/'
+				.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 		}
 
 		$this->media_status = 'not-available';
@@ -459,10 +569,10 @@ class Media extends \Model\Model_Base
 			// ignore webkit and opera user agents
 			if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(opera|webkit)/i', $_SERVER['HTTP_USER_AGENT']))
 			{
-				return $this->board->images_url . $this->media_orig;
+				return $this->board->images_url.$this->media_orig;
 			}
 
-			return \Uri::create(array($this->board->shortname, 'redirect')) . $this->media_orig;
+			return \Uri::create(array($this->board->shortname, 'redirect')).$this->media_orig;
 		}
 		else
 		{
@@ -517,6 +627,7 @@ class Media extends \Model\Model_Base
 			return base64_encode(static::urlsafe_b64decode($media_hash));
 		}
 	}
+
 
 	protected static function p_urlsafe_b64encode($string)
 	{
@@ -591,4 +702,5 @@ class Media extends \Model\Model_Base
 			}
 		}
 	}
+
 }

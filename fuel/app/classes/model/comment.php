@@ -45,7 +45,7 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @var bool
 	 */
-	protected $_backlinks_hash_only_url = FALSE;
+	protected $_backlinks_hash_only_url = false;
 
 	/**
 	 * Sets the callbacks so they return URLs good for realtime updates
@@ -53,8 +53,9 @@ class Comment extends \Model\Model_Base
 	 *
 	 * @var type
 	 */
-	protected $_realtime = FALSE;
-	protected $_force_entries = FALSE;
+	protected $_realtime = false;
+	protected $_clean = true;
+	protected $_force_entries = false;
 	protected $_forced_entries = array(
 		'title_processed', 'name_processed', 'email_processed', 'trip_processed', 'media_orig_processed',
 		'preview_orig_processed', 'media_filename_processed', 'media_hash_processed', 'poster_hash_processed',
@@ -132,7 +133,7 @@ class Comment extends \Model\Model_Base
 	}
 
 
-	public function __construct($post, $board, $options = array())
+	public function __construct($post, &$board, $options = array())
 	{
 		//parent::__construct();
 
@@ -165,7 +166,10 @@ class Comment extends \Model\Model_Base
 			$this->{'_'.$key} = $value;
 		}
 
-		$this->clean_fields();
+		if ($this->_clean)
+		{
+			$this->clean_fields();
+		}
 
 		$num = $this->thread_num.($this->subnum ? ',' - $this->subnum : '');
 		static::$_posts[$this->thread_num][] = $num;
@@ -646,13 +650,13 @@ class Comment extends \Model\Model_Base
 	 * @param array $options modifiers
 	 * @return array error key with explanation to show to user, or success and post row
 	 */
-	protected function p_comment()
+	protected function p_insert()
 	{
 		// check that the user isn't starting more than a thread in 5 minutes
 		if(!\Auth::has_access('comment.limitless_comment'))
 		{
 			// check if the user is banned
-			$banned = \DB::select()->from('banned_posters')->where('ip', Input::ip_decimal())
+			$banned = \DB::select()->from('banned_posters')->where('banned_ip', \Input::ip_decimal())
 				->as_object()->execute()->as_array();
 
 			if(count($banned))
@@ -705,11 +709,11 @@ class Comment extends \Model\Model_Base
 				}
 			}
 
-			if ($data['num'] == 0)
+			if ($this->thread_num < 1)
 			{
 				// one can create a new thread only once every 5 minutes
-				$check_op = \DB::select()->from(DB::expr(Radix::get_table($this->board)))
-					->where('poster_ip', Input::ip_decimal())->where('timestamp', '>', time() - 300)
+				$check_op = \DB::select()->from(\DB::expr(Radix::get_table($this->board)))
+					->where('poster_ip', \Input::ip_decimal())->where('timestamp', '>', time() - 300)
 					->where('op', 1)->limit(1)->execute();
 
 				if(count($check_op))
@@ -719,8 +723,8 @@ class Comment extends \Model\Model_Base
 			}
 
 			// check the latest posts by the user to see if he's posting the same message or if he's posting too fast
-			$check = \DB::select()->from(DB::expr(Radix::get_table($this->board)))
-				->where('poster_ip', Input::ip_decimal())->order_by('timestamp', 'desc')->limit(1)
+			$check = \DB::select()->from(\DB::expr(Radix::get_table($this->board)))
+				->where('poster_ip', \Input::ip_decimal())->order_by('timestamp', 'desc')->limit(1)
 				->as_object()->execute();
 
 			if (count($check))
@@ -766,13 +770,13 @@ class Comment extends \Model\Model_Base
 		$this->allow_media = true;
 
 		// check if it's a thread and its status
-		if (!$this->num)
+		if ($this->thread_num > 0)
 		{
 			try
 			{
-				$thread = Board::forge()->get_thread($this->num)->set_radix($this->board);
+				$thread = Board::forge()->get_thread($this->thread_num)->set_radix($this->board);
 				$thread->get_comments();
-				$status = $thread->check_thread();
+				$status = $thread->check_thread_status();
 			}
 			catch (\Model\BoardException $e)
 			{
@@ -782,10 +786,6 @@ class Comment extends \Model\Model_Base
 			$this->ghost = $status['dead'];
 			$this->allow_media = $status['disable_image_upload'];
 		}
-
-
-		// hook entire comment data to alter in plugin
-		Plugins::run_hook('fu.comment.comment.input', array(&$this), 'simple');
 
 		foreach(array('name', 'email', 'subject', 'delpass', 'spoiler', 'comment', 'capcode') as $key)
 		{
@@ -826,7 +826,7 @@ class Comment extends \Model\Model_Base
 		}
 
 		$hasher = new \PHPSecLib\Crypt_Hash();
-		$this->delpass = base64_encode($hasher->hasher()->pbkdf2($password, \Config::get('auth.salt'), 10000, 32));
+		$this->delpass = base64_encode($hasher->pbkdf2($this->delpass, \Config::get('auth.salt'), 10000, 32));
 
 		if ($this->capcode != '')
 		{
@@ -852,32 +852,34 @@ class Comment extends \Model\Model_Base
 			$this->capcode = 'N';
 		}
 
-		// process comment media
-		if (!isset($this->media))
-		{
-			// if no media is present and post is op, stop processing
-			if (!$this->num)
-			{
-				throw new CommentSendingThreadWithoutMediaException(__('You can\'t start a new thread without an image.'));
-			}
+		$microtime = str_replace('.', '', (string) microtime(true));
+		$this->timestamp = substr($microtime, 0, 10);
+		$this->op = (bool) !$this->thread_num;
+		$this->spoiler = (bool) !$this->spoiler;
 
-			$this->media = Media::forge_empty();
-		}
-		else
+		// process comment media
+		if (!is_null($this->media))
 		{
 			try
 			{
-				$this->media->insert();
+				$this->media->insert($microtime, $this->spoiler, $this->op);
 			}
 			catch (MediaInsertException $e)
 			{
 				throw new CommentSendingException($e->getMessage());
 			}
 		}
+		else
+		{
+			// if no media is present and post is op, stop processing
+			if (!$this->thread_num)
+			{
+				throw new CommentSendingThreadWithoutMediaException(__('You can\'t start a new thread without an image.'));
+			}
 
-		$microtime = microtime();
-		$this->timestamp = substr($microtime, 0, 10);
-		$this->op = (bool) !$this->num;
+			$this->media = Media::forge_empty($this->board);
+		}
+
 
 		// 2ch-style codes, only if enabled
 		if($this->num && $this->board->enable_poster_hash)
@@ -891,15 +893,10 @@ class Comment extends \Model\Model_Base
 			$newyork = new \DateTime(date('Y-m-d H:i:s', time()), new \DateTimeZone('America/New_York'));
 			$utc = new \DateTime(date('Y-m-d H:i:s', time()), new \DateTimeZone('UTC'));
 			$diff = $newyork->diff($utc)->h;
-			$timestamp = time() - ($diff * 60 * 60);
+			$this->timestamp = $this->timestamp - ($diff * 60 * 60);
 		}
 
-		$media_file = $this->process_media($board, $num, $media, $media_hash);
-		$default_post_arr[4] = substr($media_file['unixtime'],0,10);
-		unset($media_file['unixtime']);
-		$default_post_arr = array_merge($default_post_arr, array_values($media_file));
-
-		DB::start_transaction();
+		\DB::start_transaction();
 
 		// being processing insert...
 
@@ -920,11 +917,11 @@ class Comment extends \Model\Model_Base
 				FROM
 				(
 					SELECT subnum
-					FROM ' . Radix::get_table($board) . '
+					FROM ' . \Radix::get_table($board) . '
 					WHERE
 						num = (
 							SELECT MAX(num)
-							FROM ' . Radix::get_table($board) . '
+							FROM ' . \Radix::get_table($board) . '
 							WHERE thread_num = '.intval($this->thread_num).'
 						)
 				) AS x)
@@ -945,16 +942,24 @@ class Comment extends \Model\Model_Base
 
 			$subnum = 0;
 
-			$thread_num = \DB::expr('
-				(IF(?, (
-				SELECT COALESCE(MAX(num), 0)+1 AS num
-				FROM
-				(
-					SELECT num
-					FROM '.Radix::get_table($this->board).'
-				) AS x)
-			');
+			if($this->thread_num > 0)
+			{
+				$thread_num = $this->thread_num;
+			}
+			else
+			{
+				$thread_num = \DB::expr('
+					(SELECT COALESCE(MAX(num), 0)+1 AS thread_num
+					FROM
+					(
+						SELECT num
+						FROM '.Radix::get_table($this->board).'
+					) AS x)
+				');
+			}
 		}
+
+		$this->poster_ip = \Input::ip_decimal();
 
 		list($last_id, $num_affected) =
 			\DB::insert(\DB::expr(Radix::get_table($this->board)))
@@ -988,7 +993,7 @@ class Comment extends \Model\Model_Base
 
 		// check that it wasn't posted multiple times
 		$check_duplicate = \DB::select()->from(\DB::expr(Radix::get_table($this->board)))
-			->where('poster_ip', Input::ip_decimal())->where('comment', $this->comment)
+			->where('poster_ip', \Input::ip_decimal())->where('comment', $this->comment)
 			->where('timestamp', '>=', $this->timestamp)->as_object()->execute();
 
 		if(count($check_duplicate) > 1)
@@ -999,14 +1004,22 @@ class Comment extends \Model\Model_Base
 
 		$comment = $check_duplicate->current();
 
+		$media_fields = Media::get_fields();
 		// refresh the current comment object with the one finalized fetched from DB
 		foreach ($comment as $key => $item)
 		{
-			$this->$key = $item;
+			if (in_array($key, $media_fields))
+			{
+				$this->media->$key = $item;
+			}
+			else
+			{
+				$this->$key = $item;
+			}
 		}
 
 		// update poster_hash for non-ghost posts
-		if (!$ghost && $this->op && $this->board->enable_poster_hash)
+		if (!$this->ghost && $this->op && $this->board->enable_poster_hash)
 		{
 			$this->poster_hash = substr(substr(crypt(md5(Input::ip().'id'.$comment->thread_num),'id'),+3), 0, 8);
 
@@ -1014,7 +1027,7 @@ class Comment extends \Model\Model_Base
 				->value('poster_hash', $this->poster_hash)->where('doc_id', $comment->doc_id)->execute();
 		}
 
-		DB::commit_transaction();
+		\DB::commit_transaction();
 
 		// success, now check if there's extra work to do
 
@@ -1022,7 +1035,7 @@ class Comment extends \Model\Model_Base
 		// so we must be really careful with the insertion
 		if($this->board->myisam_search)
 		{
-			\DB::insert(Radix::get_table($this->board, '_search'))
+			\DB::insert(\DB::expr(Radix::get_table($this->board, '_search')))
 				->set(array(
 					'doc_id' => $comment->doc_id,
 					'num' => $comment->num,
