@@ -489,11 +489,11 @@ class Theme extends \Model
 			array_merge(
 				$this->_view_variables,
 				array('template' => array(
-					'body' => $content,
-					'title' => implode($this->_title_separator, $this->_title),
-					'partials' => $partials,
-					'metadata' => implode("\n", $this->_metadata)
-				)
+						'body' => $content,
+						'title' => implode($this->_title_separator, $this->_title),
+						'partials' => $partials,
+						'metadata' => implode("\n", $this->_metadata)
+					)
 				)
 			)
 		);

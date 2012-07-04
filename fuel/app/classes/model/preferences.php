@@ -77,15 +77,21 @@ class Preferences extends \Model
 
 	public static function get($setting, $fallback = null)
 	{
-		if(isset(self::$_preferences[$setting]))
+		if (isset(self::$_preferences[$setting]))
+		{
 			return self::$_preferences[$setting];
+		}
 
-		if($fallback != null)
+		if ($fallback != null)
+		{
 			return $fallback;
+		}
 
 		$const = strtoupper(substr($setting,strpos($setting,'.') + 1));
-		if(defined('FOOL_'.$const))
+		if (defined('FOOL_'.$const))
+		{
 			return constant('FOOL_'.$const);
+		}
 
 		return null;
 	}
@@ -110,17 +116,6 @@ class Preferences extends \Model
 		}
 
 		return static::load_settings(true);
-	}
-
-
-	private function _filter_value($value)
-	{
-		if ($value === 0)
-		{
-			return true;
-		}
-
-		return $value;
 	}
 
 
@@ -194,6 +189,17 @@ class Preferences extends \Model
 				static::submit($result['success']);
 			}
 		}
+	}
+
+
+	private function _filter_value($value)
+	{
+		if ($value === 0)
+		{
+			return true;
+		}
+
+		return $value;
 	}
 
 }

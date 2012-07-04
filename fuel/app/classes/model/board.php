@@ -351,6 +351,8 @@ class Board extends \Model\Model_Base
 		{
 			$this->_comments = array();
 			$this->_comments_unsorted = array();
+
+			\Profiler::mark_memory($this, 'Board $this');
 			\Profiler::mark('Board::get_latest_comments End Prematurely');
 			return $this;
 		}
@@ -409,8 +411,8 @@ class Board extends \Model\Model_Base
 		}
 
 		$this->_comments = $results;
-		\Profiler::mark_memory($this->_comments, 'Board $this->_comments');
 
+		\Profiler::mark_memory($this->_comments, 'Board $this->_comments');
 		\Profiler::mark_memory($this, 'Board $this');
 		\Profiler::mark('Board::get_latest_comments End');
 		return $this;
@@ -487,6 +489,7 @@ class Board extends \Model\Model_Base
 
 		if(!count($result))
 		{
+			\Profiler::mark_memory($this, 'Board $this');
 			\Profiler::mark('Board::get_threads_comments End Prematurely');
 			return array();
 		}
@@ -494,6 +497,7 @@ class Board extends \Model\Model_Base
 		$this->_comments_unsorted = Comment::forge($result, $this->_radix);
 		$this->_comments = $this->_comments_unsorted;
 
+		\Profiler::mark_memory($this->_comments, 'Board $this->_comments');
 		\Profiler::mark_memory($this, 'Board $this');
 		\Profiler::mark('Board::get_threads_comments End');
 		return $this;
@@ -632,6 +636,7 @@ class Board extends \Model\Model_Base
 
 		$this->_comments = $result;
 
+		\Profiler::mark_memory($this->_comments, 'Board $this->_comments');
 		\Profiler::mark_memory($this, 'Board $this');
 		\Profiler::mark('Board::get_thread_comments End');
 		return $this;
@@ -735,7 +740,7 @@ class Board extends \Model\Model_Base
 	}
 
 
-	protected function  p_get_post_comments()
+	protected function p_get_post_comments()
 	{
 		extract($this->_options);
 
