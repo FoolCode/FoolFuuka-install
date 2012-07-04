@@ -70,7 +70,7 @@ class Media extends \Model\Model_Base
 	}
 
 
-	public function __construct($comment, $board)
+	public function __construct($comment, $board, $op = false)
 	{
 		$this->board = $board;
 
@@ -78,6 +78,8 @@ class Media extends \Model\Model_Base
 		{
 			$this->$key = $item;
 		}
+
+		$this->op = $op;
 
 		if ($this->board->archive)
 		{
@@ -99,7 +101,7 @@ class Media extends \Model\Model_Base
 	}
 
 
-	protected static function p_forge_from_comment($comment, $board)
+	protected static function p_forge_from_comment($comment, $board, $op = false)
 	{
 		// if this comment doesn't have media data
 		if (!isset($comment->media_id) || !$comment->media_id)
@@ -107,7 +109,7 @@ class Media extends \Model\Model_Base
 			return null;
 		}
 
-		return new Media($comment, $board);
+		return new Media($comment, $board, $op);
 	}
 
 
@@ -265,7 +267,7 @@ class Media extends \Model\Model_Base
 	 * @param bool $thumbnail if we're looking for a thumbnail
 	 * @return bool|string FALSE if it has no image in database, string for the path
 	 */
-	protected function p_get_media_dir($thumbnail = false, $precise = FALSE)
+	protected function p_get_media_dir($thumbnail = false, $precise = false)
 	{
 		if (!$this->media_hash)
 		{
@@ -282,7 +284,7 @@ class Media extends \Model\Model_Base
 				}
 				else
 				{
-					$image = $this->preview_op ? $this->preview_op : $this->preview_reply;
+					$image = !is_null($this->preview_op) ? $this->preview_op : $this->preview_reply;
 				}
 			}
 			else
@@ -293,7 +295,7 @@ class Media extends \Model\Model_Base
 				}
 				else
 				{
-					$image = $this->preview_reply ? $this->preview_reply : $this->preview_op;
+					$image = !is_null($this->preview_reply) ? $this->preview_reply : $this->preview_op;
 				}
 			}
 		}
@@ -308,7 +310,7 @@ class Media extends \Model\Model_Base
 			throw new MediaDirNotAvailableException;
 		}
 
-		return Preferences::get('fu.boards_directory').'/'.$this->board->shortname.'/'
+		return Preferences::get('fu.boards_directory', DOCROOT.'content/').'/'.$this->board->shortname.'/'
 			.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 	}
 
@@ -394,7 +396,7 @@ class Media extends \Model\Model_Base
 			// fallback if we have the full image but not the thumbnail
 			if ($thumbnail && !isset($image) && file_exists($this->get_media_dir(false)))
 			{
-				$thumbnail = FALSE;
+				$thumbnail = false;
 				$image = $this->media;
 			}
 		}

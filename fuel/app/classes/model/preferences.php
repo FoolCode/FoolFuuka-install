@@ -33,6 +33,7 @@ class Preferences extends \Model
 
 			foreach($preferences as $pref)
 			{
+				// fix the PHP issue where . is changed to _ in the $_POST array
 				static::$_preferences[$pref['name']] = $pref['value'];
 			}
 
@@ -51,6 +52,9 @@ class Preferences extends \Model
 		{
 			foreach ($data as $setting => $value)
 			{
+				// fix the PHP issue where . is changed to _ in the $_POST array
+				$setting = substr($setting['name'], 0, 2).'.'.substr($setting['name'], 3);
+
 				// if value contains array, serialize it
 				if (is_array($value))
 				{
@@ -173,7 +177,13 @@ class Preferences extends \Model
 	{
 		if (\Input::post())
 		{
-			$result = \Validation::form_validate($form);
+			$post = array();
+			foreach (\Input::post() as $key => $item)
+			{
+				$post[substr($key, 0, 2).'.'.substr($key, 3)] = $item;
+			}
+
+			$result = \Validation::form_validate($form, $post);
 			if (isset($result['error']))
 			{
 				\Notices::set('warning', $result['error']);

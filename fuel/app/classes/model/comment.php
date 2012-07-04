@@ -157,7 +157,7 @@ class Comment extends \Model\Model_Base
 			}
 		}
 
-		$this->media = Media::forge_from_comment($media, $this->board);
+		$this->media = Media::forge_from_comment($media, $this->board, $this->op);
 
 		foreach ($options as $key => $value)
 		{

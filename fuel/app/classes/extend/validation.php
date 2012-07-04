@@ -179,7 +179,6 @@ class Validation extends \Fuel\Core\Validation
 			{
 				return array('success' => $result, 'warning' => implode(' ', $validation_func_warnings));
 			}
-
 			// returning a form with the new values
 			return array('success' => $result);
 		}
