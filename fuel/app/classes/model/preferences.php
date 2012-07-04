@@ -15,14 +15,28 @@ class Preferences extends \Model
 	}
 
 
-	public static function load_settings()
+	public static function load_settings($reload = false)
 	{
 		\Profiler::mark('Preferences::load_settings Start');
-		$preferences = \DB::select()->from('preferences')->as_assoc()->execute();
-
-		foreach($preferences as $pref)
+		if ($reload === true)
 		{
-			static::$_preferences[$pref['name']] = $pref['value'];
+			\Cache::delete('model.preferences.settings');
+		}
+
+		try
+		{
+			static::$_preferences = \Cache::get('model.preferences.settings');
+		}
+		catch (\CacheNotFoundException $e)
+		{
+			$preferences = \DB::select()->from('preferences')->as_assoc()->execute();
+
+			foreach($preferences as $pref)
+			{
+				static::$_preferences[$pref['name']] = $pref['value'];
+			}
+
+			\Cache::set('model.preferences.settings', static::$_preferences, 3600);
 		}
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
@@ -54,7 +68,7 @@ class Preferences extends \Model
 				}
 			}
 
-			return static::load_settings();
+			return static::load_settings(true);
 		}
 
 		return false;
@@ -95,7 +109,7 @@ class Preferences extends \Model
 			DB::insert('preferences')->set(array($setting, $value))->execute();
 		}
 
-		return $this->load_settings();
+		return static::load_settings(true);
 	}
 
 
@@ -146,7 +160,7 @@ class Preferences extends \Model
 		}
 
 		// reload those preferences
-		static::load_settings();
+		static::load_settings(true);
 	}
 
 
