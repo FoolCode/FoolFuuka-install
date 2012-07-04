@@ -8,6 +8,7 @@ class MediaDirNotAvailableException extends \Model\MediaNotFoundException {}
 class MediaFileNotFoundException extends \Model\MediaNotFoundException {}
 class MediaHiddenException extends \Model\MediaNotFoundException {}
 class MediaHiddenDayException extends \Model\MediaNotFoundException {}
+class MediaBannedException extends \Model\MediaNotFoundException {}
 
 class MediaInsertException extends \FuelException {}
 class MediaInsertNoFileException extends \Model\MediaInsertException {}
@@ -187,149 +188,26 @@ class Media extends \Model\Model_Base
 	}
 
 
-	public function rollback_upload()
-	{
-		if (!is_null($this->temp_filename) && file_exists($this->temp_path.$this->temp_filename))
-			unlink($this->temp_path.$this->temp_filename);
-	}
-
-
-	public function insert($microtime, $spoiler, $is_op)
-	{
-		$this->op = $is_op;
-		$full_path = $this->temp_path.$this->temp_filename;
-
-		$getimagesize = getimagesize($full_path);
-
-		if (!$getimagesize)
-		{
-			throw new MediaInsertNotImageException(__('The file you uploaded is not an image.'));
-		}
-
-		// if width and height are lower than 25 reject the image
-		if ($getimagesize[0] < 25 || $getimagesize[1] < 25)
-		{
-			throw new MediaInsertImageSizeSmall(__('The image you uploaded is too small.'));
-		}
-
-
-		$this->spoiler = $spoiler;
-		$this->media_w = $getimagesize[0];
-		$this->media_h = $getimagesize[1];
-		$this->media_orig = $microtime.'.'.$this->temp_extension;
-		$this->preview_orig = $microtime.'s.'.$this->temp_extension;
-		$this->media_hash = base64_encode(pack("H*", md5(file_get_contents($full_path))));
-
-		$hash_query = \DB::select()->from(\DB::expr(Radix::get_table($this->board, '_images')))
-				->where('media_hash', $this->media_hash)->as_object()->execute();
-
-		$do_thumb = true;
-		$do_full = true;
-
-		// do we have this file already in database?
-		if (count($hash_query) === 1)
-		{
-			$duplicate = $hash_query->current();
-			$duplicate = new Media($duplicate, $this->board);
-
-			try
-			{
-				$duplicate_dir = $duplicate->get_media_dir();
-				if (file_exists($duplicate_dir))
-				{
-					$do_full = false;
-				}
-			}
-			catch (MediaDirNotAvailableException $e)
-			{}
-
-			try
-			{
-				$duplicate_dir_thumb = $duplicate->get_media_dir(true, true);
-				if (file_exists($duplicate_dir_thumb))
-				{
-					$duplicate_dir_thumb_size = getimagesize($duplicate_dir_thumb);
-					$this->preview_w = $duplicate_dir_thumb_size[0];
-					$this->preview_h = $duplicate_dir_thumb_size[1];
-					$do_thumb = false;
-				}
-			}
-			catch (MediaDirNotAvailableException $e)
-			{}
-		}
-
-		if ($do_thumb)
-		{
-			$thumb_width = $this->board->thumbnail_reply_width;
-			$thumb_height = $this->board->thumbnail_reply_height;
-			if ($is_op)
-			{
-				$thumb_width = $this->board->thumbnail_op_width;
-				$thumb_height = $this->board->thumbnail_op_height;
-			}
-
-			if (!file_exists($this->path_from_filename(true)))
-			{
-				mkdir($this->path_from_filename(true), 0777, true);
-			}
-
-			\Image::forge(array('driver' => 'imagemagick', 'quality' => 80, 'temp_dir' => APPPATH.'/tmp/'))
-				->load($full_path)
-				->resize($thumb_width, $thumb_height)
-				->save($this->path_from_filename(true).$this->preview_orig);
-
-			$thumb_getimagesize = getimagesize($this->path_from_filename(true).$this->preview_orig);
-			$this->preview_w = $thumb_getimagesize[0];
-			$this->preview_h = $thumb_getimagesize[1];
-		}
-
-		if ($do_full)
-		{
-			if (!file_exists($this->path_from_filename()))
-			{
-				mkdir($this->path_from_filename(), 0777, true);
-			}
-
-			copy($full_path, $this->path_from_filename().$this->media_orig);
-		}
-
-		if (function_exists('exif_read_data') && in_array(strtolower($this->temp_extension), array('jpg', 'jpeg', 'tiff')))
-		{
-			$exif = exif_read_data($full_path);
-
-			if ($exif !== FALSE)
-			{
-				$this->exif = $exif;
-			}
-		}
-
-		return $this;
-	}
-
-
-	public function path_from_filename($thumbnail = false)
-	{
-		return Preferences::get('fu.boards_directory', DOCROOT.'content/boards').'/'.$this->board->shortname.'/'.
-			($thumbnail ? 'thumb' : 'image').'/'.
-			substr($this->media_orig, 0, 4).'/'.substr($this->media_orig, 4, 2).'/';
-	}
-
-
 	public function __get($name)
 	{
 		switch ($name)
 		{
 			case 'media_status':
-				$this->media_link = $this->get_media_link();
+				try { $this->media_link = $this->get_media_link(); }
+				catch (MediaNotFoundException $e) { return null; }
 				return $this->media_status;
 			case 'safe_media_hash':
-				return $this->safe_media_hash = $this->get_media_hash(true);
+				try { return $this->safe_media_hash = $this->get_media_hash(true); }
+				catch (MediaNotFoundException $e) { return null; }
 			case 'remote_media_link':
-				return $this->remote_media_link = $this->get_remote_media_link();
+				try { return $this->remote_media_link = $this->get_remote_media_link(); }
+				catch (MediaNotFoundException $e) { return null; }
 			case 'media_link':
-				return $this->media_link = $this->get_media_link();
+				try { return $this->media_link = $this->get_media_link(); }
+				catch (MediaNotFoundException $e) { return null; }
 			case 'thumb_link':
-				return $this->thumb_link = $this->get_media_link(true);
+				try { return $this->thumb_link = $this->get_media_link(true); }
+				catch (MediaNotFoundException $e) { return null; }
 			case 'preview_w':
 			case 'preview_h':
 				if ($this->board->archive && $this->spoiler)
@@ -707,6 +585,135 @@ class Media extends \Model\Model_Base
 				$this->op = $temp;
 			}
 		}
+
+	}
+
+
+	public function rollback_upload()
+	{
+		if (!is_null($this->temp_filename) && file_exists($this->temp_path.$this->temp_filename))
+			unlink($this->temp_path.$this->temp_filename);
+	}
+
+
+	public function insert($microtime, $spoiler, $is_op)
+	{
+		$this->op = $is_op;
+		$full_path = $this->temp_path.$this->temp_filename;
+
+		$getimagesize = getimagesize($full_path);
+
+		if (!$getimagesize)
+		{
+			throw new MediaInsertNotImageException(__('The file you uploaded is not an image.'));
+		}
+
+		// if width and height are lower than 25 reject the image
+		if ($getimagesize[0] < 25 || $getimagesize[1] < 25)
+		{
+			throw new MediaInsertImageSizeSmall(__('The image you uploaded is too small.'));
+		}
+
+
+		$this->spoiler = $spoiler;
+		$this->media_w = $getimagesize[0];
+		$this->media_h = $getimagesize[1];
+		$this->media_orig = $microtime.'.'.$this->temp_extension;
+		$this->preview_orig = $microtime.'s.'.$this->temp_extension;
+		$this->media_hash = base64_encode(pack("H*", md5(file_get_contents($full_path))));
+
+		$hash_query = \DB::select()->from(\DB::expr(Radix::get_table($this->board, '_images')))
+				->where('media_hash', $this->media_hash)->as_object()->execute();
+
+		$do_thumb = true;
+		$do_full = true;
+
+		// do we have this file already in database?
+		if (count($hash_query) === 1)
+		{
+			$duplicate = $hash_query->current();
+			$duplicate = new Media($duplicate, $this->board);
+
+			try
+			{
+				$duplicate_dir = $duplicate->get_media_dir();
+				if (file_exists($duplicate_dir))
+				{
+					$do_full = false;
+				}
+			}
+			catch (MediaDirNotAvailableException $e)
+			{}
+
+			try
+			{
+				$duplicate_dir_thumb = $duplicate->get_media_dir(true, true);
+				if (file_exists($duplicate_dir_thumb))
+				{
+					$duplicate_dir_thumb_size = getimagesize($duplicate_dir_thumb);
+					$this->preview_w = $duplicate_dir_thumb_size[0];
+					$this->preview_h = $duplicate_dir_thumb_size[1];
+					$do_thumb = false;
+				}
+			}
+			catch (MediaDirNotAvailableException $e)
+			{}
+		}
+
+		if ($do_thumb)
+		{
+			$thumb_width = $this->board->thumbnail_reply_width;
+			$thumb_height = $this->board->thumbnail_reply_height;
+			if ($is_op)
+			{
+				$thumb_width = $this->board->thumbnail_op_width;
+				$thumb_height = $this->board->thumbnail_op_height;
+			}
+
+			if (!file_exists($this->path_from_filename(true)))
+			{
+				mkdir($this->path_from_filename(true), 0777, true);
+			}
+
+			\Image::forge(array('driver' => 'imagemagick', 'quality' => 80, 'temp_dir' => APPPATH.'/tmp/'))
+				->load($full_path)
+				->resize($thumb_width, $thumb_height)
+				->save($this->path_from_filename(true).$this->preview_orig);
+
+			$thumb_getimagesize = getimagesize($this->path_from_filename(true).$this->preview_orig);
+			$this->preview_w = $thumb_getimagesize[0];
+			$this->preview_h = $thumb_getimagesize[1];
+		}
+
+		if ($do_full)
+		{
+			if (!file_exists($this->path_from_filename()))
+			{
+				mkdir($this->path_from_filename(), 0777, true);
+			}
+
+			copy($full_path, $this->path_from_filename().$this->media_orig);
+		}
+
+		if (function_exists('exif_read_data') && in_array(strtolower($this->temp_extension), array('jpg', 'jpeg', 'tiff')))
+		{
+			$exif = exif_read_data($full_path);
+
+			if ($exif !== FALSE)
+			{
+				$this->exif = $exif;
+			}
+		}
+
+		return $this;
+	}
+
+
+	public function path_from_filename($thumbnail = false)
+	{
+		return Preferences::get('fu.boards_directory', DOCROOT.'content/boards').'/'.$this->board->shortname.'/'.
+			($thumbnail ? 'thumb' : 'image').'/'.
+			substr($this->media_orig, 0, 4).'/'.substr($this->media_orig, 4, 2).'/';
 	}
 
 }
