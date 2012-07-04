@@ -330,7 +330,7 @@ class Comment extends \Model\Model_Base
 				. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 		}
 
-		return implode('<a href="' . (array($data->board->shortname, 'post', $data->num)) . '" '
+		return implode('<a href="' . \Uri::create(array($data->board->shortname, 'post', $data->num)) . '" '
 			. $build_url['attr'] . '>&gt;&gt;' . $num . '</a>', $build_url['tags']);
 
 		// return un-altered
