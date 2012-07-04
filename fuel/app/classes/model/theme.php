@@ -455,6 +455,7 @@ class Theme extends \Model
 	 */
 	public function build($view, $data = array(), $without_layout = FALSE)
 	{
+		\Profiler::mark('Theme::build Start');
 		foreach ($data as $key => $item)
 		{
 			$this->bind($key, $item);
@@ -477,6 +478,8 @@ class Theme extends \Model
 		// if there's no selected layout output or return this
 		if ($without_layout || $this->_selected_layout === FALSE)
 		{
+			\Profiler::mark_memory($content, 'Theme $content');
+			\Profiler::mark('Theme::build End Prematurely');
 			return $content;
 		}
 
@@ -495,6 +498,8 @@ class Theme extends \Model
 			)
 		);
 
+		\Profiler::mark_memory($html, 'Theme $html');
+		\Profiler::mark('Theme::build End');
 		return $html;
 	}
 

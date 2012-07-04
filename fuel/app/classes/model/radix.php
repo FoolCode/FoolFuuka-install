@@ -684,6 +684,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_preload($preferences = false)
 	{
+		\Profiler::mark('Radix::preload Start');
 		if (!\Auth::has_access('maccess.mod'))
 		{
 			try
@@ -758,10 +759,13 @@ class Radix extends \Model_Base
 		}
 
 		static::$preloaded_radixes = $result_object;
+		\Profiler::mark_memory(static::$preloaded_radixes, 'Radix static::$preloaded_radixes');
 
-		if ($preferences == true)
+		if ($preferences == true) {
 			static::load_preferences();
+		}
 
+		\Profiler::mark('Radix::preload End');
 		return false;
 	}
 
@@ -774,6 +778,7 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_load_preferences($board = null)
 	{
+		\Profiler::mark('Radix::load_preferences Start');
 		if (is_null($board))
 		{
 			$ids = array_keys(static::$preloaded_radixes);
@@ -814,6 +819,8 @@ class Radix extends \Model_Base
 		}
 
 		// useful if only one has been selected
+		\Profiler::mark_memory(static::$preloaded_radixes, 'Radix static::$preloaded_radixes w/ preferences');
+		\Profiler::mark('Radix::load_preferences End');
 		return $selected;
 	}
 

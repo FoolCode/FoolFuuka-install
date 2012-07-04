@@ -314,6 +314,7 @@ class Board extends \Model\Model_Base
 	 */
 	protected function p_get_latest_comments()
 	{
+		\Profiler::mark('Board::get_latest_comments Start');
 		extract($this->_options);
 
 		switch ($order)
@@ -350,6 +351,7 @@ class Board extends \Model\Model_Base
 		{
 			$this->_comments = array();
 			$this->_comments_unsorted = array();
+			\Profiler::mark('Board::get_latest_comments End Prematurely');
 			return $this;
 		}
 
@@ -374,6 +376,7 @@ class Board extends \Model\Model_Base
 		$query_posts = \DB::query(implode(' UNION ', $sql_arr), \DB::SELECT)->as_object()->execute()->as_array();
 		// populate posts_arr array
 		$this->_comments_unsorted = Comment::forge($query_posts, $this->_radix);
+		\Profiler::mark_memory($this->_comments_unsorted, 'Board $this->_comments_unsorted');
 		$results = array();
 
 		foreach ($threads as $thread)
@@ -406,13 +409,17 @@ class Board extends \Model\Model_Base
 		}
 
 		$this->_comments = $results;
+		\Profiler::mark_memory($this->_comments, 'Board $this->_comments');
 
+		\Profiler::mark_memory($this, 'Board $this');
+		\Profiler::mark('Board::get_latest_comments End');
 		return $this;
 	}
 
 
 	protected function p_get_latest_count()
 	{
+		\Profiler::mark('Board::get_latest_count Start');
 		extract($this->_options);
 
 		$type_cache = 'thread_num';
@@ -440,6 +447,8 @@ class Board extends \Model\Model_Base
 
 		$this->_total_count = $query_threads->as_object()->execute()->current()->threads;
 
+		\Profiler::mark_memory($this, 'Board $this');
+		\Profiler::mark('Board::get_latest_count End');
 		return $this;
 	}
 
@@ -460,6 +469,7 @@ class Board extends \Model\Model_Base
 
 	protected function p_get_threads_comments()
 	{
+		\Profiler::mark('Board::get_threads_comments Start');
 		extract($this->_options);
 
 		$inner_query =  \DB::select('*', \DB::expr('thread_num as unq_thread_num'))
@@ -477,12 +487,15 @@ class Board extends \Model\Model_Base
 
 		if(!count($result))
 		{
+			\Profiler::mark('Board::get_threads_comments End Prematurely');
 			return array();
 		}
 
 		$this->_comments_unsorted = Comment::forge($result, $this->_radix);
 		$this->_comments = $this->_comments_unsorted;
 
+		\Profiler::mark_memory($this, 'Board $this');
+		\Profiler::mark('Board::get_threads_comments End');
 		return $this;
 	}
 
@@ -527,6 +540,7 @@ class Board extends \Model\Model_Base
 
 	protected function p_get_thread_comments()
 	{
+		\Profiler::mark('Board::get_thread_comments Start');
 		extract($this->_options);
 
 		// determine type
@@ -618,6 +632,8 @@ class Board extends \Model\Model_Base
 
 		$this->_comments = $result;
 
+		\Profiler::mark_memory($this, 'Board $this');
+		\Profiler::mark('Board::get_thread_comments End');
 		return $this;
 	}
 

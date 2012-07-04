@@ -155,6 +155,7 @@ class Controller_Chan extends Controller_Common
 
 	protected function latest($page = 1, $options = array())
 	{
+		\Profiler::mark('Controller Chan::latest Start');
 		try
 		{
 			$board = Board::forge()->get_latest()->set_radix($this->_radix)->set_page($page)->set_options($options);
@@ -165,6 +166,7 @@ class Controller_Chan extends Controller_Common
 		}
 		catch (\Model\BoardException $e)
 		{
+			\Profiler::mark('Controller Chan::latest End Prematurely');
 			return $this->error($e->getMessage());
 		}
 
@@ -204,6 +206,8 @@ class Controller_Chan extends Controller_Common
 			$this->_theme->set_partial('tools_new_thread_box', 'tools_reply_box');
 		}
 
+		\Profiler::mark_memory($this, 'Controller Chan $this');
+		\Profiler::mark('Controller Chan::latest End');
 		return Response::forge($this->_theme->build('board'));
 	}
 
@@ -232,6 +236,7 @@ class Controller_Chan extends Controller_Common
 
 	protected function thread($num = 0, $options = array())
 	{
+		\Profiler::mark('Controller Chan::thread Start');
 		$num = str_replace('S', '', $num);
 
 		try
@@ -243,10 +248,12 @@ class Controller_Chan extends Controller_Common
 		}
 		catch(\Model\BoardThreadNotFoundException $e)
 		{
+			\Profiler::mark('Controller Chan::thread End Prematurely');
 			return $this->action_post($num);
 		}
 		catch (\Model\BoardException $e)
 		{
+			\Profiler::mark('Controller Chan::thread End Prematurely');
 			return $this->error($e->getMessage());
 		}
 
@@ -261,6 +268,7 @@ class Controller_Chan extends Controller_Common
 		}
 		catch (\Model\BoardThreadNotFoundException $e)
 		{
+			\Profiler::mark('Controller Chan::thread End Prematurely');
 			return $this->error();
 		}
 
@@ -281,6 +289,8 @@ class Controller_Chan extends Controller_Common
 			$this->_theme->set_partial('tools_reply_box', 'tools_reply_box');
 		}
 
+		\Profiler::mark_memory($this, 'Controller Chan $this');
+		\Profiler::mark('Controller Chan::thread End');
 		return Response::forge($this->_theme->build('board'));
 	}
 

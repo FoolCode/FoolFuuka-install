@@ -65,6 +65,7 @@ class Plugins extends \Model
 	 */
 	public static function get_all()
 	{
+		\Profiler::mark('Plugins::get_all Start');
 		$slugs = $this->lookup_plugins();
 
 		$result = array();
@@ -107,6 +108,8 @@ class Plugins extends \Model
 			}
 		}
 
+		\Profiler::mark_memory($slugs_with_data, 'Plugins object - $slugs_with_data');
+		\Profiler::mark('Plugins::get_all End');
 		return $slugs_with_data;
 	}
 
@@ -416,10 +419,16 @@ class Plugins extends \Model
 	public static function run_hook($target, $parameters = array(), $modifier = '')
 	{
 		if(!isset(self::$_hooks[$target]) && $modifier == 'simple')
+		{
 			return end($parameters);
+		}
+
 
 		if(!isset(self::$_hooks[$target]))
+		{
 			return NULL;
+		}
+
 
 		$hook_array = self::$_hooks[$target];
 

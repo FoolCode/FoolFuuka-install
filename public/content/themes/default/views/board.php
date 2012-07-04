@@ -133,8 +133,6 @@ foreach ($board->get_comments() as $key => $post) :
 
 	<aside class="posts">
 		<?php
-			 Profiler::mark('start of this piece of code');
-
 		if (isset($post['posts'])) :
 			$post_counter = 0;
 			foreach ($post['posts'] as $p)

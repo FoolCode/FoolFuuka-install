@@ -110,8 +110,6 @@ class Comment extends \Model\Model_Base
 				return $this->comment_processed = @iconv('UTF-8', 'UTF-8//IGNORE', $this->process_comment());
 		}
 
-
-
 		return null;
 	}
 

@@ -17,6 +17,7 @@ class Preferences extends \Model
 
 	public static function load_settings()
 	{
+		\Profiler::mark('Preferences::load_settings Start');
 		$preferences = \DB::select()->from('preferences')->as_assoc()->execute();
 
 		foreach($preferences as $pref)
@@ -24,6 +25,8 @@ class Preferences extends \Model
 			static::$_preferences[$pref['name']] = $pref['value'];
 		}
 
+		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
+		\Profiler::mark('Preferences::load_settings End');
 		return static::$_preferences;
 	}
 
