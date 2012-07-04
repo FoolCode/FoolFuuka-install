@@ -366,8 +366,8 @@ class Board extends \Model\Model_Base
 			$threads_arr[$thread->unq_thread_num] = array('replies' => $thread->nreplies, 'images' => $thread->nimages);
 
 			$temp = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
-			$this->sql_media_join($temp);
-			$this->sql_report_join($temp);
+			static::sql_media_join($temp);
+			static::sql_report_join($temp);
 			$temp->where('thread_num', $thread->unq_thread_num)
 				->order_by('op', 'desc')->order_by('num', 'desc')->order_by('subnum', 'desc')
 				->limit($per_thread + 1)->offset(0);
@@ -552,16 +552,16 @@ class Board extends \Model\Model_Base
 		{
 			case 'from_doc_id':
 				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
-				$this->sql_media_join($query);
-				$this->sql_report_join($query);
+				static::sql_media_join($query);
+				static::sql_report_join($query);
 				$query->where('thread_num', $num)->where('doc_id', '>', $latest_doc_id)
 					->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
 			case 'ghosts':
 				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
-				$this->sql_media_join($query);
-				$this->sql_report_join($query);
+				static::sql_media_join($query);
+				static::sql_report_join($query);
 				$query->where('thread_num', $num)->where('subnum', '<>', 0)
 					->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
@@ -577,15 +577,15 @@ class Board extends \Model\Model_Base
 							->order_by('num', 'desc')->order_by('subnum', 'desc')->limit($last_limit).')
 					) AS x
 				'));
-				$this->sql_media_join($query,null, 'x');
-				$this->sql_report_join($query, null, 'x');
+				static::sql_media_join($query,null, 'x');
+				static::sql_report_join($query, null, 'x');
 				$query->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 
 			case 'thread':
 				$query = \DB::select()->from(\DB::expr(Radix::get_table($this->_radix)));
-				$this->sql_media_join($query);
-				$this->sql_report_join($query);
+				static::sql_media_join($query);
+				static::sql_report_join($query);
 				$query->where('thread_num', $num)->order_by('num', 'asc')->order_by('subnum', 'asc');
 				break;
 		}
@@ -605,7 +605,6 @@ class Board extends \Model\Model_Base
 
 		foreach ($this->_comments_unsorted as $post)
 		{
-
 			if ($post->op == 0)
 			{
 				$result[$post->thread_num]['posts'][$post->num.(($post->subnum == 0) ? '' : '_'.$post->subnum)] = $post;

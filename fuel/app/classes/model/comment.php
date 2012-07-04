@@ -169,7 +169,7 @@ class Comment extends \Model\Model_Base
 			$this->clean_fields();
 		}
 
-		$num = $this->thread_num.($this->subnum ? ',' - $this->subnum : '');
+		$num = $this->num.($this->subnum ? ',' . $this->subnum : '');
 		static::$_posts[$this->thread_num][] = $num;
 	}
 
