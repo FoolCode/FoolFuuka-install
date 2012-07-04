@@ -31,6 +31,8 @@ class Media extends \Model\Model_Base
 	public $media_hash = null;
 	public $media_orig = null;
 	public $exif = null;
+	public $total = 0;
+	public $banned = 0;
 
 	public $media = null;
 	public $preview_op = null;
@@ -45,6 +47,8 @@ class Media extends \Model\Model_Base
 		'media_id',
 		'spoiler',
 		'preview_orig',
+		'preview_op',
+		'preview_reply',
 		'preview_w',
 		'preview_h',
 		'media_filename',
@@ -53,7 +57,9 @@ class Media extends \Model\Model_Base
 		'media_size',
 		'media_hash',
 		'media_orig',
-		'exif'
+		'exif',
+		'total',
+		'banned'
 	);
 
 
