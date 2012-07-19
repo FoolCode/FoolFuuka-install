@@ -81,18 +81,18 @@ class Controller_Admin_Auth extends Controller_Admin
 				{
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-					$title = \Preferences::get('ff.gen_site_title').' '.__('account activation');
+					$title = \Preferences::get('ff.gen_website_title').' '.__('account activation');
 
 					$content = \View::Forge('admin/auth/email_activation', array(
 						'title' => $title,
-						'site' => \Preferences::get('ff.gen_site_title'),
+						'site' => \Preferences::get('ff.gen_website_title'),
 						'username' => $input['username'],
 						'activation_link' => Uri::create('admin/auth/activate/'.$id.'/'.$activation_key)
 					));
 
 					Package::load('email');
 					$email = Email::forge();
-					$email->from($from, \Preferences::get('ff.gen_site_title'))
+					$email->from($from, \Preferences::get('ff.gen_website_title'))
 						->subject($title)
 						->to($input['email'])
 						->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
@@ -145,7 +145,7 @@ class Controller_Admin_Auth extends Controller_Admin
 	}
 
 
-	public function action_forgotten_password()
+	public function action_forgot_password()
 	{
 		if (Input::post())
 		{
@@ -158,7 +158,7 @@ class Controller_Admin_Auth extends Controller_Admin
 
 				try
 				{
-					list($id, $forgotten_password_key) = Auth::create_forgotten_password_key($input['email']);
+					$forgotten_password_key = Auth::create_forgotten_password_key($input['email']);
 				}
 				catch (\Auth\FoolUserWrongEmail $e)
 				{
@@ -166,20 +166,22 @@ class Controller_Admin_Auth extends Controller_Admin
 					Response::redirect('admin/auth/forgotten_password');
 				}
 
+				$user = Users::get_user_by('email', $input['email']);
+
 				$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-				$title = \Preferences::get('ff.gen_site_title').' '.__('password change');
+				$title = \Preferences::get('ff.gen_website_title').' '.__('password change');
 
 				$content = \View::Forge('admin/auth/email_password_change', array(
 					'title' => $title,
-					'site' => \Preferences::get('ff.gen_site_title'),
-					'username' => $input['username'],
-					'password_change_link' => Uri::create('admin/auth/change_password/'.$id.'/'.$forgotten_password_key)
+					'site' => \Preferences::get('ff.gen_website_title'),
+					'username' => $user->username,
+					'password_change_link' => Uri::create('admin/auth/change_password/'.$user->id.'/'.$forgotten_password_key)
 				));
 
 				Package::load('email');
 				$email = Email::forge();
-				$email->from($from, \Preferences::get('ff.gen_site_title'))
+				$email->from($from, \Preferences::get('ff.gen_website_title'))
 					->subject($title)
 					->to($input['email'])
 					->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
@@ -196,6 +198,12 @@ class Controller_Admin_Auth extends Controller_Admin
 				}
 			}
 		}
+
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Forgot Password');
+		$this->_views['main_content_view'] = View::forge('admin/auth/forgot_password');
+
+		return Response::forge(View::forge('admin/default', $this->_views));
 	}
 
 

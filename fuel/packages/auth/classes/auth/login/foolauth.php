@@ -429,7 +429,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		$affected_rows = \DB::update(\Config::get('foolauth.table_name'))->where('email', $email)->set(array(
 				'new_password_key' => $this->hash_password($new_password_key),
 				'new_password_time' => time(),
-			))-execute(\Config::get('foolauth.db_connection'));
+			))->execute(\Config::get('foolauth.db_connection'));
 
 		if ( ! $affected_rows)
 		{
@@ -604,6 +604,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	{
 		return \Config::get('foolauth.guest_login', true);
 	}
+
 }
 
 // end of file foolauth.php

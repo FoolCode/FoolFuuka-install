@@ -17,7 +17,7 @@
 
 	<body>
 
-		<?php echo $navbar; ?>
+		<?= $navbar; ?>
 
 		<div class="container-fluid">
 			<div class="row-fluid">
@@ -65,7 +65,8 @@
 					</div>
 
 					<?php
-					echo $main_content_view;
+					if (isset($main_content_view))
+						echo $main_content_view;
 					?>
 
 

@@ -10,7 +10,7 @@ Otherwise, you can activate your account by just following <strong><a href="<?ph
 <br/><br/>
 If the link is not working, copy and paste the following link into your browser's address bar: <?php $activation_link ?>
 <br/><br/><br/>
-Thanks for joining us! ｷﾀ━━━━(ﾟ∀ﾟ)━━━━ !!!!!
+Thanks for joining us! ｷﾀ━━━━(ﾟ∀ﾟ)━━━━ !!!!! Your registration was VIP quality.
 <hr/>
 The FoOlz Archives team.
 
