@@ -21,14 +21,20 @@ Autoloader::add_classes(array(
 
 	'Auth\\Auth_Acl_Driver'     => __DIR__.'/classes/auth/acl/driver.php',
 	'Auth\\Auth_Acl_SimpleAcl'  => __DIR__.'/classes/auth/acl/simpleacl.php',
+	'Auth\\Auth_Acl_FoolAcl'  => __DIR__.'/classes/auth/acl/foolacl.php',
 
 	'Auth\\Auth_Group_Driver'       => __DIR__.'/classes/auth/group/driver.php',
-	'Auth\\Auth_Group_SimpleGroup'  => __DIR__.'/classes/auth/group/simplegroup.php',
+	'Auth\\Auth_Group_FoolGroup'  => __DIR__.'/classes/auth/group/simplegroup.php',
+	'Auth\\Auth_Group_FoolGroup'  => __DIR__.'/classes/auth/group/foolgroup.php',
 
 	'Auth\\Auth_Login_Driver'          => __DIR__.'/classes/auth/login/driver.php',
 	'Auth\\Auth_Login_SimpleAuth'      => __DIR__.'/classes/auth/login/simpleauth.php',
 	'Auth\\SimpleUserUpdateException'  => __DIR__.'/classes/auth/login/simpleauth.php',
 	'Auth\\SimpleUserWrongPassword'    => __DIR__.'/classes/auth/login/simpleauth.php',
+
+	'Auth\\Auth_Login_FoolAuth'      => __DIR__.'/classes/auth/login/foolauth.php',
+	'Auth\\FoolUserUpdateException'  => __DIR__.'/classes/auth/login/foolauth.php',
+	'Auth\\FoolUserWrongPassword'    => __DIR__.'/classes/auth/login/foolauth.php',
 ));
 
 

@@ -2,7 +2,7 @@
 
 return array(
     // The drivers
-    'driver' => array('SimpleAuth'),
+    'driver' => array('FoolAuth'),
 
     // Set to true to allow multiple logins
     'verify_multiple_logins' => false,

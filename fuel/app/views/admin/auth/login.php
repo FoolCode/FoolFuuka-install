@@ -24,11 +24,13 @@
 		'value' => 1,
 		'checked' => Input::post('remember'),
 	);
+
 	$captcha = array(
 		'name' => 'captcha',
 		'id' => 'captcha',
 		'maxlength' => 8,
 	);
+	
 	?>
 	<?php echo Form::open(); ?>
 	<?php echo isset($login_error) ? $login_error : '' ?>
