@@ -53,6 +53,11 @@ class Controller_Admin_Auth extends Controller_Admin
 
 	public function action_register()
 	{
+		if (Preferences::get('ff.reg_disabled'))
+		{
+			throw new HttpNotFoundException;
+		}
+
 		if (Input::post())
 		{
 			$val = Validation::forge('register');

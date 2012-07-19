@@ -26,7 +26,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'input',
 			'label' => 'Title',
 			'class' => 'span3',
-			'placeholder' => FOOL_PREF_GEN_WEBSITE_TITLE,
+			'placeholder' => FOOL_GEN_WEBSITE_TITLE,
 			'preferences' => TRUE,
 			'validate' => 'trim|max_length[32]',
 			'help' => __('Sets the title of your site.')
@@ -37,7 +37,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'input',
 			'label' => 'Index title',
 			'class' => 'span3',
-			'placeholder' => FOOL_PREF_GEN_INDEX_TITLE,
+			'placeholder' => FOOL_GEN_INDEX_TITLE,
 			'preferences' => TRUE,
 			'validate' => 'trim|max_length[32]',
 			'help' => __('Sets the title displayed in the index page.')

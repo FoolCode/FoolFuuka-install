@@ -572,7 +572,7 @@ var findSameImageFromFile = function(obj)
 			});
 			var digestBase64 = Crypto.util.bytesToBase64(digestBytes);
 			var digestBase64URL = digestBase64.replace('==', '').replace(/\//g, '_').replace(/\+/g, '-');
-			document.location = backend_vars.site_url + backend_vars.board_shortname + '/image/' + digestBase64URL;
+			jQuery('#image').val(digestBase64URL);
 		}
 	}
 

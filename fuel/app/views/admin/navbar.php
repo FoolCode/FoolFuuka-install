@@ -13,10 +13,10 @@
 				<li><a href="<?php echo URI::create('@default') ?>"><?php echo __('Boards') ?></a></li>
 				<li class="divider-vertical"></li>
 				<?php
-				if (Auth::member('user')):?>
+				if (\Auth::has_access('maccess.user')):?>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<?php echo $this->auth->get_username(); ?>
+							<?php echo \Auth::get_screen_name(); ?>
 							<b class="caret"></b>
 						</a>
 						<ul class="dropdown-menu">

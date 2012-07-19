@@ -59,7 +59,6 @@ class Controller_Admin extends Controller_Common
 					"level" => "admin", "name" => __("Manage"), "icon" => 'icon-th-list'),
 				"add_new" => array("level" => "admin", "name" => __("Add board"), "icon" => 'icon-asterisk'),
 				"sphinx" => array("level" => "admin", "name" => __("Sphinx Search"), "icon" => 'icon-search'),
-				"asagi" => array("level" => "admin", "name" => __("Asagi Fetcher"), "icon" => 'icon-cogs'),
 				"preferences" => array("level" => "admin", "name" => __("Preferences"), "icon" => 'icon-check')
 			)
 		);

@@ -63,7 +63,7 @@
 <?php echo Form::submit(array('name' => 'submit', 'value' => __('Login'), 'class' => 'btn btn-primary')); ?>
 
 <input type="button" onClick="window.location.href='<?php echo URI::create('/admin/auth/forgot_password/') ?>'" class="btn" value="<?php echo htmlspecialchars(__("Forgot password")) ?>" />
-<input type="button" onClick="window.location.href='<?php echo URI::create('/admin/auth/register/') ?>'" class="btn" value="<?php echo htmlspecialchars(__("Register")) ?>" />
+<?php if (!\Preferences::get('ff.reg_disabled')) : ?><input type="button" onClick="window.location.href='<?php echo URI::create('/admin/auth/register/') ?>'" class="btn" value="<?php echo htmlspecialchars(__("Register")) ?>" /><?php endif; ?>
 
 <?php echo Form::close(); ?>
 

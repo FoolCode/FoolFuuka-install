@@ -276,7 +276,7 @@ class Controller_Chan extends Controller_Common
 		$this->_theme->bind(array(
 			'thread_id' => $num,
 			'board' => $board,
-			'is_thread' => TRUE,
+			'is_thread' => true,
 			'disable_image_upload' => $thread_status['disable_image_upload'],
 			'thread_dead' => $thread_status['dead'],
 			'latest_doc_id' => $latest_doc_id,
@@ -528,7 +528,6 @@ class Controller_Chan extends Controller_Common
 			return $this->error(implode(' ', $val->error()));
 		}
 
-		//Response::redirect($this->_radix->shortname.'/thread/'.$comment->thread_num.'/')
 		$this->_theme->set_layout('redirect');
 		return Response::forge($this->_theme->build('redirect',
 			array('url' => Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/'.$comment->num))));
