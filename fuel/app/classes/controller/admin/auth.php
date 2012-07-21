@@ -502,4 +502,87 @@ class Controller_Admin_Auth extends Controller_Admin
 		Response::redirect('admin/auth/login');
 	}
 
+
+	public function action_profile()
+	{
+		$form = array();
+
+		$form['open'] = array(
+			'type' => 'open'
+		);
+
+		$form['paragraph'] = array(
+			'type' => 'paragraph',
+			'help' => __('You can customize your account here.')
+		);
+
+		$form['paragraph-2'] = array(
+			'type' => 'paragraph',
+			'help' => '<img src="'.Gravatar::get_gravatar(Auth::get_email()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+				Str::tr(__('Your avatar is automatically fetched from :gravatar, based on your registration email.'),
+				array('gravatar' => '<a href="http://gravatar.com" target="_blank">Gravatar</a>'))
+		);
+
+		$form['bio'] = array(
+			'type' => 'textarea',
+			'database' => true,
+			'label' => 'Bio',
+			'style' => 'height:150px;',
+			'class' => 'span5',
+			'help' => __('Some details about you'),
+			'validation' => 'trim|max_length[360]'
+		);
+
+		$form['twitter'] = array(
+			'type' => 'input',
+			'database' => true,
+			'label' => 'Twitter',
+			'class' => 'span3',
+			'help' => __('Your twitter nickname'),
+			'validation' => 'trim|max_length[32]'
+		);
+
+		$form['submit'] = array(
+			'type' => 'submit',
+			'class' => 'btn btn-primary',
+			'value' => __('Submit')
+		);
+
+		$form['close'] = array(
+			'type' => 'close'
+		);
+
+		$data['form'] = $form;
+
+		if (Input::post())
+		{
+			$result = \Validation::form_validate($form);
+
+			if (isset($result['error']))
+			{
+				\Notices::set('warning', $result['error']);
+			}
+			else
+			{
+				if (isset($result['warning']))
+				{
+					\Notices::set('warning', $result['warning']);
+				}
+
+				\Notices::set('success', __('Preferences updated.'));
+
+				Auth::update_profile($result['success']);
+			}
+		}
+
+		$data['object'] = (object) Auth::get_profile();
+
+		// create a form
+		$this->_views["controller_title"] = __('Authentication');
+		$this->_views["method_title"] = __('Profile');
+		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
+		return Response::forge(View::forge('admin/default', $this->_views));
+
+	}
+
 }

@@ -258,102 +258,34 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	}
 
 	/**
-	 * Update a user's properties
-	 * Note: Username cannot be updated, to update password the old password must be passed as old_password
+	 * Update the available columns for profile
 	 *
-	 * @param   Array  properties to be updated including profile fields
-	 * @param   string
-	 * @return  bool
+	 * @param array $data
+	 * @return boolean
 	 */
-	public function update_user($values, $username = null)
+	public function update_profile(Array $data)
 	{
-		$username = $username ?: $this->user['username'];
-		$current_values = \DB::select_array(\Config::get('foolauth.table_columns', array('*')))
-			->where('username', '=', $username)
-			->from(\Config::get('foolauth.table_name'))
+		// select only what we can insert
+		$data = \Arr::filter_keys($data, array('bio', 'twitter'));
+
+		\DB::update(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->set($data)
 			->execute(\Config::get('foolauth.db_connection'));
 
-		if (empty($current_values))
-		{
-			throw new \FoolUserUpdateException('Username not found', 4);
-		}
-
-		$update = array();
-		if (array_key_exists('username', $values))
-		{
-			throw new \FoolUserUpdateException('Username cannot be changed.', 5);
-		}
-		if (array_key_exists('password', $values))
-		{
-			if (empty($values['old_password'])
-				or $current_values->get('password') != $this->hash_password(trim($values['old_password'])))
-			{
-				throw new \FoolUserWrongPassword('Old password is invalid');
-			}
-
-			$password = trim(strval($values['password']));
-			if ($password === '')
-			{
-				throw new \FoolUserUpdateException('Password can\'t be empty.', 6);
-			}
-			$update['password'] = $this->hash_password($password);
-			unset($values['password']);
-		}
-		if (array_key_exists('old_password', $values))
-		{
-			unset($values['old_password']);
-		}
-		if (array_key_exists('email', $values))
-		{
-			$email = filter_var(trim($values['email']), FILTER_VALIDATE_EMAIL);
-			if ( ! $email)
-			{
-				throw new \FoolUserUpdateException('Email address is not valid', 7);
-			}
-			$update['email'] = $email;
-			unset($values['email']);
-		}
-		if (array_key_exists('group', $values))
-		{
-			if (is_numeric($values['group']))
-			{
-				$update['group'] = (int) $values['group'];
-			}
-			unset($values['group']);
-		}
-		if ( ! empty($values))
-		{
-			$profile_fields = @unserialize($current_values->get('profile_fields')) ?: array();
-			foreach ($values as $key => $val)
-			{
-				if ($val === null)
-				{
-					unset($profile_fields[$key]);
-				}
-				else
-				{
-					$profile_fields[$key] = $val;
-				}
-			}
-			$update['profile_fields'] = serialize($profile_fields);
-		}
-
-		$affected_rows = \DB::update(\Config::get('foolauth.table_name'))
-			->set($update)
-			->where('username', '=', $username)
-			->execute(\Config::get('foolauth.db_connection'));
-
-		// Refresh user
-		if ($this->user['username'] == $username)
-		{
-			$this->user = \DB::select_array(\Config::get('foolauth.table_columns', array('*')))
-				->where('username', '=', $username)
-				->from(\Config::get('foolauth.table_name'))
-				->execute(\Config::get('foolauth.db_connection'))->current();
-		}
-
-		return $affected_rows > 0;
+		return true;
 	}
+
+
+	public function get_profile()
+	{
+		return \DB::select_array(array('bio', 'twitter'))
+			->from(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->execute(\Config::get('foolauth.db_connection'))
+			->current();
+	}
+
 
 	/**
 	 * Activates the user account

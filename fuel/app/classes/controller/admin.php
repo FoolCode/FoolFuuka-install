@@ -77,9 +77,10 @@ class Controller_Admin extends Controller_Common
 			"level" => "user",
 			"default" => "change_email",
 			"content" => array(
+				"profile" => array("level" => "user", "name" => __("Profile"), "icon" => 'icon-user'),
 				"change_email_request" => array("level" => "user", "name" => __("Change Email"), "icon" => 'icon-envelope'),
 				"change_password_request" => array("level" => "user", "name" => __("Change Password"), "icon" => 'icon-lock'),
-				"delete_account_request" => array("level" => "user", "name" => __("Delete Account"), "icon" => 'icon-remove-circle')
+				"delete_account_request" => array("level" => "user", "name" => __("Delete Account"), "icon" => 'icon-remove-circle'),
 			)
 		);
 
