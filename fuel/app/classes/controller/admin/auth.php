@@ -542,6 +542,15 @@ class Controller_Admin_Auth extends Controller_Admin
 			'validation' => 'trim|max_length[32]'
 		);
 
+		$form['display_name'] = array(
+			'type' => 'input',
+			'database' => true,
+			'label' => 'Display name',
+			'class' => 'span3',
+			'help' => __('Alternative name in place of login username'),
+			'validation' => 'trim|max_length[32]'
+		);
+
 		$form['submit'] = array(
 			'type' => 'submit',
 			'class' => 'btn btn-primary',

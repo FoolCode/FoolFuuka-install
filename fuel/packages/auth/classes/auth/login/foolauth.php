@@ -266,7 +266,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	public function update_profile(Array $data)
 	{
 		// select only what we can insert
-		$data = \Arr::filter_keys($data, array('bio', 'twitter'));
+		$data = \Arr::filter_keys($data, array('bio', 'twitter', 'display_name'));
 
 		\DB::update(\Config::get('foolauth.table_name'))
 			->where('id', '=', $this->user['id'])
@@ -279,7 +279,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 	public function get_profile()
 	{
-		return \DB::select_array(array('bio', 'twitter'))
+		return \DB::select_array(array('bio', 'twitter', 'display_name'))
 			->from(\Config::get('foolauth.table_name'))
 			->where('id', '=', $this->user['id'])
 			->execute(\Config::get('foolauth.db_connection'))

@@ -84,13 +84,13 @@ class Controller_Admin extends Controller_Common
 			)
 		);
 
-		$sidebar["members"] = array(
-			"name" => __("Members"),
+		$sidebar["users"] = array(
+			"name" => __("Users"),
 			"level" => "mod",
-			"default" => "members",
+			"default" => "users",
 			"content" => array(
-				"members" => array("alt_highlight" => array("member"),
-					"level" => "mod", "name" => __("Member List"), "icon" => 'icon-user'),
+				"manage" => array("alt_highlight" => array("member"),
+					"level" => "mod", "name" => __("Manage"), "icon" => 'icon-user'),
 			)
 		);
 

@@ -7,6 +7,32 @@ class UsersWrongId extends \FuelException {}
 class Users extends \Model
 {
 	/**
+	 * Gets the current user
+	 *
+	 * @param  int  $id
+	 * @return object
+	 */
+	public static function get_user()
+	{
+		$id = \Auth::get_user_id();
+		$id = $id[1];
+
+		$query = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->where('id', $id)
+			->as_object()
+			->execute(\Config::get('foolauth.db_connection'));
+
+		if (!count($query))
+		{
+			throw new UsersWrongId;
+		}
+
+		return $query->current();
+	}
+
+
+	/**
 	 * Gets single user database row by selected row
 	 *
 	 * @param  int  $id
@@ -14,7 +40,8 @@ class Users extends \Model
 	 */
 	public static function get_user_by($field, $id)
 	{
-		$query = \DB::select()->from(\Config::get('foolauth.table_name'))
+		$query = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
 			->where($field, $id)
 			->as_object()
 			->execute(\Config::get('foolauth.db_connection'));
@@ -29,27 +56,28 @@ class Users extends \Model
 
 
 	/**
-	 * Gets the current user
+	 * Gets single user database row by selected row
 	 *
 	 * @param  int  $id
 	 * @return object
 	 */
-	public static function get_user()
+	public static function get_all($page = 1, $limit = 40)
 	{
-		$id = \Auth::get_user_id();
-		$id = $id[1];
-
-		$query = \DB::select()->from(\Config::get('foolauth.table_name'))
-			->where('id', $id)
+		$users = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->limit($limit)
+			->offset(($page * $limit) - $limit)
 			->as_object()
-			->execute(\Config::get('foolauth.db_connection'));
+			->execute(\Config::get('foolauth.db_connection'))
+			->as_array();
 
-		if ( ! count($query))
-		{
-			throw new UsersWrongId;
-		}
+		$count = \DB::select(\DB::expr('COUNT(*) as count'))
+			->from(\Config::get('foolauth.table_name'))
+			->as_object()
+			->execute()
+			->current()->count;
 
-		return $query->current();
+		return array('result' => $users, 'count' => $count);
 	}
 }
 
