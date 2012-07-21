@@ -200,6 +200,10 @@ class Controller_Admin_Auth extends Controller_Admin
 						Notices::set('warning', __('The link you used is incorrect or has expired.'));
 					}
 				}
+				else
+				{
+					Notices::set('error', $val->error());
+				}
 			}
 			else
 			{
@@ -244,9 +248,104 @@ class Controller_Admin_Auth extends Controller_Admin
 	}
 
 
-	public function action_change_email()
+	public function action_change_email_request()
 	{
+		if ( ! Auth::has_access('maccess.user'))
+		{
+			Response::redirect('admin/auth/login');
+		}
 
+		if (Input::post())
+		{
+			$val = Validation::forge('change_password');
+			$val->add_field('password', __('Password'), 'required');
+			$val->add_field('email', __('Email'), 'required|trim|valid_email');
+
+			if($val->run())
+			{
+				$input = $val->input();
+
+				try
+				{
+					$change_email_key = Auth::create_change_email_key($input['email'], $input['password']);
+				}
+				catch (\Auth\FoolUserWrongPassword $e)
+				{
+					Notices::set_flash('error', __('The password doesn\'t match your account password.'));
+					Response::redirect('admin/auth/change_email_request');
+				}
+				catch (\Auth\FoolUserEmailExists $e)
+				{die('here');
+					Notices::set_flash('error', __('The email already exists in the system and can\'t be used again.'));
+					Response::redirect('admin/auth/change_email_request');
+				}
+
+				$user = Users::get_user();
+
+				$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
+
+				$title = \Preferences::get('ff.gen_website_title').' '.__('email change');
+
+				$content = \View::Forge('admin/auth/email_email_change', array(
+					'title' => $title,
+					'site' => \Preferences::get('ff.gen_website_title'),
+					'username' => $user->username,
+					'email_change_link' => Uri::create('admin/auth/change_email/'.$user->id.'/'.$change_email_key)
+				));
+
+				Package::load('email');
+				$sending = Email::forge();
+				$sending->from($from, \Preferences::get('ff.gen_website_title'))
+					->subject($title)
+					->to($input['email'])
+					->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
+
+				try
+				{
+					$sending->send();
+					Notices::set_flash('success', __('The email change email has been sent. The link included will work for 24 hours.'));
+				}
+				catch(\EmailSendingFailedException $e)
+				{
+					// The driver could not send the email
+					Notices::set_flash('error', __('There was an error and the system couldn\'t send the email change email.'));
+					Log::error('The system can\'t send the Email. The user '.$user->username.' couldn\'t change his email.');
+				}
+
+				Auth::logout();
+				Response::redirect('admin/auth/login');
+
+			}
+			else
+			{
+				Notices::set('error', $val->error());
+			}
+		}
+
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Change Email Request');
+		$this->_views['main_content_view'] = View::forge('admin/auth/change_email_request');
+
+		return Response::forge(View::forge('admin/default', $this->_views));
+	}
+
+
+	public function action_change_email($id, $email_key)
+	{
+		try
+		{
+			Auth::change_email($id, $email_key);
+			Notices::set('success', __('Your new email has been activated'));
+		}
+		catch (\Auth\FoolUserWrongKey $e)
+		{
+			Notices::set('warning', __('The link you used is incorrect or has expired.'));
+		}
+
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Change Email');
+
+		return Response::forge(View::forge('admin/default', $this->_views));
 	}
 
 

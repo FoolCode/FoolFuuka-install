@@ -17,6 +17,8 @@ class FoolUserUpdateException extends \FuelException {}
 
 class FoolUserWrongPassword extends \FuelException {}
 class FoolUserWrongEmail extends \FuelException {}
+class FoolUserWrongKey extends \FuelException {}
+class FoolUserEmailExists extends \FuelException {}
 
 /**
  * FoolAuth basic login driver
@@ -438,6 +440,89 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		}
 
 		return $new_password_key;
+	}
+
+
+	/**
+	 * Generates a code for confirming email change
+	 *
+	 * @param   string  $email
+	 * @return  string
+	 */
+	public function create_change_email_key($email, $password)
+	{
+		$check_email = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->where('email', '=', $email)
+			->or_where_open()
+			->where('id', '<>', $this->user['id'])
+			->where('new_email', '=', $email)
+			->where_close()
+			->execute(\Config::get('foolauth.db_connection'));
+
+		if (count($check_email))
+		{
+			throw new FoolUserEmailExists;
+		}
+
+		$new_email_key = sha1(\Config::get('foolauth.login_hash_salt').$email.time());
+
+		$check_password = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->where('password', '=', $this->hash_password($password))
+			->execute(\Config::get('foolauth.db_connection'));
+
+		if ( ! count($check_password))
+		{
+			throw new FoolUserWrongPassword;
+		}
+
+		\DB::update(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->set(array(
+				'new_email' => $email,
+				'new_email_key' => $this->hash_password($new_email_key),
+				'new_email_time' => time(),
+			))->execute(\Config::get('foolauth.db_connection'));
+
+
+		return $new_email_key;
+	}
+
+	/**
+	 * Checks if the pair id/password_key is valid without altering rows
+	 *
+	 * @param   int     $id
+	 * @param   string  $email_key
+	 * @return  bool
+	 */
+	public function change_email($id, $email_key)
+	{
+		$user = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->where('id', '=', $id)
+			->where('new_email_key', '=', $this->hash_password($email_key))
+			->where('new_email_time', '>', time() - 86400)
+			->execute(\Config::get('foolauth.db_connection'));
+
+		if ( ! count($user))
+		{
+			throw new FoolUserWrongKey;
+		}
+
+		$user = $user->current();
+
+		\DB::update(\Config::get('foolauth.table_name'))
+			->where('id', '=', $id)
+			->set(array(
+				'email' => $user['new_email'],
+				'new_email' => null,
+				'new_email_key' => null,
+				'new_email_time' => null,
+			))->execute(\Config::get('foolauth.db_connection'));
+
+		return true;
 	}
 
 	/**

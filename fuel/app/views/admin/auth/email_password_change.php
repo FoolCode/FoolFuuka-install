@@ -11,4 +11,4 @@ Otherwise, you can change your password by just following <strong><a href="<?= $
 If the link is not working, copy and paste the following link into your browser's address bar: <?= $password_change_link ?>
 <br/><br/>
 <hr/>
-The FoOlz Archives team.
+The <?= $site ?> team.

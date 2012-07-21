@@ -12,6 +12,6 @@ If the link is not working, copy and paste the following link into your browser'
 <br/><br/><br/>
 Thanks for joining us! ｷﾀ━━━━(ﾟ∀ﾟ)━━━━ !!!!! Your registration was VIP quality.
 <hr/>
-The FoOlz Archives team.
+The <?= $site ?> team.
 
 
