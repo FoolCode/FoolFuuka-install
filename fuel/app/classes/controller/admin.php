@@ -74,12 +74,12 @@ class Controller_Admin extends Controller_Common
 
 		$sidebar["auth"] = array(
 			"name" => __("Account"),
-			"level" => "member",
+			"level" => "user",
 			"default" => "change_email",
 			"content" => array(
-				"change_email" => array("level" => "member", "name" => __("Change Email"), "icon" => 'icon-envelope'),
-				"change_password" => array("level" => "member", "name" => __("Change Password"), "icon" => 'icon-lock'),
-				"unregister" => array("level" => "member", "name" => __("Unregister"), "icon" => 'icon-remove-circle')
+				"change_email_request" => array("level" => "user", "name" => __("Change Email"), "icon" => 'icon-envelope'),
+				"change_password_request" => array("level" => "user", "name" => __("Change Password"), "icon" => 'icon-lock'),
+				"delete_account_request" => array("level" => "user", "name" => __("Delete Account"), "icon" => 'icon-remove-circle')
 			)
 		);
 

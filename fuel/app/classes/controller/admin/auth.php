@@ -85,7 +85,7 @@ class Controller_Admin_Auth extends Controller_Admin
 						'title' => $title,
 						'site' => \Preferences::get('ff.gen_website_title'),
 						'username' => $input['username'],
-						'activation_link' => Uri::create('admin/auth/activate/'.$id.'/'.$activation_key)
+						'link' => Uri::create('admin/auth/activate/'.$id.'/'.$activation_key)
 					));
 
 					Package::load('email');
@@ -275,7 +275,7 @@ class Controller_Admin_Auth extends Controller_Admin
 					Response::redirect('admin/auth/change_email_request');
 				}
 				catch (\Auth\FoolUserEmailExists $e)
-				{die('here');
+				{
 					Notices::set_flash('error', __('The email already exists in the system and can\'t be used again.'));
 					Response::redirect('admin/auth/change_email_request');
 				}
@@ -290,7 +290,7 @@ class Controller_Admin_Auth extends Controller_Admin
 					'title' => $title,
 					'site' => \Preferences::get('ff.gen_website_title'),
 					'username' => $user->username,
-					'email_change_link' => Uri::create('admin/auth/change_email/'.$user->id.'/'.$change_email_key)
+					'link' => Uri::create('admin/auth/change_email/'.$user->id.'/'.$change_email_key)
 				));
 
 				Package::load('email');
@@ -312,7 +312,6 @@ class Controller_Admin_Auth extends Controller_Admin
 					Log::error('The system can\'t send the Email. The user '.$user->username.' couldn\'t change his email.');
 				}
 
-				Auth::logout();
 				Response::redirect('admin/auth/login');
 
 			}
@@ -332,10 +331,16 @@ class Controller_Admin_Auth extends Controller_Admin
 
 	public function action_change_email($id, $email_key)
 	{
+		if ( ! Auth::has_access('maccess.user'))
+		{
+			Response::redirect('admin/auth/login');
+		}
+
 		try
 		{
 			Auth::change_email($id, $email_key);
-			Notices::set('success', __('Your new email has been activated'));
+			Notices::set_flash('success', __('Your new email has been activated'));
+			Response::redirect();
 		}
 		catch (\Auth\FoolUserWrongKey $e)
 		{
@@ -344,6 +349,106 @@ class Controller_Admin_Auth extends Controller_Admin
 
 		$this->_views['controller_title'] = __('Authorization');
 		$this->_views['method_title'] = __('Change Email');
+
+		return Response::forge(View::forge('admin/default', $this->_views));
+	}
+
+
+	public function action_delete_account_request()
+	{
+		if ( ! Auth::has_access('maccess.user'))
+		{
+			Response::redirect('admin/auth/login');
+		}
+
+		if (Input::post())
+		{
+			$val = Validation::forge('change_password');
+			$val->add_field('password', __('Password'), 'required');
+
+			if ($val->run())
+			{
+
+				$input = $val->input();
+
+				try
+				{
+					$account_deletion_key = Auth::create_account_deletion_key($input['password']);
+				}
+				catch (\Auth\FoolUserWrongPassword $e)
+				{die('here');
+					Notices::set_flash('error', __('The password doesn\'t match your account password.'));
+					Response::redirect('admin/auth/delete_account_request');
+				}
+
+				$user = Users::get_user();
+
+				$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
+
+				$title = \Preferences::get('ff.gen_website_title').' '.__('account deletion');
+
+				$content = \View::Forge('admin/auth/email_delete_account', array(
+					'title' => $title,
+					'site' => \Preferences::get('ff.gen_website_title'),
+					'username' => $user->username,
+					'link' => Uri::create('admin/auth/delete_account/'.$user->id.'/'.$account_deletion_key)
+				));
+
+				Package::load('email');
+				$sending = Email::forge();
+				$sending->from($from, \Preferences::get('ff.gen_website_title'))
+					->subject($title)
+					->to($user->email)
+					->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
+
+				try
+				{
+					$sending->send();
+					Notices::set_flash('success', __('The account deletion email has been sent. The link included will work for 15 minutes.'));
+				}
+				catch(\EmailSendingFailedException $e)
+				{
+					// The driver could not send the email
+					Notices::set_flash('error', __('There was an error and the system couldn\'t send the account deletion email.'));
+					Log::error('The system can\'t send the Email. The user '.$user->username.' couldn\'t delete his account.');
+				}
+
+				Response::redirect('admin/auth/delete_account_request');
+			}
+			else
+			{
+				Notices::set('error', $val->error());
+			}
+
+		}
+
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Account Deletion Request');
+		$this->_views['main_content_view'] = View::forge('admin/auth/delete_account_request');
+
+		return Response::forge(View::forge('admin/default', $this->_views));
+	}
+
+
+	public function action_delete_account($id, $key)
+	{
+		if (!Auth::has_access('maccess.user'))
+		{
+			Notices::set('warning', __('You must be logged in to delete your account with this link.'));
+		}
+
+		try
+		{
+			Auth::delete_account($id, $key);
+			Notices::set('success', __('Your account has been deleted.'));
+		}
+		catch (\Auth\FoolUserWrongKey $e)
+		{
+			Notices::set('warning', __('The link you used is incorrect or has expired.'));
+		}
+
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Delete Account');
 
 		return Response::forge(View::forge('admin/default', $this->_views));
 	}
@@ -371,7 +476,7 @@ class Controller_Admin_Auth extends Controller_Admin
 			'title' => $title,
 			'site' => \Preferences::get('ff.gen_website_title'),
 			'username' => $user->username,
-			'password_change_link' => Uri::create('admin/auth/change_password/'.$user->id.'/'.$password_key)
+			'link' => Uri::create('admin/auth/change_password/'.$user->id.'/'.$password_key)
 		));
 
 		Package::load('email');

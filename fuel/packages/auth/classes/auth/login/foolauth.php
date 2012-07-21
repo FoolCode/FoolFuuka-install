@@ -396,6 +396,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new FoolUserWrongKey;
 		}
 
+		$this->logout();
+		$this->force_login($id);
+
 		return true;
 	}
 
@@ -497,7 +500,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 * @param   string  $email_key
 	 * @return  bool
 	 */
-	public function change_email($id, $email_key)
+	public function	change_email($id, $email_key)
 	{
 		$user = \DB::select()
 			->from(\Config::get('foolauth.table_name'))
@@ -522,27 +525,70 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 				'new_email_time' => null,
 			))->execute(\Config::get('foolauth.db_connection'));
 
+		$this->logout();
+		$this->force_login($id);
+
 		return true;
 	}
+
+
+	/**
+	 * Generates a code for confirming account deletion
+	 *
+	 * @param   string  $email
+	 * @return  string
+	 */
+	public function create_account_deletion_key($password)
+	{
+
+		$check_password = \DB::select()
+			->from(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->where('password', '=', $this->hash_password($password))
+			->execute(\Config::get('foolauth.db_connection'));
+
+		if ( ! count($check_password))
+		{
+			throw new FoolUserWrongPassword;
+		}
+
+		$key = sha1(\Config::get('foolauth.login_hash_salt').time());
+
+		\DB::update(\Config::get('foolauth.table_name'))
+			->where('id', '=', $this->user['id'])
+			->set(array(
+				'deletion_key' => $this->hash_password($key),
+				'deletion_time' => time(),
+			))->execute(\Config::get('foolauth.db_connection'));
+
+		return $key;
+	}
+
 
 	/**
 	 * Deletes a given user
 	 *
 	 * @param   string
+	 * @param   string
 	 * @return  bool
 	 */
-	public function delete_user($username)
+	public function delete_account($id, $key)
 	{
-		if (empty($username))
-		{
-			throw new \FoolUserUpdateException('Cannot delete user with empty username', 9);
-		}
-
 		$affected_rows = \DB::delete(\Config::get('foolauth.table_name'))
-			->where('username', '=', $username)
+			->where('id', '=', $id)
+			->where('deletion_key', '=', $this->hash_password($key))
+			->where('deletion_time', '>', time() - 900)
 			->execute(\Config::get('foolauth.db_connection'));
 
-		return $affected_rows > 0;
+
+		if ($affected_rows < 1)
+		{
+			throw new FoolUserWrongKey;
+		}
+
+		$this->logout();
+
+		return true;
 	}
 
 	/**
