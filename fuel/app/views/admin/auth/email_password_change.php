@@ -2,7 +2,7 @@
 
 <h4>Hello <?= $username ?>!</h4>
 
-Looks like you have requested a password change for your account on <?php $site ?>.
+Looks like you have requested a password change for your account on <?= $site ?>.
 <br/><br/>
 If this mail was sent to you by mistake, you should ignore it, delete it if you wish. Sorry for bothering. （´・ω・`）
 <br/><br/>

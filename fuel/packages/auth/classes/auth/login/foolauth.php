@@ -63,31 +63,37 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	protected function perform_check()
 	{
-		$username    = \Session::get('username');
-		$login_hash  = \Session::get('login_hash');
+		$autologin_hash = \Cookie::get('autologin');
 
-		// only worth checking if there's both a username and login-hash
-		if ( ! empty($username) and ! empty($login_hash))
+		if ( ! empty($autologin_hash))
 		{
-			if (is_null($this->user) or ($this->user['username'] != $username and $this->user != static::$guest_login))
+			if (is_null($this->user) and $this->user != static::$guest_login)
 			{
-				$this->user = \DB::select_array(\Config::get('foolauth.table_columns', array('*')))
-					->where('username', '=', $username)
-					->from(\Config::get('foolauth.table_name'))
+				$autologin_query = \DB::select('*')
+					->from(\Config::get('foolauth.table_autologin_name'))
+					->where('login_hash', '=', $this->hash_password($autologin_hash))
+					->and_where('expiration', '>', time())
 					->execute(\Config::get('foolauth.db_connection'))->current();
-			}
 
-			// return true when login was verified
-			if ($this->user and $this->user['login_hash'] === $login_hash)
-			{
-				return true;
+				if ($autologin_query)
+				{
+					$this->user = \DB::select_array(\Config::get('foolauth.table_columns', array('*')))
+						->where('id', '=', $autologin_query['user_id'])
+						->from(\Config::get('foolauth.table_name'))
+						->execute(\Config::get('foolauth.db_connection'))->current();
+				}
+
+				// return true when login was verified
+				if ($this->user)
+				{
+					return true;
+				}
 			}
 		}
 
 		// no valid login when still here, ensure empty session and optionally set guest_login
 		$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
-		\Session::delete('username');
-		\Session::delete('login_hash');
+		//\Cookie::delete('autologin');
 
 		return false;
 	}
@@ -132,14 +138,12 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		if ( ! ($this->user = $this->validate_user($username_or_email, $password)))
 		{
 			$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
-			\Session::delete('username');
-			\Session::delete('login_hash');
+			\Cookie::delete('autologin');
 			return false;
 		}
 
-		\Session::set('username', $this->user['username']);
-		\Session::set('login_hash', $this->create_login_hash());
-		\Session::instance()->rotate();
+		\Cookie::set('autologin', $this->create_login_hash());
+
 		return true;
 	}
 
@@ -167,13 +171,11 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		if ($this->user == false)
 		{
 			$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
-			\Session::delete('username');
-			\Session::delete('login_hash');
+			\Cookie::set('autologin');
 			return false;
 		}
 
-		\Session::set('username', $this->user['username']);
-		\Session::set('login_hash', $this->create_login_hash());
+		\Cookie::set('autologin', $this->create_login_hash());
 		return true;
 	}
 
@@ -185,8 +187,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	public function logout()
 	{
 		$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
-		\Session::delete('username');
-		\Session::delete('login_hash');
+		\Cookie::delete('autologin');
 		return true;
 	}
 
@@ -424,7 +425,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function create_forgotten_password_key($email)
 	{
-		$new_password_key = \Str::random('sha1');
+		$new_password_key = sha1(\Config::get('foolauth.login_hash_salt').$email.time());
 
 		$affected_rows = \DB::update(\Config::get('foolauth.table_name'))->where('email', $email)->set(array(
 				'new_password_key' => $this->hash_password($new_password_key),
@@ -474,12 +475,22 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		$last_login = \Date::forge()->get_timestamp();
 		$login_hash = sha1(\Config::get('foolauth.login_hash_salt').$this->user['username'].$last_login);
 
-		\DB::update(\Config::get('foolauth.table_name'))
-			->set(array('last_login' => $last_login, 'login_hash' => $login_hash))
-			->where('username', '=', $this->user['username'])
-			->execute(\Config::get('foolauth.db_connection'));
+		// autologin garbage collection
+		if (time() % 25 == 0)
+		{
+			\DB::delete(\Config::get('foolauth.table_autologin_name'))->where('expiration', '<', time())->execute();
+		}
 
-		$this->user['login_hash'] = $login_hash;
+		\DB::insert(\Config::get('foolauth.table_autologin_name'))->set(array(
+			'user_id' => $this->user['id'],
+			'login_hash' => $this->hash_password($login_hash),
+			'expiration' => time() + 604800, // 7 days
+			'last_ip' => \Input::ip_decimal(),
+			'user_agent' => \Input::user_agent(),
+			'last_login' => time()
+		))->execute(\Config::get('foolauth.db_connection'));
+
+		\Cookie::set('autologin', $login_hash);
 
 		return $login_hash;
 	}
@@ -594,6 +605,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			$groups = $this->get_groups();
 			$user = reset($groups);
 		}
+
 		return parent::has_access($condition, $driver, $user);
 	}
 

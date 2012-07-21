@@ -32,6 +32,11 @@ return array(
 	'table_name' => 'users',
 
 	/**
+	 * DB table name for the autologin table
+	 */
+	'table_autologin_name' => 'user_autologin',
+
+	/**
 	 * Choose which columns are selected, must include: username, password, email, last_login,
 	 * login_hash, group & profile_fields
 	 */
