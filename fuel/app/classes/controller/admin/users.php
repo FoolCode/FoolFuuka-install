@@ -7,7 +7,7 @@ class Controller_Admin_Users extends Controller_Admin
 	public function before()
 	{
 		// only mods and admins can see and edit users
-		if(!Auth::has_access('maccess.mod'))
+		if(!Auth::has_access('users.access'))
 		{
 			Response::redirect('admin');
 		}
@@ -32,6 +32,150 @@ class Controller_Admin_Users extends Controller_Admin
 		$this->_views['method_title'] = __('Manage');
 		$this->_views['main_content_view'] = View::forge('admin/users/manage', $data);
 
+		return Response::forge(View::forge('admin/default', $this->_views));
+	}
+
+
+	public function action_user($id = null)
+	{
+		if (intval($id) < 1)
+		{
+			throw new HttpNotFoundException;
+		}
+
+		$form = array();
+
+		$form['open'] = array(
+			'type' => 'open'
+		);
+
+		$form['paragraph'] = array(
+			'type' => 'paragraph',
+			'help' => __('You can customize your account here.')
+		);
+
+		$form['paragraph-2'] = array(
+			'type' => 'paragraph',
+			'help' => '<img src="'.Gravatar::get_gravatar(Auth::get_email()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+				Str::tr(__('The avatar is automatically fetched from :gravatar, based on the user\'s registration email.'),
+				array('gravatar' => '<a href="http://gravatar.com" target="_blank">Gravatar</a>'))
+		);
+
+		if (Auth::has_access('users.change_credentials'))
+		{
+			$form['username'] = array(
+				'type' => 'input',
+				'database' => true,
+				'label' => __('Username'),
+				'class' => 'span3',
+				'help' => __('Change the username'),
+				'validation' => 'trim|max_length[32]'
+			);
+
+			$form['email'] = array(
+				'type' => 'input',
+				'database' => true,
+				'label' => __('Email'),
+				'class' => 'span3',
+				'help' => __('Change the email'),
+				'validation' => 'trim|max_length[32]'
+			);
+
+			$form['password'] = array(
+				'type' => 'password',
+				'database' => true,
+				'label' => __('Password'),
+				'class' => 'span3',
+				'help' => __('Change the password (leave empty to not change it)'),
+			);
+		}
+
+		$form['bio'] = array(
+			'type' => 'textarea',
+			'database' => true,
+			'label' => 'Bio',
+			'style' => 'height:150px;',
+			'class' => 'span5',
+			'help' => __('Some details about you'),
+			'validation' => 'trim|max_length[360]'
+		);
+
+		$form['twitter'] = array(
+			'type' => 'input',
+			'database' => true,
+			'label' => 'Twitter',
+			'class' => 'span3',
+			'help' => __('Your twitter nickname'),
+			'validation' => 'trim|max_length[32]'
+		);
+
+		$form['display_name'] = array(
+			'type' => 'input',
+			'database' => true,
+			'label' => 'Display name',
+			'class' => 'span3',
+			'help' => __('Alternative name in place of login username'),
+			'validation' => 'trim|max_length[32]'
+		);
+
+		if (Auth::has_access('users.change_group'))
+		{
+			$form['group'] = array(
+				'type' => 'radio',
+				'database' => true,
+				'label' => 'Display name',
+				'help' => __('Change the group of the user'),
+				'radio_values' => array(
+					1 => 'User',
+					50 => 'Moderator',
+					100 => 'Administrator'
+				)
+			);
+		}
+
+		$form['submit'] = array(
+			'type' => 'submit',
+			'class' => 'btn btn-primary',
+			'value' => __('Submit')
+		);
+
+		$form['close'] = array(
+			'type' => 'close'
+		);
+
+		$data['form'] = $form;
+
+		if (Input::post())
+		{
+			$result = \Validation::form_validate($form);
+
+			if (isset($result['error']))
+			{
+				\Notices::set('warning', $result['error']);
+			}
+			else
+			{
+				if (isset($result['warning']))
+				{
+					\Notices::set('warning', $result['warning']);
+				}
+
+				\Notices::set('success', __('Preferences updated.'));
+
+				$user = Users::get_user_by('id', $id);
+
+				$user->save($result['success']);
+			}
+		}
+
+		$data['object'] = Users::get_user_by('id', $id);
+
+		$data['object']->password = '';
+
+		// create a form
+		$this->_views["controller_title"] = __('Users');
+		$this->_views["method_title"] = __('User');
+		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
 		return Response::forge(View::forge('admin/default', $this->_views));
 	}
 

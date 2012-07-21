@@ -88,3 +88,4 @@ Autoloader::alias_to_namespace('Model\\Board');
 Autoloader::alias_to_namespace('Model\\Comment');
 Autoloader::alias_to_namespace('Model\\Media');
 Autoloader::alias_to_namespace('Model\\Users');
+Autoloader::alias_to_namespace('Model\\User');

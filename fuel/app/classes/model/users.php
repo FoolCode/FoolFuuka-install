@@ -28,7 +28,7 @@ class Users extends \Model
 			throw new UsersWrongId;
 		}
 
-		return $query->current();
+		return User::forge($query->current());
 	}
 
 
@@ -51,14 +51,15 @@ class Users extends \Model
 			throw new UsersWrongId;
 		}
 
-		return $query->current();
+		return User::forge($query->current());
 	}
 
 
 	/**
-	 * Gets single user database row by selected row
+	 * Gets all user limited with page and limit
 	 *
-	 * @param  int  $id
+	 * @param  int  $page
+	 * @param  into $limit
 	 * @return object
 	 */
 	public static function get_all($page = 1, $limit = 40)
@@ -67,18 +68,20 @@ class Users extends \Model
 			->from(\Config::get('foolauth.table_name'))
 			->limit($limit)
 			->offset(($page * $limit) - $limit)
-			->as_object()
 			->execute(\Config::get('foolauth.db_connection'))
 			->as_array();
+
+		$users = User::forge($users);
 
 		$count = \DB::select(\DB::expr('COUNT(*) as count'))
 			->from(\Config::get('foolauth.table_name'))
 			->as_object()
-			->execute()
+			->execute(\Config::get('foolauth.db_connection'))
 			->current()->count;
 
 		return array('result' => $users, 'count' => $count);
 	}
+
 }
 
 /* end of file user.php */

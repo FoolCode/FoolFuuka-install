@@ -591,7 +591,6 @@ class Controller_Admin_Auth extends Controller_Admin
 		$this->_views["method_title"] = __('Profile');
 		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
 		return Response::forge(View::forge('admin/default', $this->_views));
-
 	}
 
 }
