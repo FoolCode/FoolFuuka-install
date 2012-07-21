@@ -20,7 +20,7 @@ class Notices extends \Model
 	public static function set_flash($level, $message)
 	{
 		self::$_flash_notices[] = array('level' => $level, 'message' => $message);
-		\Session::get_flash('notices', self::$_flash_notices);
+		\Session::set_flash('notices', self::$_flash_notices);
 	}
 
 	public static function get()

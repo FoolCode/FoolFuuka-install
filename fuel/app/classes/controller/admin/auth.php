@@ -202,7 +202,7 @@ class Controller_Admin_Auth extends Controller_Admin
 				}
 				else
 				{
-					Notices::set('error', $val->error());
+					Notices::set('error', implode(' ', $val->error()));
 				}
 			}
 			else
@@ -317,7 +317,7 @@ class Controller_Admin_Auth extends Controller_Admin
 			}
 			else
 			{
-				Notices::set('error', $val->error());
+				Notices::set('error', implode(' ', $val->error()));
 			}
 		}
 
@@ -376,7 +376,7 @@ class Controller_Admin_Auth extends Controller_Admin
 					$account_deletion_key = Auth::create_account_deletion_key($input['password']);
 				}
 				catch (\Auth\FoolUserWrongPassword $e)
-				{die('here');
+				{
 					Notices::set_flash('error', __('The password doesn\'t match your account password.'));
 					Response::redirect('admin/auth/delete_account_request');
 				}
@@ -417,7 +417,7 @@ class Controller_Admin_Auth extends Controller_Admin
 			}
 			else
 			{
-				Notices::set('error', $val->error());
+				Notices::set('error', implode(' ', $val->error()));
 			}
 
 		}
