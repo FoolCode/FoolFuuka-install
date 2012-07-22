@@ -1,14 +1,13 @@
 <?php
 
-namespace Model;
-
+namespace Foolfuuka\Model;
 
 class BoardException extends \FuelException {}
-class BoardThreadNotFoundException extends \Model\BoardException {}
-class BoardPostNotFoundException extends \Model\BoardException {}
-class BoardMalformedInputException extends \Model\BoardException {}
-class BoardNotCompatibleMethodException extends \Model\BoardException {}
-class BoardMissingOptionsException extends \Model\BoardException {}
+class BoardThreadNotFoundException extends BoardException {}
+class BoardPostNotFoundException extends BoardException {}
+class BoardMalformedInputException extends BoardException {}
+class BoardNotCompatibleMethodException extends BoardException {}
+class BoardMissingOptionsException extends BoardException {}
 
 
 /**

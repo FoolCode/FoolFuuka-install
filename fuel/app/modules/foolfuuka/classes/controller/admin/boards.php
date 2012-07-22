@@ -1,7 +1,8 @@
 <?php
 
+namespace Foolfuuka;
 
-class Controller_Admin_Boards extends Controller_Admin
+class Controller_Admin_Boards extends \Controller_Admin
 {
 
 
@@ -9,8 +10,8 @@ class Controller_Admin_Boards extends Controller_Admin
 	{
 		parent::before();
 
-		if (!Auth::has_access('boards.edit'))
-			Response::redirect('admin');
+		if (!\Auth::has_access('boards.edit'))
+			\Response::redirect('admin');
 
 		$this->_views['controller_title'] = __('Boards');
 	}
@@ -18,75 +19,75 @@ class Controller_Admin_Boards extends Controller_Admin
 
 	public function action_manage()
 	{
-		Radix::preload(true);
+		\Radix::preload(true);
 
 		$this->_views['method_title'] = __('Login');
-		$this->_views['main_content_view'] = View::forge('admin/boards/manage', array('boards' => Radix::get_all()));
+		$this->_views['main_content_view'] = \View::forge('admin/boards/manage', array('boards' => \Radix::get_all()));
 
-		return Response::forge(View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
 	public function action_edit()
 	{
-		Radix::preload(true);
+		\Radix::preload(true);
 
 		$this->_views['method_title'] = __('Login');
-		$this->_views['main_content_view'] = View::forge('admin/form_creator', array('form' => Radix::get_all()));
+		$this->_views['main_content_view'] = \View::forge('admin/form_creator', array('form' => \Radix::get_all()));
 
-		return Response::forge(View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
 	public function action_board($shortname = NULL)
 	{
-		$data['form'] = Radix::structure();
+		$data['form'] = \Radix::structure();
 
-		if (Input::post())
+		if (\Input::post())
 		{
-			$result = Validation::form_validate($data['form']);
+			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
 			{
-				Notices::set('warning', $result['error']);
+				\Notices::set('warning', $result['error']);
 			}
 			else
 			{
 				// it's actually fully checked, we just have to throw it in DB
-				Radix::save($result['success']);
+				\Radix::save($result['success']);
 				if (is_null($shortname))
 				{
-					Notices::set_flash('success', __('New board created!'));
-					Response::redirect('admin/boards/board/'.$result['success']['shortname']);
+					\Notices::set_flash('success', __('New board created!'));
+					\Response::redirect('admin/boards/board/'.$result['success']['shortname']);
 				}
 				else if ($shortname != $result['success']['shortname'])
 				{
 					// case in which letter was changed
-					Notices::set_flash('success', __('Board information updated.'));
-					Response::redirect('admin/boards/board/'.$result['success']['shortname']);
+					\Notices::set_flash('success', __('Board information updated.'));
+					\Response::redirect('admin/boards/board/'.$result['success']['shortname']);
 				}
 				else
 				{
-					Notices::set('success', __('Board information updated.'));
+					\Notices::set('success', __('Board information updated.'));
 				}
 			}
 		}
 
-		$board = Radix::get_by_shortname($shortname);
+		$board = \Radix::get_by_shortname($shortname);
 		if ($board === FALSE)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
 		$data['object'] = $board;
 
 		$this->_views["method_title"] = __('Editing board:').' '.$board->shortname;
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
+		$this->_views["main_content_view"] = \View::forge('admin/form_creator', $data);
 
 		if (!$board->sphinx && !$board->myisam_search)
 		{
 			$this->_views["main_content_view"] = '
 				<div class="alert">
-					<a class="btn btn-warning" href="'.Uri::create('admin/boards/search_table/create/'.$board->id).'">
+					<a class="btn btn-warning" href="'.\Uri::create('admin/boards/search_table/create/'.$board->id).'">
 						'.__('Create search table').'
 					</a> '.__('This board doesn\'t have the search table. You can create it by follwing this button.').'
 				</div>
@@ -97,84 +98,84 @@ class Controller_Admin_Boards extends Controller_Admin
 		{
 			$this->_views["main_content_view"] = '
 				<div class="alert">
-					<a class="btn btn-warning" href="'.Uri::create('admin/boards/search_table/remove/'.$board->id).'">
+					<a class="btn btn-warning" href="'.\Uri::create('admin/boards/search_table/remove/'.$board->id).'">
 						'.__('Remove search table').'
 					</a> '.__('You are using Sphinx Search for this board, so you can remove the search table.').'
 				</div>
 			'.$this->_views["main_content_view"];
 		}
 
-		return Response::forge(View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
 	function action_add_new()
 	{
-		$data['form'] = Radix::structure();
+		$data['form'] = \Radix::structure();
 
-		if (Input::post())
+		if (\Input::post())
 		{
-			$result = Validation::form_validate($data['form']);
+			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
 			{
-				Notices::set('warning', $result['error']);
+				\Notices::set('warning', $result['error']);
 			}
 			else
 			{
 				// it's actually fully checked, we just have to throw it in DB
-				Radix::save($result['success']);
-				Notices::set_flash('success', __('New board created!'));
-				Response::redirect('admin/boards/board/'.$result['success']['shortname']);
+				\Radix::save($result['success']);
+				\Notices::set_flash('success', __('New board created!'));
+				\Response::redirect('admin/boards/board/'.$result['success']['shortname']);
 			}
 		}
 
 		// the actual POST is in the board() function
-		$data['form']['open']['action'] = Uri::create('admin/boards/add_new');
+		$data['form']['open']['action'] = \Uri::create('admin/boards/add_new');
 
 		// panel for creating a new board
 		$this->_views["method_title"] = __('Creating a new board');
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
+		$this->_views["main_content_view"] = \View::forge('admin/form_creator', $data);
 
-		return Response::forge(View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
 	function action_search_table($type = FALSE, $id = 0)
 	{
-		$board = Radix::get_by_id($id);
+		$board = \Radix::get_by_id($id);
 		if ($board == FALSE)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
-		if (Input::post())
+		if (\Input::post())
 		{
 			switch ($type)
 			{
 				case("create"):
 					if (!$this->radix->create_search($board))
 					{
-						Notices::set_flash('error', sprintf(__('Failed to create the search table for the board %s.'), $board->shortname));
+						\Notices::set_flash('error', sprintf(__('Failed to create the search table for the board %s.'), $board->shortname));
 					}
 					else
 					{
-						Notices::set_flash('success',
+						\Notices::set_flash('success',
 							sprintf(__('The search table for the board %s has been created.'), $board->shortname));
 					}
-					Response::redirect('admin/boards/board/'.$board->shortname);
+					\Response::redirect('admin/boards/board/'.$board->shortname);
 					break;
 
 				case("remove"):
-					if (!Radix::remove_search($board))
+					if (!\Radix::remove_search($board))
 					{
-						Notices::set_flash('error', sprintf(__('Failed to remove the search table for the board %s.'), $board->shortname));
+						\Notices::set_flash('error', sprintf(__('Failed to remove the search table for the board %s.'), $board->shortname));
 					}
 					else
 					{
-						Notices::set_flash('success',
+						\Notices::set_flash('success',
 							sprintf(__('The search table for the board %s has been removed.'), $board->shortname));
 					}
-					Response::redirect('admin/boards/board/'.$board->shortname);
+					\Response::redirect('admin/boards/board/'.$board->shortname);
 					break;
 			}
 		}
@@ -196,7 +197,7 @@ class Controller_Admin_Boards extends Controller_Admin
 $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 					__('For very large boards, past a few millions of entries, this would could hours: you should use SphinxSearch instead, or anyway you should use the command line.');
 
-				$this->_views["main_content_view"] = View::forge('admin/confirm', $data);
+				$this->_views["main_content_view"] = \View::forge('admin/confirm', $data);
 				break;
 
 			case('remove'):
@@ -209,31 +210,31 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 				break;
 		}
 
-		$this->_views["main_content_view"] = View::forge('admin/confirm', $data);
-		return Response::forge(View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('admin/confirm', $data);
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
 	function action_delete($type = FALSE, $id = 0)
 	{
-		$board = Radix::get_by_id($id);
+		$board = \Radix::get_by_id($id);
 		if ($board == FALSE)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
-		if (Input::post())
+		if (\Input::post())
 		{
 			switch ($type)
 			{
 				case("board"):
-					if (!Radix::remove($id))
+					if (!\Radix::remove($id))
 					{
-						Notices::set_flash('error', sprintf(__('Failed to delete the board %s.'), $board->shortname));
-						Response::redirect('admin/boards/manage');
+						\Notices::set_flash('error', sprintf(__('Failed to delete the board %s.'), $board->shortname));
+						\Response::redirect('admin/boards/manage');
 					}
-					Notices::set_flash('success', sprintf(__('The board %s has been deleted.'), $board->shortname));
-					Response::redirect('admin/boards/manage');
+					\Notices::set_flash('success', sprintf(__('The board %s has been deleted.'), $board->shortname));
+					\Response::redirect('admin/boards/manage');
 					break;
 			}
 		}
@@ -248,8 +249,8 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 					__('Notice: due to its size, you will have to remove the image directory manually. The directory will have the "_removed" suffix. You can remove all the leftover "_removed" directories with the following command:').
 					' <code>php index.php cli boards remove_leftover_dirs</code>';
 
-				$this->_views["main_content_view"] = View::forge('admin/confirm', $data);
-				return Response::forge(View::forge('admin/default', $this->_views));
+				$this->_views["main_content_view"] = \View::forge('admin/confirm', $data);
+				return \Response::forge(\View::forge('admin/default', $this->_views));
 		}
 	}
 
@@ -315,13 +316,13 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'type' => 'close'
 		);
 
-		Preferences::submit_auto($form);
+		\Preferences::submit_auto($form);
 
 		$data['form'] = $form;
 
 		// create a form
-		$this->_views["main_content_view"] = View::forge("admin/form_creator", $data);
-		return Response::forge(View::forge("admin/default", $this->_views));
+		$this->_views["main_content_view"] = \View::forge("admin/form_creator", $data);
+		return \Response::forge(\View::forge("admin/default", $this->_views));
 	}
 
 
@@ -379,7 +380,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 					);
 				}
 
-				$connection = @SphinxQL::set_server($sphinx_ip_port[0], $sphinx_ip_port[1]);
+				$connection = @\SphinxQL::set_server($sphinx_ip_port[0], $sphinx_ip_port[1]);
 
 				if ($connection === FALSE)
 				{
@@ -489,14 +490,14 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'type' => 'close'
 		);
 
-		Preferences::submit_auto($form);
+		\Preferences::submit_auto($form);
 
 		// create the form
 		$data['form'] = $form;
 
-		$this->_views["main_content_view"] = View::forge("admin/form_creator", $data);
-		$this->_views["main_content_view"] .= '<pre>'.SphinxQL::generate_sphinx_config(Radix::get_all()).'</pre>';
-		return Response::forge(View::forge("admin/default", $this->_views));
+		$this->_views["main_content_view"] = \View::forge("admin/form_creator", $data);
+		$this->_views["main_content_view"] .= '<pre>'.\SphinxQL::generate_sphinx_config(\Radix::get_all()).'</pre>';
+		return \Response::forge(\View::forge("admin/default", $this->_views));
 	}
 
 }

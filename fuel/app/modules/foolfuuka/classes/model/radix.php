@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace Foolfuuka\Model;
 
 class Radix extends \Model_Base
 {
@@ -79,7 +79,7 @@ class Radix extends \Model_Base
 				'validation_func' => function($input, $form_internal)
 				{
 					// if we're not using the special subdomain for peripherals
-					if (Preferences::get('ff.srv_sys_subdomain', FOOL_PREF_SYS_SUBDOMAIN) === FALSE)
+					if (\Preferences::get('ff.srv_sys_subdomain', FOOL_PREF_SYS_SUBDOMAIN) === FALSE)
 					{
 						if (in_array($input['shortname'], unserialize(FOOL_PROTECTED_RADIXES)))
 						{
@@ -415,7 +415,7 @@ class Radix extends \Model_Base
 			),
 		);
 
-		$structure = Plugins::run_hook('fu_radix_model_structure_alter', array($structure), 'simple');
+		$structure = \Plugins::run_hook('fu_radix_model_structure_alter', array($structure), 'simple');
 
 		$structure = array_merge($structure,
 			array(
@@ -580,7 +580,7 @@ class Radix extends \Model_Base
 		\DB::delete('boards')->where('id', $id)->execute();
 
 		// rename the directory and prevent directory collision
-		$base = Preferences::get('fu.boards_directory').'/'.$board->shortname;
+		$base =	\Preferences::get('fu.boards_directory').'/'.$board->shortname;
 		if (file_exists($base.'_removed'))
 		{
 			$incremented = \String::increment('_removed');
@@ -593,7 +593,7 @@ class Radix extends \Model_Base
 		}
 		else
 		{
-			$rename_to = Preferences::get('fu.boards_directory').'/'.$board->shortname.'_removed';
+			$rename_to = \Preferences::get('fu.boards_directory').'/'.$board->shortname.'_removed';
 		}
 
 		rename($base, $rename_to);
@@ -620,14 +620,14 @@ class Radix extends \Model_Base
 		$array = array();
 
 		// get all directories
-		if ($handle = opendir(Preferences::get('fu.boards_directory')))
+		if ($handle = opendir(\Preferences::get('fu.boards_directory')))
 		{
 			while (false !== ($file = readdir($handle)))
 			{
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir(Preferences::get('fu.boards_directory').'/'.$file))
+				if (is_dir(\Preferences::get('fu.boards_directory').'/'.$file))
 				{
 					$array[] = $file;
 				}
@@ -659,7 +659,7 @@ class Radix extends \Model_Base
 		// exec the deletion
 		foreach ($array as $dir)
 		{
-			$cmd = 'rm -Rv '.Preferences::get('fu.boards_directory').'/'.$dir;
+			$cmd = 'rm -Rv '.\Preferences::get('fu.boards_directory').'/'.$dir;
 			if ($echo)
 			{
 				echo $cmd.PHP_EOL;
@@ -837,9 +837,9 @@ class Radix extends \Model_Base
 		if (is_object($shortname))
 			$shortname = $shortname->shortname;
 
-		if (Preferences::get('fu.boards_db'))
+		if (\Preferences::get('fu.boards_db'))
 		{
-			return '`'.Preferences::get('fu.boards_db').'`.`'.$shortname.$suffix.'`';
+			return '`'.\Preferences::get('fu.boards_db').'`.`'.$shortname.$suffix.'`';
 		}
 		else
 		{
@@ -1181,8 +1181,8 @@ class Radix extends \Model_Base
 	{
 		// triggers fail if we try to send it from the other database, so switch it for a moment
 		// the alternative would be adding a database prefix to the trigger name which would be messy
-		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.Preferences::get('fu.boards_db'))->execute();
+		if (\Preferences::get('fu.boards_db'))
+			\DB::query('USE '.\Preferences::get('fu.boards_db'))->execute();
 
 		\DB::query("
 			CREATE PROCEDURE `update_thread_".$board->shortname."` (tnum INT)
@@ -1389,7 +1389,7 @@ class Radix extends \Model_Base
 			END;
 		")->execute();
 
-		if (Preferences::get('fu.boards_db'))
+		if (\Preferences::get('fu.boards_db'))
 			\DB::query('USE '.\Config::get('db.default.connection.database'))->execute();
 	}
 
@@ -1423,8 +1423,8 @@ class Radix extends \Model_Base
 	 */
 	protected static function p_mysql_remove_triggers($board)
 	{
-		if (Preferences::get('fu.boards_db'))
-			\DB::query('USE '.Preferences::get('fu.boards_db'))->execute();
+		if (\Preferences::get('fu.boards_db'))
+			\DB::query('USE '.\Preferences::get('fu.boards_db'))->execute();
 
 		$prefixes_procedure = array(
 			'update_thread_',
@@ -1448,7 +1448,7 @@ class Radix extends \Model_Base
 		foreach ($prefixes_trigger as $prefix)
 			\DB::query("DROP TRIGGER IF EXISTS `".$prefix.$board->shortname."`")->execute();
 
-		if (Preferences::get('fu.boards_db'))
+		if (\Preferences::get('fu.boards_db'))
 			\DB::query('USE '.\Config::get('db.default.connection.database'))->execute();
 	}
 

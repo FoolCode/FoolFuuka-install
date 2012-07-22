@@ -143,8 +143,7 @@ if (!defined('DOCROOT'))
 		<?php
 			if ($radix->posting_rules)
 			{
-				$this->load->library('Markdown_Parser');
-				echo Markdown($radix->posting_rules);
+				echo \Markdown::parse($radix->posting_rules);
 			}
 		?>
 	</div>

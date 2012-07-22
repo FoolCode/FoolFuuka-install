@@ -27,5 +27,5 @@ if (!defined('DOCROOT'))
 </style>
 
 <div class="markdown">
-	<?= Markdown($content); ?>
+	<?= \Markdown::parse($content); ?>
 </div>

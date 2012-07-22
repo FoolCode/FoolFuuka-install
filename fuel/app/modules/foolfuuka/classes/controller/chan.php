@@ -1,5 +1,6 @@
 <?php
 
+namespace Foolfuuka;
 
 /**
  * The Welcome Controller.
@@ -10,7 +11,7 @@
  * @package  app
  * @extends  Controller
  */
-class Controller_Chan extends Controller_Common
+class Controller_Chan extends \Controller_Common
 {
 
 	protected $_theme = null;
@@ -62,7 +63,7 @@ class Controller_Chan extends Controller_Common
 
 	public function router($method, $params)
 	{
-		$this->_radix = Radix::set_selected_by_shortname($method);
+		$this->_radix = \Radix::set_selected_by_shortname($method);
 		$this->_theme->bind('radix', $this->_radix?:null);
 		if ($this->_radix)
 		{
@@ -87,7 +88,7 @@ class Controller_Chan extends Controller_Common
 	public function action_index()
 	{
 		$this->_theme->bind('disable_headers', TRUE);
-		return Response::forge($this->_theme->build('index'));
+		return \Response::forge($this->_theme->build('index'));
 	}
 
 
@@ -99,7 +100,7 @@ class Controller_Chan extends Controller_Common
 	 */
 	public function action_404()
 	{
-		return Response::forge($this->_theme->build('error',
+		return \Response::forge($this->_theme->build('error',
 					array(
 					'error' => __('Page not found. You can use the search if you were looking for something!')
 				)));
@@ -110,9 +111,9 @@ class Controller_Chan extends Controller_Common
 	{
 		if (is_null($error))
 		{
-			return Response::forge($this->_theme->build('error', array('error' => __('We encountered an unexpected error.'))));
+			return \Response::forge($this->_theme->build('error', array('error' => __('We encountered an unexpected error.'))));
 		}
-		return Response::forge($this->_theme->build('error', array('error' => $error)));
+		return \Response::forge($this->_theme->build('error', array('error' => $error)));
 	}
 
 
@@ -120,15 +121,15 @@ class Controller_Chan extends Controller_Common
 	{
 		$mode = $_mode === 'by_thread' ? 'by_thread' : 'by_post';
 		$type = $this->_radix->archive ? 'archive' : 'board';
-		Cookie::set('default_theme_page_mode_'.$type, $mode);
+		\Cookie::set('default_theme_page_mode_'.$type, $mode);
 
-		Response::redirect($this->_radix->shortname);
+		\Response::redirect($this->_radix->shortname);
 	}
 
 
 	public function action_page($page = 1)
 	{
-		$order = Cookie::get('default_theme_page_mode_'. ($this->_radix->archive ? 'archive' : 'board')) === 'by_thread'
+		$order = \Cookie::get('default_theme_page_mode_'. ($this->_radix->archive ? 'archive' : 'board')) === 'by_thread'
 			? 'by_thread' : 'by_post';
 
 		$options = array(
@@ -158,7 +159,7 @@ class Controller_Chan extends Controller_Common
 		\Profiler::mark('Controller Chan::latest Start');
 		try
 		{
-			$board = Board::forge()->get_latest()->set_radix($this->_radix)->set_page($page)->set_options($options);
+			$board = \Board::forge()->get_latest()->set_radix($this->_radix)->set_page($page)->set_options($options);
 
 			// execute in case there's more exceptions to handle
 			$board->get_comments();
@@ -195,7 +196,7 @@ class Controller_Chan extends Controller_Common
 			'posts_per_thread' => $options['per_thread'] - 1,
 			'order' => $options['order'],
 			'pagination' => array(
-				'base_url' => Uri::create(array($this->_radix->shortname, $options['order'])),
+				'base_url' => \Uri::create(array($this->_radix->shortname, $options['order'])),
 				'current_page' => $page,
 				'total' => $board->get_count()
 			)
@@ -208,7 +209,7 @@ class Controller_Chan extends Controller_Common
 
 		\Profiler::mark_memory($this, 'Controller Chan $this');
 		\Profiler::mark('Controller Chan::latest End');
-		return Response::forge($this->_theme->build('board'));
+		return \Response::forge($this->_theme->build('board'));
 	}
 
 
@@ -220,12 +221,12 @@ class Controller_Chan extends Controller_Common
 
 	public function action_last50($num = 0)
 	{
-		Response::redirect($this->_radix->shortname.'/last/50/'.$num);
+		\Response::redirect($this->_radix->shortname.'/last/50/'.$num);
 	}
 
 	public function action_last($limit = 0, $num = 0)
 	{
-		if (!Board::is_natural($limit) || $limit < 1)
+		if (!\Board::is_natural($limit) || $limit < 1)
 		{
 			return $this->action_404();
 		}
@@ -241,7 +242,7 @@ class Controller_Chan extends Controller_Common
 
 		try
 		{
-			$board = Board::forge()->get_thread($num)->set_radix($this->_radix)->set_options($options);
+			$board = \Board::forge()->get_thread($num)->set_radix($this->_radix)->set_options($options);
 
 			// execute in case there's more exceptions to handle
 			$thread = $board->get_comments();
@@ -272,7 +273,7 @@ class Controller_Chan extends Controller_Common
 			return $this->error();
 		}
 
-		$this->_theme->set_title(Radix::get_selected()->formatted_title.' &raquo; '.__('Thread').' #'.$num);
+		$this->_theme->set_title(\Radix::get_selected()->formatted_title.' &raquo; '.__('Thread').' #'.$num);
 		$this->_theme->bind(array(
 			'thread_id' => $num,
 			'board' => $board,
@@ -291,7 +292,7 @@ class Controller_Chan extends Controller_Common
 
 		\Profiler::mark_memory($this, 'Controller Chan $this');
 		\Profiler::mark('Controller Chan::thread End');
-		return Response::forge($this->_theme->build('board'));
+		return \Response::forge($this->_theme->build('board'));
 	}
 
 
@@ -299,7 +300,7 @@ class Controller_Chan extends Controller_Common
 	{
 		try
 		{
-			$board = Board::forge()->get_threads()->set_radix($this->_radix)->set_page($page)
+			$board = \Board::forge()->get_threads()->set_radix($this->_radix)->set_page($page)
 				->set_options('per_page', 100);
 
 			$comments = $board->get_comments();
@@ -310,7 +311,7 @@ class Controller_Chan extends Controller_Common
 		}
 
 		$this->_theme->bind('board', $board);
-		return Response::forge($this->_theme->build('gallery'));
+		return \Response::forge($this->_theme->build('gallery'));
 
 	}
 
@@ -319,7 +320,7 @@ class Controller_Chan extends Controller_Common
 	{
 		try
 		{
-			$board = Board::forge()->get_post()->set_radix($this->_radix)->set_options('num', $num);
+			$board = \Board::forge()->get_post()->set_radix($this->_radix)->set_options('num', $num);
 
 			$comments = $board->get_comments();
 		}
@@ -335,7 +336,7 @@ class Controller_Chan extends Controller_Common
 		// it always returns an array
 		$comment = $comments[0];
 
-		$redirect =  Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/');
+		$redirect =  \Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/');
 
 		if (!$comment->op)
 		{
@@ -344,7 +345,7 @@ class Controller_Chan extends Controller_Common
 
 		$this->_theme->set_title(__('Redirecting'));
 		$this->_theme->set_layout('redirect');
-		return Response::forge($this->_theme->build('redirect', array('url' => $redirect)));
+		return \Response::forge($this->_theme->build('redirect', array('url' => $redirect)));
 	}
 
 
@@ -356,7 +357,7 @@ class Controller_Chan extends Controller_Common
 	public function action_image()
 	{
 		// support non-urlsafe hash
-		$uri = Uri::segments();
+		$uri = \Uri::segments();
 		array_shift($uri);
 		array_shift($uri);
 
@@ -370,7 +371,7 @@ class Controller_Chan extends Controller_Common
 		$hash = mb_substr($imploded_uri, 0, 22);
 		if (strpos($hash, '/') !== false || strpos($hash, '+') !== false)
 		{
-			$hash = Comment::urlsafe_b64encode(Comment::urlsafe_b64decode($hash));
+			$hash = \Comment::urlsafe_b64encode(Comment::urlsafe_b64decode($hash));
 		}
 
 		// Obtain the PAGE from URI.
@@ -383,7 +384,7 @@ class Controller_Chan extends Controller_Common
 		// Fetch the POSTS with same media hash and generate the IMAGEPOSTS.
 		$page = intval($page);
 		Response::redirect(Uri::create(array(
-			get_selected_radix()->shortname, 'search', 'image', $hash, 'order', 'desc', 'page', $page)), 'location', 301);
+			\Radix::get_selected()->shortname, 'search', 'image', $hash, 'order', 'desc', 'page', $page)), 'location', 301);
 	}
 
 
@@ -393,13 +394,13 @@ class Controller_Chan extends Controller_Common
 	public function action_full_image($filename)
 	{
 		// Check if $filename is valid.
-		if (!in_array(substr($filename, -3), array('gif', 'jpg', 'png')) || !Board::is_natural(substr($filename, 0, 13)))
+		if (!in_array(substr($filename, -3), array('gif', 'jpg', 'png')) || !\Board::is_natural(substr($filename, 0, 13)))
 		{
 			return $this->action_404();
 		}
 
 		// Fetch the FULL IMAGE with the FILENAME specified.
-		$image = Comment::get_full_media(get_selected_radix(), $filename);
+		$image = \Comment::get_full_media(get_selected_radix(), $filename);
 
 		if (isset($image['media_link']))
 		{
@@ -426,7 +427,7 @@ class Controller_Chan extends Controller_Common
 			if ($image['error_type'] == 'not_on_server')
 			{
 				$this->output->set_status_header('404');
-				$this->theme->set_title(get_selected_radix()->formatted_title . ' &raquo; ' . __('Image Pruned'));
+				$this->theme->set_title(\Radix::get_selected()->formatted_title . ' &raquo; ' . __('Image Pruned'));
 				$this->_set_parameters(
 					array(
 						'section_title' => __('Error 404: The image has been pruned from the server.'),
@@ -447,7 +448,7 @@ class Controller_Chan extends Controller_Common
 	public function action_submit()
 	{
 		// adapter
-		if(!Input::post())
+		if(!\Input::post())
 		{
 			return $this->error(__('You aren\'t sending the required fields for creating a new message.'));
 		}
@@ -462,7 +463,7 @@ class Controller_Chan extends Controller_Common
 
 		$data = array();
 
-		$post = Input::post();
+		$post = \Input::post();
 
 		if(isset($post['reply_numero']))
 			$data['thread_num'] = $post['reply_numero'];
@@ -485,11 +486,11 @@ class Controller_Chan extends Controller_Common
 
 		$media = null;
 
-		if (count(Upload::get_files()))
+		if (count(\Upload::get_files()))
 		{
 			try
 			{
-				$media = Media::forge_from_upload($this->_radix);
+				$media = \Media::forge_from_upload($this->_radix);
 			}
 			catch (\Model\MediaUploadNoFileException $e)
 			{
@@ -507,7 +508,7 @@ class Controller_Chan extends Controller_Common
 	public function submit($data, $media)
 	{
 		// some beginners' validation, while through validation will happen in the Comment model
-		$val = Validation::forge();
+		$val = \Validation::forge();
 		$val->add_field('thread_num', __('Thread Number'), 'required');
 		$val->add_field('name', __('Username'), 'trim|max_length[64]');
 		$val->add_field('email', __('Email'), 'trim|max_length[64]');
@@ -529,8 +530,8 @@ class Controller_Chan extends Controller_Common
 		}
 
 		$this->_theme->set_layout('redirect');
-		return Response::forge($this->_theme->build('redirect',
-			array('url' => Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/'.$comment->num))));
+		return \Response::forge($this->_theme->build('redirect',
+			array('url' => \Uri::create($this->_radix->shortname.'/thread/'.$comment->thread_num.'/'.$comment->num))));
 
 	}
 }
