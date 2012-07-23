@@ -331,6 +331,9 @@ class Controller_Admin_Auth extends Controller_Admin
 
 	public function action_change_email($id, $email_key)
 	{
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Change Email');
+
 		if ( ! Auth::has_access('maccess.user'))
 		{
 			Response::redirect('admin/auth/login');
@@ -346,9 +349,6 @@ class Controller_Admin_Auth extends Controller_Admin
 		{
 			Notices::set('warning', __('The link you used is incorrect or has expired.'));
 		}
-
-		$this->_views['controller_title'] = __('Authorization');
-		$this->_views['method_title'] = __('Change Email');
 
 		return Response::forge(View::forge('admin/default', $this->_views));
 	}
@@ -432,9 +432,14 @@ class Controller_Admin_Auth extends Controller_Admin
 
 	public function action_delete_account($id, $key)
 	{
+		$this->_views['controller_title'] = __('Authorization');
+		$this->_views['method_title'] = __('Delete Account');
+
 		if (!Auth::has_access('maccess.user'))
 		{
 			Notices::set('warning', __('You must be logged in to delete your account with this link.'));
+
+			return Response::forge(View::forge('admin/default', $this->_views));
 		}
 
 		try
@@ -446,9 +451,6 @@ class Controller_Admin_Auth extends Controller_Admin
 		{
 			Notices::set('warning', __('The link you used is incorrect or has expired.'));
 		}
-
-		$this->_views['controller_title'] = __('Authorization');
-		$this->_views['method_title'] = __('Delete Account');
 
 		return Response::forge(View::forge('admin/default', $this->_views));
 	}

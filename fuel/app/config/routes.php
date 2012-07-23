@@ -1,4 +1,5 @@
 <?php
+
 return array(
 	'_root_'  => 'foolfuuka/chan/index',  // The default route
 	'admin/boards' => 'foolfuuka/admin/boards/manage',

@@ -97,6 +97,7 @@ class Media extends \Model\Model_Base
 
 	public function __destruct()
 	{
+		// check if there's a file stored in the cache and get rid of it
 		$this->rollback_upload();
 	}
 
