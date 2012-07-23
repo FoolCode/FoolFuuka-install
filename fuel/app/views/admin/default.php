@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?php echo Preferences::get('fs_gen_site_title', FOOL_NAME); ?> <?php echo __('Control Panel') ?></title>
+		<title><?php echo Preferences::get('fu.gen.website_title'); ?> <?php echo __('Control Panel') ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" />
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/admin/admin.css?v=<?= FOOL_VERSION ?>" />
-		<script type="text/javascript" src="<?= URI::base() ?>assets/js/jquery.js?v=<?= FOOL_VERSION ?>"></script>
-		<script type="text/javascript" src="<?= URI::base() ?>assets/bootstrap2/js/bootstrap.js?v=<?= FOOL_VERSION ?>"></script>
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= FOOL_VERSION ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= \Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/admin/admin.css?v=<?= \Config::get('foolframe.main.version') ?>" />
+		<script type="text/javascript" src="<?= URI::base() ?>assets/js/jquery.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= URI::base() ?>assets/bootstrap2/js/bootstrap.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= \Config::get('foolframe.main.version') ?>" />
 		<!--[if lt IE 8]>
-			<link href="<?= URI::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= URI::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= \Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
-		<script type="text/javascript" src="<?= URI::base() ?>assets/admin/admin.js?v=<?= FOOL_VERSION ?>"></script>
+		<script type="text/javascript" src="<?= URI::base() ?>assets/admin/admin.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
 	</head>
 
 	<body>
@@ -71,10 +71,10 @@
 
 
 					<footer class="footer">
-						<p style="padding-left: 20px;"><?php echo FOOL_NAME ?> Version <?php
-						echo FOOL_VERSION;
-						if (Auth::member('admin') && (FOOL_VERSION != Preferences::get('fs_cron_autoupgrade_version') && (Preferences::get('fs_cron_autoupgrade_version'))))
-							echo ' – <a href="' . site_url('admin/system/upgrade/') . '">' . __('New upgrade available:') . ' ' . Preferences::get('fs_cron_autoupgrade_version') . '</a>';
+						<p style="padding-left: 20px;"><?php echo \Config::get('foolframe.main.name') ?> Version <?php
+						echo \Config::get('foolframe.main.version');
+						if (Auth::member('admin') && (\Config::get('foolframe.main.version') != Preferences::get('ff.cron.autoupgrade_version') && (Preferences::get('ff.cron.autoupgrade_version'))))
+							echo ' – <a href="' . site_url('admin/system/upgrade/') . '">' . __('New upgrade available:') . ' ' . Preferences::get('ff.cron.autoupgrade_version') . '</a>';
 						?></p>
 					</footer>
 				</div>

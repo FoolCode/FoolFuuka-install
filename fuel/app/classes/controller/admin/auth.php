@@ -79,18 +79,18 @@ class Controller_Admin_Auth extends Controller_Admin
 				{
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-					$title = \Preferences::get('ff.gen_website_title').' '.__('account activation');
+					$title = \Preferences::get('ff.gen.website_title').' '.__('account activation');
 
 					$content = \View::Forge('admin/auth/email_activation', array(
 						'title' => $title,
-						'site' => \Preferences::get('ff.gen_website_title'),
+						'site' => \Preferences::get('ff.gen.website_title'),
 						'username' => $input['username'],
 						'link' => Uri::create('admin/auth/activate/'.$id.'/'.$activation_key)
 					));
 
 					Package::load('email');
 					$email = Email::forge();
-					$email->from($from, \Preferences::get('ff.gen_website_title'))
+					$email->from($from, \Preferences::get('ff.gen.website_title'))
 						->subject($title)
 						->to($input['email'])
 						->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
@@ -284,18 +284,18 @@ class Controller_Admin_Auth extends Controller_Admin
 
 				$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-				$title = \Preferences::get('ff.gen_website_title').' '.__('email change');
+				$title = \Preferences::get('ff.gen.website_title').' '.__('email change');
 
 				$content = \View::Forge('admin/auth/email_email_change', array(
 					'title' => $title,
-					'site' => \Preferences::get('ff.gen_website_title'),
+					'site' => \Preferences::get('ff.gen.website_title'),
 					'username' => $user->username,
 					'link' => Uri::create('admin/auth/change_email/'.$user->id.'/'.$change_email_key)
 				));
 
 				Package::load('email');
 				$sending = Email::forge();
-				$sending->from($from, \Preferences::get('ff.gen_website_title'))
+				$sending->from($from, \Preferences::get('ff.gen.website_title'))
 					->subject($title)
 					->to($input['email'])
 					->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
@@ -385,18 +385,18 @@ class Controller_Admin_Auth extends Controller_Admin
 
 				$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-				$title = \Preferences::get('ff.gen_website_title').' '.__('account deletion');
+				$title = \Preferences::get('ff.gen.website_title').' '.__('account deletion');
 
 				$content = \View::Forge('admin/auth/email_delete_account', array(
 					'title' => $title,
-					'site' => \Preferences::get('ff.gen_website_title'),
+					'site' => \Preferences::get('ff.gen.website_title'),
 					'username' => $user->username,
 					'link' => Uri::create('admin/auth/delete_account/'.$user->id.'/'.$account_deletion_key)
 				));
 
 				Package::load('email');
 				$sending = Email::forge();
-				$sending->from($from, \Preferences::get('ff.gen_website_title'))
+				$sending->from($from, \Preferences::get('ff.gen.website_title'))
 					->subject($title)
 					->to($user->email)
 					->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));
@@ -472,18 +472,18 @@ class Controller_Admin_Auth extends Controller_Admin
 
 		$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-		$title = \Preferences::get('ff.gen_website_title').' '.__('password change');
+		$title = \Preferences::get('ff.gen.website_title').' '.__('password change');
 
 		$content = \View::Forge('admin/auth/email_password_change', array(
 			'title' => $title,
-			'site' => \Preferences::get('ff.gen_website_title'),
+			'site' => \Preferences::get('ff.gen.website_title'),
 			'username' => $user->username,
 			'link' => Uri::create('admin/auth/change_password/'.$user->id.'/'.$password_key)
 		));
 
 		Package::load('email');
 		$sending = Email::forge();
-		$sending->from($from, \Preferences::get('ff.gen_website_title'))
+		$sending->from($from, \Preferences::get('ff.gen.website_title'))
 			->subject($title)
 			->to($email)
 			->html_body(\View::forge('email_default', array('title' => $title, 'content' => $content)));

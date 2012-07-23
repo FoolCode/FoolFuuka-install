@@ -2,7 +2,7 @@
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="brand" href="<?php echo URI::create('admin') ?>">
-				<?php echo Preferences::get('fs_gen_site_title', FOOL_NAME); ?> - <?php echo __('Control Panel'); ?>
+				<?php echo Preferences::get('ff.gen.website_title'); ?> - <?php echo __('Control Panel'); ?>
 			</a>
 			<ul class="nav">
 				<li class="active">

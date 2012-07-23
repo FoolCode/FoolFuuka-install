@@ -2,7 +2,7 @@
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-if (!isset($radix) && Preferences::get('fu.sphinx_global'))
+if (!isset($radix) && Preferences::get('fu.sphinx.global'))
 {
 	// search can work also without a radix selected
 	$radix = new stdClass();
@@ -51,7 +51,7 @@ if (isset($radix)) :
 					?>
 
 					<?php
-					if (Preferences::get('fs_sphinx_global')) :
+					if (Preferences::get('fu.sphinx.global')) :
 						echo Form::submit(array(
 							'class' => 'btn btn-inverse btn-mini',
 							'value' => __('Global Search'),

@@ -3,6 +3,9 @@
 namespace Model;
 
 
+class ThemeException extends \FuelException {};
+class ThemeModuleNotSelectedException extends ThemeException {};
+
 /**
  * FoOlFrame Theme Model
  *
@@ -31,21 +34,28 @@ class Theme extends \Model
 	 *
 	 * @var array
 	 */
-	private $_is_all_loaded = FALSE;
+	private $_is_all_loaded = false;
+
+	/**
+	 * The name of the selected module
+	 *
+	 * @var string|bool the name of the module
+	 */
+	private $_selected_module = false;
 
 	/**
 	 * The name of the selected theme
 	 *
 	 * @var string|bool the folder name of the theme or FALSE if not set
 	 */
-	private $_selected_theme = FALSE;
+	private $_selected_theme = false;
 
 	/**
 	 * The selected layout
 	 *
 	 * @var string|bool FALSE when not choosen
 	 */
-	private $_selected_layout = FALSE;
+	private $_selected_layout = false;
 
 	/**
 	 * The selected partials
@@ -136,7 +146,7 @@ class Theme extends \Model
 		}
 		else
 		{
-			$active_themes = Preferences::get('ff.theme_active_themes');
+			$active_themes = Preferences::get('ff.theme.active_themes');
 			if (!$active_themes || !$active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
@@ -263,6 +273,12 @@ class Theme extends \Model
 	}
 
 
+	public function set_module($module = false)
+	{
+		return $this->_selected_module = $module;
+	}
+
+
 	/**
 	 * Checks if the theme is available to the rules and loads it
 	 *
@@ -271,6 +287,11 @@ class Theme extends \Model
 	 */
 	public function set_theme($theme)
 	{
+		if (is_null($this->_selected_module))
+		{
+			throw new ThemeModuleNotSelectedException;
+		}
+
 		// sending FALSE leaves the situation unchanged
 		if ($theme === FALSE)
 		{
@@ -279,24 +300,25 @@ class Theme extends \Model
 
 		if (!in_array($theme, $this->get_available_themes()))
 		{
-			$theme = FOOL_THEME_DEFAULT;
+			$theme = \Config::get($this->_selected_module.'.preferences.themes.default');
 		}
 
 		$result = $this->get_by_name($theme);
 		$this->_selected_theme = $theme;
 
 		// load the theme functions if there is such a file
-		$theme_functions_file = DOCROOT.'content/themes/'.$theme.'/theme_functions.php';
+		$theme_functions_file = DOCROOT.'content/themes/'.$this->_selected_module.'/'.$theme.'/theme_functions.php';
 		if (file_exists($theme_functions_file))
 		{
 			require_once $theme_functions_file;
 		}
 
 		// load the theme plugin file if present
-		$theme_plugin_file = 'content/themes/'.$theme.'/theme_plugin.php';
+		$theme_plugin_file = 'content/themes/'.$this->_selected_module.'/'.$theme.'/theme_plugin.php';
 		if (file_exists($theme_plugin_file))
 		{
-			Plugins::inject_plugin('theme', 'Theme_Plugin_'.$theme, true, $theme_plugin_file);
+			Plugins::inject_plugin('theme', 'Theme_Plugin_'.\Config::get($this->_selected_module.'.main.class_name')
+				.'_'.$theme, true, $theme_plugin_file);
 		}
 
 		return $result;
@@ -407,13 +429,15 @@ class Theme extends \Model
 	public function fallback_asset($asset)
 	{
 		$asset = ltrim($asset, '/');
-		if (file_exists('content/themes/'.$this->_selected_theme.'/'.$asset))
+
+		$version = \Config::get($this->_selected_module.'.main.version');
+		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset))
 		{
-			return 'content/themes/'.$this->_selected_theme.'/'.$asset.'?v='.FOOL_VERSION;
+			return 'content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 		}
 		else
 		{
-			return 'content/themes/'.$this->get_config('extends').'/'.$asset.'?v='.FOOL_VERSION;
+			return 'content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 		}
 	}
 
@@ -433,12 +457,13 @@ class Theme extends \Model
 			return array($this->fallback_asset($asset));
 		}
 
+		$version = \Config::get($this->_selected_module.'.main.version');
 		$result = array();
-		if (file_exists('content/themes/'.$this->get_config('extends').'/'.$asset))
-			$result[] = 'content/themes/'.$this->get_config('extends').'/'.$asset.'?v='.FOOL_VERSION;
+		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset))
+			$result[] = 'content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 
-		if (file_exists('content/themes/'.$this->_selected_theme.'/'.$asset))
-			$result[] = 'content/themes/'.$this->_selected_theme.'/'.$asset.'?v='.FOOL_VERSION;
+		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset))
+			$result[] = 'content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 
 		// we want first extended theme and then the override
 		return $result;
@@ -519,16 +544,16 @@ class Theme extends \Model
 			switch ($_type)
 			{
 				case 'layout':
-					if (file_exists('content/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
+					if (file_exists('content/themes/'.$this->_selected_module.'/'.$_directory.'/views/layouts/'.$_file.'.php'))
 					{
-						$_location = 'content/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
+						$_location = 'content/themes/'.$this->_selected_module.'/'.$_directory.'/views/layouts/'.$_file.'.php';
 					}
 					break;
 				case 'content':
 				case 'partial':
-					if (file_exists('content/themes/'.$_directory.'/views/'.$_file.'.php'))
+					if (file_exists('content/themes/'.$this->_selected_module.'/'.$_directory.'/views/'.$_file.'.php'))
 					{
-						$_location = 'content/themes/'.$_directory.'/views/'.$_file.'.php';
+						$_location = 'content/themes/'.$this->_selected_module.'/'.$_directory.'/views/'.$_file.'.php';
 					}
 					break;
 			}

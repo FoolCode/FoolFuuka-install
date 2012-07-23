@@ -227,7 +227,7 @@ if (!isset($board))
 							'name' => 'submit_search'
 						));
 
-						if (get_setting('fs_sphinx_global')) :
+						if (get_setting('fu.sphinx.global')) :
 							echo form_submit(array(
 								'value' => 'Global Search',
 								'name' => 'submit_search_global'

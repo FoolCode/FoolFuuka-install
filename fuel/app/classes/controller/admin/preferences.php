@@ -22,7 +22,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		// build the array for the form
-		$form['ff.gen_site_title'] = array(
+		$form['ff.gen.site_title'] = array(
 			'type' => 'input',
 			'label' => 'Title',
 			'class' => 'span3',
@@ -33,7 +33,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		// build the array for the form
-		$form['ff.gen_index_title'] = array(
+		$form['ff.gen.index_title'] = array(
 			'type' => 'input',
 			'label' => 'Index title',
 			'class' => 'span3',
@@ -72,7 +72,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			);
 		}
 
-		$form['ff.theme_active_themes'] = array(
+		$form['ff.theme.active_themes'] = array(
 			'type' => 'checkbox_array',
 			'label' => __('Active themes'),
 			'help' => __('Choose the themes to make available to the users. Admins are able to access any of them even if disabled.'),
@@ -86,7 +86,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			$themes_default[$name] = $theme['name'];
 		}
 
-		$form['ff.theme_default'] = array(
+		$form['ff.theme.default'] = array(
 			'type' => 'select',
 			'label' => __('Default theme'),
 			'help' => __('The theme the users will see as they reach your site.'),
@@ -95,7 +95,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'preferences' => TRUE,
 		);
 
-		$form['ff.theme_google_analytics'] = array(
+		$form['ff.theme.google_analytics'] = array(
 			'type' => 'input',
 			'label' => __('Google Analytics code'),
 			'placeholder' => 'UX-XXXXXXX-X',
@@ -108,7 +108,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'separator'
 		);
 
-		$form['ff.theme_header_text'] = array(
+		$form['ff.theme.header_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Text ("notices")'),
 			'preferences' => TRUE,
@@ -116,7 +116,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme_header_code'] = array(
+		$form['ff.theme.header_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Code'),
 			'preferences' => TRUE,
@@ -124,7 +124,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme_footer_text'] = array(
+		$form['ff.theme.footer_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Text'),
 			'preferences' => TRUE,
@@ -132,7 +132,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme_footer_code'] = array(
+		$form['ff.theme.footer_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Code'),
 			'preferences' => TRUE,

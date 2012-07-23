@@ -147,7 +147,6 @@ class Radix extends \Model_Base
 				'type' => 'input',
 				'class' => 'span1',
 				'validation' => 'trim|required|valid_string[numeric]',
-				'default_value' => FOOL_RADIX_THREADS_PER_PAGE
 			),
 			'archive' => array(
 				'database' => TRUE,
@@ -266,7 +265,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_THUMB_OP_WIDTH
 					),
 					'thumbnail_op_height' => array(
 						'database' => TRUE,
@@ -275,7 +273,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_THUMB_OP_HEIGHT
 					),
 					'thumbnail_reply_width' => array(
 						'database' => TRUE,
@@ -284,7 +281,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_THUMB_REPLY_WIDTH
 					),
 					'thumbnail_reply_height' => array(
 						'database' => TRUE,
@@ -293,7 +289,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_THUMB_REPLY_HEIGHT
 					),
 					'max_image_size_kilobytes' => array(
 						'database' => TRUE,
@@ -302,7 +297,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_KILOBYTES
 					),
 					'max_image_size_width' => array(
 						'database' => TRUE,
@@ -311,7 +305,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_WIDTH
 					),
 					'max_image_size_height' => array(
 						'database' => TRUE,
@@ -320,7 +313,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]|numeric_min[25]',
-						'default_value' => FOOL_RADIX_MAX_IMAGE_SIZE_HEIGHT
 					),
 					'max_posts_count' => array(
 						'database' => TRUE,
@@ -329,7 +321,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]',
-						'default_value' => FOOL_RADIX_MAX_POSTS_COUNT
 					),
 					'max_images_count' => array(
 						'database' => TRUE,
@@ -338,7 +329,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]',
-						'default_value' => FOOL_RADIX_MAX_IMAGES_COUNT
 					),
 					'min_image_repost_hours' => array(
 						'database' => TRUE,
@@ -347,7 +337,6 @@ class Radix extends \Model_Base
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|numeric_min[-2]',
-						'default_value' => FOOL_RADIX_MIN_IMAGE_REPOST_HOURS
 					)
 				)
 			),
@@ -358,7 +347,6 @@ class Radix extends \Model_Base
 				'type' => 'input',
 				'class' => 'span3',
 				'validation' => 'trim|required',
-				'default_value' => FOOL_RADIX_ANONYMOUS_DEFAULT_NAME
 			),
 			'transparent_spoiler' => array(
 				'database' => TRUE,
@@ -400,7 +388,6 @@ class Radix extends \Model_Base
 				'database' => TRUE,
 				'boards_preferences' => TRUE,
 				'type' => 'internal',
-				'default_value' => FOOL_RADIX_MYISAM_SEARCH,
 				'help' => __('internal')
 			),
 			'sphinx' => array(
@@ -733,10 +720,7 @@ class Radix extends \Model_Base
 			{
 				if (!isset($result_object[$item->id]->$key) && isset($arr['boards_preferences']))
 				{
-					if (isset($arr['default_value']))
-						$result_object[$item->id]->$key = $arr['default_value'];
-					else
-						$result_object[$item->id]->$key = false;
+					$result_object[$item->id]->$key = \Config::get('foolfuuka.radix.'.$key);
 				}
 
 				foreach (array('sub', 'sub_inverse') as $sub)
@@ -747,10 +731,7 @@ class Radix extends \Model_Base
 						{
 							if (!isset($result_object[$item->id]->$k) && isset($a['boards_preferences']))
 							{
-								if (isset($a['default_value']))
-									$result_object[$item->id]->$k = $a['default_value'];
-								else
-									$result_object[$item->id]->$k = false;
+								$result_object[$item->id]->$k = \Config::get('foolfuuka.radix.'.$k);
 							}
 						}
 					}

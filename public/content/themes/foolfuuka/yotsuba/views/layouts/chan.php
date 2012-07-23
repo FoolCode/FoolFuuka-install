@@ -31,7 +31,7 @@
 		}
 		?>
 
-		<?php if (get_setting('fs_sphinx_global')) : ?>
+		<?php if (get_setting('fu.sphinx.global')) : ?>
 			<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE) ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
 	</head>

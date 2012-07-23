@@ -7,6 +7,7 @@ class Preferences extends \Model
 {
 
 	private static $_preferences = array();
+	private static $_module_identifiers = array();
 
 
 	public static function _init()
@@ -21,6 +22,15 @@ class Preferences extends \Model
 		if ($reload === true)
 		{
 			\Cache::delete('model.preferences.settings');
+		}
+
+		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
+		$modules = \Config::get('foolframe.modules.installed');
+		$modules[] = 'foolframe';
+
+		foreach ($modules as $module)
+		{
+			static::$_module_identifiers[\Config::get($module.'.main.identifier')] = $module;
 		}
 
 		try
@@ -91,13 +101,12 @@ class Preferences extends \Model
 			return $fallback;
 		}
 
-		$const = strtoupper(substr($setting,strpos($setting,'.') + 1));
-		if (defined('FOOL_'.$const))
-		{
-			return constant('FOOL_'.$const);
-		}
+		$segments = explode('.', $setting);
+		$identifier = $segments[0];
+		unset($segments[0]);
+		$query = implode('.', $segments);
 
-		return null;
+		return \Config::get(static::$_module_identifiers[$identifier].'.preferences.'.$query);
 	}
 
 

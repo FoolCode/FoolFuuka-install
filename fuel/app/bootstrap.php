@@ -14,7 +14,7 @@ Autoloader::add_classes(array(
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
 	'Uri' => APPPATH.'classes/extend/uri.php',
-	'Validation' => APPPATH.'classes/extend/validation.php'
+	'Validation' => APPPATH.'classes/extend/validation.php',
 ));
 
 // Register the autoloader
@@ -30,14 +30,13 @@ Autoloader::register();
  */
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 
-Fuel::load(APPPATH.'config/constants.php');
 /*
 if (function_exists('_'))
 {*/
 	function __($text)
 	{
 		$text = _($text);
-		$text = str_replace('{{FOOL_NAME}}', FOOL_NAME, $text);
+		$text = str_replace('{{FOOL_NAME}}', \Config::get('foolframe.main.name'), $text);
 		return $text;
 	}
 
@@ -50,7 +49,7 @@ else
 {
 	function __($text)
 	{
-		$text = str_replace('{{FOOL_NAME}}', FOOL_NAME, $text);
+		$text = str_replace('{{FOOL_NAME}}', \Config::get('foolframe.main.name'), $text);
 		return $text;
 	}
 
@@ -76,17 +75,26 @@ function _ngettext($string)
 // Initialize the framework with the config file.
 Fuel::init('config.php');
 
-Autoloader::add_class('Model\\Model_Base', APPPATH.'classes/model/model_base.php');
-Autoloader::alias_to_namespace('Model\\Model_Base');
-Autoloader::alias_to_namespace('Model\\Inet');
-Autoloader::alias_to_namespace('Model\\Preferences');
-Autoloader::alias_to_namespace('Model\\Notices');
-Autoloader::alias_to_namespace('Model\\Plugins');
-Autoloader::alias_to_namespace('Model\\Theme');
-Autoloader::alias_to_namespace('Model\\Users');
-Autoloader::alias_to_namespace('Model\\User');
+\Config::load('foolframe', 'foolframe');
 
-Autoloader::alias_to_namespace('Foolfuuka\\Model\\Radix');
-Autoloader::alias_to_namespace('Foolfuuka\\Model\\Board');
-Autoloader::alias_to_namespace('Foolfuuka\\Model\\Comment');
-Autoloader::alias_to_namespace('Foolfuuka\\Model\\Media');
+Autoloader::add_classes(array(
+	'Model\\Model_Base' => APPPATH.'classes/model/model_base.php',
+	'Model\\Inet' => APPPATH.'classes/model/inet.php',
+	'Model\\Preferences' => APPPATH.'classes/model/preferences.php',
+	'Model\\Notices' => APPPATH.'classes/model/notices.php',
+	'Model\\Plugins' => APPPATH.'classes/model/plugins.php',
+	'Model\\Theme' => APPPATH.'classes/model/theme.php',
+	'Model\\Users' => APPPATH.'classes/model/users.php',
+	'Model\\User' => APPPATH.'classes/model/user.php',
+));
+
+Autoloader::add_core_namespace('Model');
+
+
+// load each FoolFrame module, bootstrap and config
+foreach(\Config::get('foolframe.modules.installed') as $module)
+{
+	\Module::load($module);
+	\Config::load($module.'::'.$module, $module);
+	\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
+}

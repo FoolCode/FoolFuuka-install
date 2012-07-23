@@ -353,11 +353,11 @@ class Board extends \Model
 
 		// if global or board => use sphinx, else mysql for board only
 		// global search requires sphinx
-		if (($board === FALSE && get_setting('fs_sphinx_global', 0) == 0))
+		if (($board === FALSE && get_setting('fu.sphinx.global', 0) == 0))
 		{
 			return array('error' => __('Sorry, global search requires SphinxSearch.'));
 		}
-		elseif (($board === FALSE && get_setting('fs_sphinx_global', 0)) || (is_object($board) && $board->sphinx))
+		elseif (($board === FALSE && get_setting('fu.sphinx.global', 0)) || (is_object($board) && $board->sphinx))
 		{
 			$this->load->library('SphinxQL');
 

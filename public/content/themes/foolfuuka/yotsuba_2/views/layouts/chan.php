@@ -28,7 +28,7 @@
 		<!--[if lt IE 9]>
 		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-<?php if (get_setting('fs_sphinx_global')) : ?>
+<?php if (get_setting('fu.sphinx.global')) : ?>
 		<link rel="search" type="application/opensearchdescription+xml" title="<?= get_setting('fs_gen_site_title', FOOL_PREF_GEN_WEBSITE_TITLE); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 <?php endif; ?>
 		<?= get_setting('fs_theme_header_code'); ?>

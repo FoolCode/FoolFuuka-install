@@ -6,20 +6,20 @@ header('imagetoolbar: false');
 <html>
 	<head>
 		<meta charset="utf-8">
-		<meta name="generator" content="<?= FOOL_NAME ?> <?= FOOL_VERSION ?>" />
+		<meta name="generator" content="<?= \Config::get('foolfuuka.main.name') ?> <?= \Config::get('foolfuuka.main.version') ?>" />
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale = 0.5,maximum-scale = 2.0">
 		<?= $template['metadata'] ?>
 
 		<title><?= $template['title'] ?></title>
-		<link href='<?= Uri::base() ?>' rel='index' title='<?= Preferences::get('ff.gen_site_title') ?>' />
+		<link href='<?= Uri::base() ?>' rel='index' title='<?= Preferences::get('ff.gen.site_title') ?>' />
 		<?php if ($radix) : ?>
 		<link href="<?= Uri::create($radix->shortname) ?>rss_gallery_50.xml" rel="alternate" type="application/rss+xml" title="RSS" />
 		<link href="<?= Uri::create($radix->shortname) ?>atom_gallery_50.xml" rel="alternate" type="application/atom+xml" title="Atom" />
 		<?php endif; ?>
-		<link href="<?= Uri::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
-		<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+		<link href="<?= Uri::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= \Config::get('foolfuuka.main.version') ?>" rel="stylesheet" type="text/css" />
+		<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= \Config::get('foolfuuka.main.version') ?>" rel="stylesheet" type="text/css" />
 		<!--[if lt IE 8]>
-			<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= FOOL_VERSION ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= Uri::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= \Config::get('foolfuuka.main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
 		<?php
 			foreach($this->fallback_override('style.css', $this->get_config('extends_css')) as $css)
@@ -29,10 +29,10 @@ header('imagetoolbar: false');
 		<!--[if lt IE 9]>
 			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<?php if (Preferences::get('fu.sphinx_global')) : ?>
-			<link rel="search" type="application/opensearchdescription+xml" title="<?= Preferences::get('ff.gen_site_title'); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
+		<?php if (Preferences::get('fu.sphinx.global')) : ?>
+			<link rel="search" type="application/opensearchdescription+xml" title="<?= Preferences::get('ff.gen.site_title'); ?> " href="<?= Uri::create('@system/functions/opensearch') ?>" />
 		<?php endif; ?>
-		<?= Preferences::get('ff.theme_header_code'); ?>
+		<?= Preferences::get('ff.theme.header_code'); ?>
 
 	</head>
 	<body class="<?= $this->get_selected_theme_class(array('theme_default')) ?>">
@@ -73,7 +73,7 @@ header('imagetoolbar: false');
 						<ul class="nav">
 							<li class="dropdown">
 								<a href="<?= Uri::base() ?>" id="brand" class="brand dropdown-toggle" data-toggle="dropdown">
-									<?= ($radix) ? '/' . $radix->shortname . '/' . ' - ' . $radix->name :  Preferences::get('ff.gen_site_title') ?> <b class="caret"></b>
+									<?= ($radix) ? '/' . $radix->shortname . '/' . ' - ' . $radix->name :  Preferences::get('ff.gen.website_title') ?> <b class="caret"></b>
 								</a>
 								<ul class="dropdown-menu">
 									<?= '<li><a href="' . Uri::create('@default') . '">' . __('Index') . '</a></li>'; ?>
@@ -163,8 +163,8 @@ header('imagetoolbar: false');
 			<div role="main" id="main">
 				<?php if (isset($section_title)) : ?>
 					<h3 class="section_title"><?= $section_title ?></h3>
-				<?php elseif (Preferences::get('ff.theme_header_text')) : ?>
-					<section class="section_title"><?= Preferences::get('ff.theme_header_text') ?></section>
+				<?php elseif (Preferences::get('ff.theme.header_text')) : ?>
+					<section class="section_title"><?= Preferences::get('ff.theme.header_text') ?></section>
 				<?php endif; ?>
 
 				<?= isset($template['partials']['tools_new_thread_box']) ? $template['partials']['tools_new_thread_box'] : ''; ?>
@@ -236,7 +236,7 @@ header('imagetoolbar: false');
 			<div id="push"></div>
 		</div>
 		<footer id="footer">
-			<a href="http://github.com/FoOlRulez/FoOlFuuka"><?= FOOL_NAME ?> Imageboard <?= FOOL_VERSION ?></a>
+			<a href="http://github.com/FoOlRulez/FoOlFuuka"><?= \Config::get('foolfuuka.main.name') ?> Imageboard <?= \Config::get('foolfuuka.main.version') ?></a>
 			- <a href="http://github.com/eksopl/asagi" target="_blank">Asagi Fetcher</a>
 
 			<div style="float:right">
@@ -297,9 +297,9 @@ header('imagetoolbar: false');
 				echo '</div>';
 			}
 
-			if (Preferences::get('fs_theme_footer_text'))
+			if (Preferences::get('fu.theme.footer_text'))
 			{
-				echo '<section class="footer_text">' . Preferences::get('fs_theme_footer_text') . '</section>';
+				echo '<section class="footer_text">' . Preferences::get('fu.theme.footer_text') . '</section>';
 			}
 			?>
 		</footer>
@@ -311,10 +311,10 @@ header('imagetoolbar: false');
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="<?= Uri::base() ?>assets/js/jquery.js"><\/script>')</script>
-		<script defer src="<?= Uri::base() ?>assets/bootstrap2/js/bootstrap.min.js?v=<?= FOOL_VERSION ?>"></script>
+		<script defer src="<?= Uri::base() ?>assets/bootstrap2/js/bootstrap.min.js?v=<?= \Config::get('foolfuuka.main.version') ?>"></script>
 		<script defer src="<?= Uri::base() . $this->fallback_asset('plugins.js') ?>"></script>
 		<script defer src="<?= Uri::base() . $this->fallback_asset('board.js') ?>"></script>
-<?php if (Preferences::get('fs_theme_google_analytics')) : ?>
+<?php if (Preferences::get('ff.theme.google_analytics')) : ?>
 		<script>
 			var _gaq=[['_setAccount','<?= Preferences::get('fs_theme_google_analytics') ?>'],['_trackPageview'],['_trackPageLoadTime']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -329,6 +329,6 @@ header('imagetoolbar: false');
 		  <script defer src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
 		  <script defer>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
 		<![endif]-->
-		<?= Preferences::get('fs_theme_footer_code'); ?>
+		<?= Preferences::get('fu.theme.footer_code'); ?>
 	</body>
 </html>

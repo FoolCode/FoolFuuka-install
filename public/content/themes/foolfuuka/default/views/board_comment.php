@@ -123,7 +123,7 @@ $quote_mode = (isset($is_last50) && $is_last50) ? 'last50' : 'thread';
 		<?php if ($p->poster_ip) : ?>
 			<button class="btn btn-mini" data-function="mod" data-board="<?= $p->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $p->board->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-action="ban_user"><?= __('Ban IP:') . ' ' . \Inet::dtop($p->poster_ip) ?></button>
 			<button class="btn btn-mini" data-function="searchUser" data-board="<?= $p->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $p->board->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= \Inet::dtop($p->poster_ip) ?>"><?= __('Search IP') ?></button>
-			<?php if (Preferences::get('fu.sphinx_global')) : ?>
+			<?php if (Preferences::get('fu.sphinx.global')) : ?>
 			<button class="btn btn-mini" data-function="searchUserGlobal" data-board="<?= $p->board->shortname ?>" data-board-url="<?= Uri::create(array('@radix', $p->board->shortname)) ?>" data-id="<?= $p->doc_id ?>" data-poster-ip="<?= \Inet::dtop($p->poster_ip) ?>"><?= __('Search IP Globally') ?></button>
 			<?php endif; ?>
 		<?php endif; ?>

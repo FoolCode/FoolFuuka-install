@@ -112,7 +112,7 @@ class Controller_Admin extends Controller_Common
 			"content" => array(
 				"information" => array("level" => "admin", "name" => __("Information"), "icon" => 'icon-info-sign'),
 				"preferences" => array("level" => "admin", "name" => __("Preferences"), "icon" => 'icon-check'),
-				"upgrade" => array("level" => "admin", "name" => __("Upgrade") . ((Preferences::get('ff,cron_autoupgrade_version') && version_compare(FOOL_VERSION,
+				"upgrade" => array("level" => "admin", "name" => __("Upgrade") . ((Preferences::get('ff.cron_autoupgrade_version') && version_compare(\Config::get('foolframe.main.version'),
 						Preferences::get('ff.cron_autoupgrade_version')) < 0) ? ' <span class="label label-success">' . __('New') . '</span>'
 							: ''), "icon" => 'icon-refresh'),
 			)

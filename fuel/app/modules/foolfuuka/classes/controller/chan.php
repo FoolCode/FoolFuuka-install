@@ -24,6 +24,7 @@ class Controller_Chan extends \Controller_Common
 
 		$this->_theme = new \Theme();
 
+		$this->_theme->set_module('foolfuuka');
 		$this->_theme->set_theme('default');
 		$this->_theme->set_layout('chan');
 
