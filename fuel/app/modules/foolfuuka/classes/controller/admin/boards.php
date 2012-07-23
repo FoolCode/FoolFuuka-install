@@ -265,28 +265,28 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'type' => 'open'
 		);
 
-		$form['fu.boards_directory'] = array(
+		$form['fu.boards.directory'] = array(
 			'type' => 'input',
 			'label' => __('Boards directory'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default path to the boards directory (Example: /var/www/foolfuuka/boards)')
 		);
 
-		$form['fu.boards_url'] = array(
+		$form['fu.boards.url'] = array(
 			'type' => 'input',
 			'label' => __('Boards URL'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default url to the boards folder (Example: http://foolfuuka.site.com/there/boards)')
 		);
 
-		$form['fu.boards_db'] = array(
+		$form['fu.boards.db'] = array(
 			'type' => 'input',
 			'label' => __('Boards database'),
 			'preferences' => TRUE,
 			'help' => __('Overrides the default database. You should point it to your Asagi database if you have a separate one.')
 		);
 
-		$form['fu.boards_media_balancers'] = array(
+		$form['fu.boards.media_balancers'] = array(
 			'type' => 'textarea',
 			'label' => __('Media load balancers'),
 			'preferences' => TRUE,
@@ -294,7 +294,7 @@ $ php index.php cli database create_search '.$board->shortname.'</pre>'.
 			'class' => 'span6'
 		);
 
-		$form['fu.boards_media_balancers_https'] = array(
+		$form['fu.boards.media_balancers_https'] = array(
 			'type' => 'textarea',
 			'label' => __('HTTPS media load balancers'),
 			'preferences' => TRUE,

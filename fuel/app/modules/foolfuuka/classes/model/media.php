@@ -311,7 +311,7 @@ class Media extends \Model\Model_Base
 			throw new MediaDirNotAvailableException;
 		}
 
-		return \Preferences::get('fu.boards_directory', DOCROOT.'content/').'/'.$this->board->shortname.'/'
+		return \Preferences::get('fu.boards.directory', DOCROOT.'content/').'/'.$this->board->shortname.'/'
 			.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 	}
 
@@ -409,14 +409,14 @@ class Media extends \Model\Model_Base
 		if (isset($image))
 		{
 			$media_cdn = array();
-			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && \Preferences::get('fu.boards_media_balancers_https'))
+			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' && \Preferences::get('fu.boards.media_balancers_https'))
 			{
-				$balancers = \Preferences::get('fu.boards_media_balancers_https');
+				$balancers = \Preferences::get('fu.boards.media_balancers_https');
 			}
 
-			if (!isset($balancers) && \Preferences::get('fu.boards_media_balancers'))
+			if (!isset($balancers) && \Preferences::get('fu.boards.media_balancers'))
 			{
-				$balancers = \Preferences::get('fu.boards_media_balancers');
+				$balancers = \Preferences::get('fu.boards.media_balancers');
 			}
 
 			if (isset($balancers))
@@ -430,7 +430,7 @@ class Media extends \Model\Model_Base
 					.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 			}
 
-			return \Preferences::get('fu.boards_url', \Uri::base()).'/'.$this->board->shortname.'/'
+			return \Preferences::get('fu.boards.url', \Uri::base()).'/'.$this->board->shortname.'/'
 				.($thumbnail ? 'thumb' : 'image').'/'.substr($image, 0, 4).'/'.substr($image, 4, 2).'/'.$image;
 		}
 
@@ -714,7 +714,7 @@ class Media extends \Model\Model_Base
 
 	public function path_from_filename($thumbnail = false)
 	{
-		return \Preferences::get('fu.boards_directory', DOCROOT.'content/boards').'/'.$this->board->shortname.'/'.
+		return \Preferences::get('fu.boards.directory', DOCROOT.'content/boards').'/'.$this->board->shortname.'/'.
 			($thumbnail ? 'thumb' : 'image').'/'.
 			substr($this->media_orig, 0, 4).'/'.substr($this->media_orig, 4, 2).'/';
 	}
