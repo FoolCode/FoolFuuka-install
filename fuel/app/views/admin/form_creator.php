@@ -81,6 +81,7 @@
 			}
 		}
 
+		// PHP doesn't allow periods in POST array
 		$name = str_replace('.', ',', $name);;
 		if (isset($item['name']))
 		{
