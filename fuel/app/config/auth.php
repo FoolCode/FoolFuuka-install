@@ -8,7 +8,7 @@ return array(
     'verify_multiple_logins' => false,
 
     // Use your own salt for security reasons
-    'salt' => 'herpaderp',
+    'salt' => 'give_me_salt',
 );
 
 /* End of file auth.php */

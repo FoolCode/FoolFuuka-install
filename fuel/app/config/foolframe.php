@@ -71,7 +71,7 @@ return array(
 		/**
 		 * The installed modules
 		 */
-		'installed' => array('foolfuuka')
+		'installed' => array()
 	),
 
 	/**

@@ -31,11 +31,30 @@ class Controller_Install extends \Controller
 
 	public function action_database()
 	{
+		$data = array();
 
+		$this->_view_data['method_title'] = 'Database connection';
+		$this->_view_data['main_content_view'] = \View::forge('install::database', $data);
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
+	}
 
+	public function action_database_confirm()
+	{
 		if (!\Input::post())
 		{
+			$val = \Validation::forge('database');
+			$val->add_field('hostname', __('Hostname'), 'required|trim');
+			$val->add_field('prefix', __('Prefix'), 'trim');
+			$val->add_field('username', __('Username'), 'required|trim');
+			$val->add_field('password', __('Password'), 'required');
+			$val->add_field('database', __('Database name'), 'required|trim');
 
+			if ($val->run())
+			{
+				$input = $val->input();
+
+				
+			}
 		}
 	}
 
