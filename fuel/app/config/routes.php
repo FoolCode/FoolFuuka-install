@@ -7,7 +7,7 @@ return array(
 	'admin/(boards|posts)/(:any)' => 'foolfuuka/admin/$1/$2',
 	'admin/(:any)' => 'admin/$1',
 	'search/(:any)' => 'foolfuuka/chan/search',
-	'(?!(admin|api|content|assets|search))(\w+)' => 'foolfuuka/chan/$2/page',
-	'(?!(admin|api|content|assets|search))(\w+)/(:any)' => 'foolfuuka/chan/$2/$3',
+	'(?!(admin|api|content|assets|search|install))(\w+)' => 'foolfuuka/chan/$2/page',
+	'(?!(admin|api|content|assets|search|install))(\w+)/(:any)' => 'foolfuuka/chan/$2/$3',
 	'_404_'   => 'foolfuuka/chan/404',    // The main 404 route
 );

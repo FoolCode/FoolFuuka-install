@@ -37,10 +37,7 @@ return array(
 		 */
 		'git_changelog_url' => 'https://raw.github.com/foolrulez/FoOlFuuka/master/CHANGELOG.md',
 
-		/**
-		 * Minimal PHP requirement
-		 */
-		'min_php_version' => '5.3.0'
+
 
 	),
 
@@ -53,7 +50,17 @@ return array(
 		 * This must be turned to true so the application can run,
 		 * otherwise only the install module will be available
 		 */
-		'installed' => false
+		'installed' => false,
+
+		/**
+		 * Requirements to install FoolFrame
+		 */
+		'requirements' => array(
+			/**
+			* Minimal PHP requirement
+			*/
+			'min_php_version' => '5.3.0'
+		)
 	),
 
 	/**

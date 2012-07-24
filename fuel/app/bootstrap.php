@@ -90,11 +90,19 @@ Autoloader::add_classes(array(
 
 Autoloader::add_core_namespace('Model');
 
-
-// load each FoolFrame module, bootstrap and config
-foreach(\Config::get('foolframe.modules.installed') as $module)
+// check if FoolFrame is installed and in case it's not, allow reaching install
+if (!\Config::get('foolframe.install.installed'))
 {
-	\Module::load($module);
-	\Config::load($module.'::'.$module, $module);
-	\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
+	\Module::load('install');
+	\Fuel::load(APPPATH.'modules/install/bootstrap.php');
+}
+else
+{
+	// load each FoolFrame module, bootstrap and config
+	foreach(\Config::get('foolframe.modules.installed') as $module)
+	{
+		\Module::load($module);
+		\Config::load($module.'::'.$module, $module);
+		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
+	}
 }
