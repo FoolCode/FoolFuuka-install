@@ -1,3 +1,6 @@
 [submodule "fuel/app/modules/foolfuuka"]
 	path = fuel/app/modules/foolfuuka
 	url = git@github.com:FoOlRulez/FoolFuuka-module.git
+[submodule "public/foolfuuka"]
+	path = public/foolfuuka
+	url = git@github.com:FoOlRulez/FoolFuuka-public.git
