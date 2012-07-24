@@ -81,6 +81,6 @@ return array(
 			'default' => 'en_EN',
 			'available' => array('en_EN')
 		)
-	)
+	),
 
 );
