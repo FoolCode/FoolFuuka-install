@@ -81,6 +81,12 @@
 			}
 		}
 
+		$name = str_replace('.', ',', $name);;
+		if (isset($item['name']))
+		{
+			$item['name'] = str_replace('.', ',', $item['name']);
+		}
+
 		// support for HTML form arrays
 		if(isset($helpers['array']) && $helpers['array'])
 		{
@@ -242,7 +248,7 @@
 
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$checked = Preferences::get($name);
+							$checked = Preferences::get(str_replace(',', '.', $name));
 
 							if(isset($helpers['array_key']))
 							{
@@ -350,7 +356,7 @@
 						<?php
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$item['selected'] = Preferences::get($name);;
+							$item['selected'] = Preferences::get(str_replace(',', '.', $name));
 						}
 						else if (isset($item['value']))
 						{
@@ -391,7 +397,7 @@
 						{
 							if (isset($helpers['preferences']) && $helpers['preferences'])
 							{
-								$item['value'] = Preferences::get($name);
+								$item['value'] = Preferences::get(str_replace(',', '.', $name));
 								if(isset($helpers['array']) && $helpers['array'])
 								{
 									$item['value'] = unserialize($item['value']);

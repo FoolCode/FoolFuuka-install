@@ -63,7 +63,8 @@ class Preferences extends \Model
 			foreach ($data as $setting => $value)
 			{
 				// fix the PHP issue where . is changed to _ in the $_POST array
-				$setting = substr($setting['name'], 0, 2).'.'.substr($setting['name'], 3);
+				$name = str_replace(',', '.', $setting['name']);
+
 
 				// if value contains array, serialize it
 				if (is_array($value))
@@ -71,10 +72,10 @@ class Preferences extends \Model
 					$value = serialize(array_filter($value, array($this, '_filter_value')));
 				}
 
-				$validate = DB::select('*')->from('preferences')->where('name', $setting)->execute();
+				$validate = DB::select('*')->from('preferences')->where('name', $name)->execute();
 				if (count($validate) === 1)
 				{
-					DB::update('preferences')->value($setting, $value)->where('name', $setting)->execute();
+					DB::update('preferences')->value($setting, $value)->where('name', $name)->execute();
 				}
 				else
 				{
@@ -189,7 +190,7 @@ class Preferences extends \Model
 			$post = array();
 			foreach (\Input::post() as $key => $item)
 			{
-				$post[substr($key, 0, 2).'.'.substr($key, 3)] = $item;
+				$post[str_replace(',', '.', $key)] = $item;
 			}
 
 			$result = \Validation::form_validate($form, $post);
