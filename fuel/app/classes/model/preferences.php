@@ -56,36 +56,6 @@ class Preferences extends \Model
 	}
 
 
-	public static function save_settings($data)
-	{
-		if (is_array($data) && count($data) > 0)
-		{
-			foreach ($data as $setting => $value)
-			{
-				// if value contains array, serialize it
-				if (is_array($value))
-				{
-					$value = serialize(array_filter($value, array($this, '_filter_value')));
-				}
-
-				$validate = DB::select('*')->from('preferences')->where('name', $name)->execute();
-				if (count($validate) === 1)
-				{
-					DB::update('preferences')->value($setting, $value)->where('name', $name)->execute();
-				}
-				else
-				{
-					DB::insert('preferences')->set(array($setting, $value))->execute();
-				}
-			}
-
-			return static::load_settings(true);
-		}
-
-		return false;
-	}
-
-
 	public static function get($setting, $fallback = null)
 	{
 		if (isset(self::$_preferences[$setting]))
@@ -99,15 +69,14 @@ class Preferences extends \Model
 		}
 
 		$segments = explode('.', $setting);
-		$identifier = $segments[0];
-		unset($segments[0]);
+		$identifier = array_shift($segments);
 		$query = implode('.', $segments);
 
 		return \Config::get(static::$_module_identifiers[$identifier].'.preferences.'.$query);
 	}
 
 
-	public static function set($setting, $value)
+	public static function set($setting, $value, $reload = true)
 	{
 		// if array, serialize value
 		if (is_array($value))
@@ -115,17 +84,24 @@ class Preferences extends \Model
 			$value = serialize($value);
 		}
 
-		$validate = DB::select('*')->from('preferences')->where('name', $setting)->execute();
-		if (count($validate) === 1)
+		$count = \DB::select(\DB::expr('COUNT(*) as count'))
+				->from('preferences')->where('name', $setting)->execute()->current();
+
+		if ($count['count'])
 		{
-			DB::update('preferences')->value($setting, $value)->where('name', $setting)->execute();
+			\DB::update('preferences')->value('value', $value)->where('name', $setting)->execute();
 		}
 		else
 		{
-			DB::insert('preferences')->set(array($setting, $value))->execute();
+			\DB::insert('preferences')->set(array('name' => $setting, 'value' => $value))->execute();
 		}
 
-		return static::load_settings(true);
+		if ($reload)
+		{
+			return static::load_settings(true);
+		}
+
+		return static::$_preferences;
 	}
 
 
@@ -150,18 +126,7 @@ class Preferences extends \Model
 				}));
 			}
 
-			$count = \DB::select(\DB::expr('COUNT(*) as count'))
-				->from('preferences')->where('name', $name)->execute()->current();
-
-			// we can update only if it already exists
-			if ($count['count'])
-			{
-				\DB::update('preferences')->value('value', $value)->where('name', $name)->execute();
-			}
-			else
-			{
-				\DB::insert('preferences')->set(array('name' => $name, 'value' => $value))->execute();
-			}
+			static::set($name, $value, false);
 		}
 
 		// reload those preferences
@@ -173,7 +138,7 @@ class Preferences extends \Model
 	 * A lazy way to submit the preference panel input, saves some code in controller
 	 *
 	 * This function runs the custom validation function that uses the $form array
-	 * to first run the original CodeIgniter validation and then the anonymous
+	 * to first run the original FuelPHP validation and then the anonymous
 	 * functions included in the $form array. It sets a proper notice for the
 	 * admin interface on conclusion.
 	 *
@@ -206,17 +171,6 @@ class Preferences extends \Model
 				static::submit($result['success']);
 			}
 		}
-	}
-
-
-	private function _filter_value($value)
-	{
-		if ($value === 0)
-		{
-			return true;
-		}
-
-		return $value;
 	}
 
 }
