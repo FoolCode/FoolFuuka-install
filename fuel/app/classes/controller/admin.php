@@ -55,7 +55,7 @@ class Controller_Admin extends Controller_Common
 			$module_sidebar = \Config::load($module.'::sidebar', $module.'_sidebar');
 			if(is_array($module_sidebar))
 			{
-				$sidebar = array_merge($module_sidebar, $sidebar);
+				$sidebar = array_merge($module_sidebar['sidebar'], $sidebar);
 			}
 		}
 
