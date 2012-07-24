@@ -50,6 +50,7 @@ class Controller_Admin extends Controller_Common
 
 		$sidebar = array();
 
+		// load sidebars from modules and leave FoolFrame sidebar on bottom
 		foreach(\Config::get('foolframe.modules.installed') as $module)
 		{
 			$module_sidebar = \Config::load($module.'::sidebar', $module.'_sidebar');
