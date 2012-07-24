@@ -330,10 +330,10 @@ class Radix extends \Model_Base
 						'class' => 'span1',
 						'validation' => 'trim|required|valid_string[numeric]',
 					),
-					'min_image_repost_hours' => array(
+					'min_image_repost_time' => array(
 						'database' => TRUE,
 						'boards_preferences' => TRUE,
-						'label' => __('The minimum time in hours to repost the same image (0 means no limit, -1 means never allowing a repost)'),
+						'label' => __('The minimum time in seconds to repost the same image (0 means no limit, -1 means never allowing a repost)'),
 						'type' => 'input',
 						'class' => 'span1',
 						'validation' => 'trim|required|numeric_min[-2]',
@@ -417,6 +417,34 @@ class Radix extends \Model_Base
 			'close' => array(
 				'type' => 'close'
 			)));
+
+		foreach ($structure as $key => $item)
+		{
+			$default = \Config::get('foolfuuka.preferences.radix.'.$key);
+			if(!is_null($default))
+			{
+				$structure[$key]['default_value'] = $default;
+			}
+
+			$subs = array('sub', 'sub_inverse');
+
+			foreach ($subs as $inv)
+			{
+				if (isset($item[$inv]))
+				{
+					foreach ($item[$inv] as $k => $i)
+					{
+						$default = \Config::get('foolfuuka.preferences.radix.'.$k);
+
+						if(!is_null($default))
+						{
+							$structure[$key][$inv][$k]['default_value'] = $default;
+						}
+					}
+				}
+			}
+		}
+
 		return $structure;
 	}
 

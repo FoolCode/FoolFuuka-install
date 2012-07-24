@@ -73,11 +73,11 @@ return array(
 		),
 
 		'radix' => array(
-			'per_page' => 10,
-			'thumb_op_width' => 250,
-			'thumb_op_height' => 250,
-			'thumb_reply_width' => 125,
-			'thumb_reply_height' => 125,
+			'threads_per_page' => 10,
+			'thumbnail_op_width' => 250,
+			'thumbnail_op_height' => 250,
+			'thumbnail_reply_width' => 125,
+			'thumbnail_reply_height' => 125,
 			'max_image_size_kilobytes' => 3072,
 			'max_image_size_width' => 5000,
 			'max_image_size_height' => 5000,
