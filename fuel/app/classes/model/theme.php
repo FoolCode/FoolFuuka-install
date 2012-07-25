@@ -233,14 +233,14 @@ class Theme extends \Model
 	{
 		$array = array();
 
-		if ($handle = opendir('content/themes/'))
+		if ($handle = opendir(DOCROOT.$this->_selected_module.'/themes/'))
 		{
 			while (false !== ($file = readdir($handle)))
 			{
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir('content/themes/'.$file))
+				if (is_dir(DOCROOT.$this->_selected_module.'//themes/'.$file))
 				{
 					$array[] = $file;
 				}
@@ -260,9 +260,9 @@ class Theme extends \Model
 	 */
 	private function load_config($name)
 	{
-		if (file_exists(DOCROOT.'content/themes/'.$name.'/theme_config.php'))
+		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$name.'/theme_config.php'))
 		{
-			include 'content/themes/'.$name.'/theme_config.php';
+			include DOCROOT.$this->_selected_module.'/themes/'.$name.'/theme_config.php';
 			if (!isset($config))
 				return false;
 
@@ -307,14 +307,14 @@ class Theme extends \Model
 		$this->_selected_theme = $theme;
 
 		// load the theme functions if there is such a file
-		$theme_functions_file = DOCROOT.'content/themes/'.$this->_selected_module.'/'.$theme.'/theme_functions.php';
+		$theme_functions_file = DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_module.'/'.$theme.'/theme_functions.php';
 		if (file_exists($theme_functions_file))
 		{
 			require_once $theme_functions_file;
 		}
 
 		// load the theme plugin file if present
-		$theme_plugin_file = 'content/themes/'.$this->_selected_module.'/'.$theme.'/theme_plugin.php';
+		$theme_plugin_file = DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_module.'/'.$theme.'/theme_plugin.php';
 		if (file_exists($theme_plugin_file))
 		{
 			Plugins::inject_plugin('theme', 'Theme_Plugin_'.\Config::get($this->_selected_module.'.main.class_name')
@@ -431,13 +431,13 @@ class Theme extends \Model
 		$asset = ltrim($asset, '/');
 
 		$version = \Config::get($this->_selected_module.'.main.version');
-		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset))
+		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset))
 		{
-			return 'content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
+			return $this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 		}
 		else
 		{
-			return 'content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
+			return $this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 		}
 	}
 
@@ -459,11 +459,11 @@ class Theme extends \Model
 
 		$version = \Config::get($this->_selected_module.'.main.version');
 		$result = array();
-		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset))
-			$result[] = 'content/themes/'.$this->_selected_module.'/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
+		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset))
+			$result[] = $this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 
-		if (file_exists('content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset))
-			$result[] = 'content/themes/'.$this->_selected_module.'/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
+		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset))
+			$result[] = $this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 
 		// we want first extended theme and then the override
 		return $result;
@@ -544,16 +544,16 @@ class Theme extends \Model
 			switch ($_type)
 			{
 				case 'layout':
-					if (file_exists('content/themes/'.$this->_selected_module.'/'.$_directory.'/views/layouts/'.$_file.'.php'))
+					if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
 					{
-						$_location = 'content/themes/'.$this->_selected_module.'/'.$_directory.'/views/layouts/'.$_file.'.php';
+						$_location = DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
 					}
 					break;
 				case 'content':
 				case 'partial':
-					if (file_exists('content/themes/'.$this->_selected_module.'/'.$_directory.'/views/'.$_file.'.php'))
+					if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/'.$_file.'.php'))
 					{
-						$_location = 'content/themes/'.$this->_selected_module.'/'.$_directory.'/views/'.$_file.'.php';
+						$_location = DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/'.$_file.'.php';
 					}
 					break;
 			}
