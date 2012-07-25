@@ -72,6 +72,37 @@ class Controller_Install extends \Controller
 
 	public function action_create_user()
 	{
+		if (\Input::post())
+		{
+			$val = \Validation::forge('database');
+			$val->add_field('username', __('Username'), 'required|trim|min_length[4]|max_length[32]');
+			$val->add_field('email', __('Email'), 'required|trim|valid_email');
+			$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
+			$val->add_field('confirm_password', __('Confirm password'), 'required|match_field[password]');
+
+			if ($val->run())
+			{
+				$input = $val->input();
+
+				list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
+				\Auth::activate_user($id, $activation_key);
+				\Auth::force_login($id);
+				\Response::redirect('install/complete');
+			}
+			else
+			{
+				$this->_view_data['error'] = implode(' ', $val->error());
+			}
+		}
+
+		$this->_view_data['method_title'] = 'Administrator account creation';
+		$this->_view_data['main_content_view'] = \View::forge('install::create_user');
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
+	}
+
+
+	public function action_complete()
+	{
 
 	}
 

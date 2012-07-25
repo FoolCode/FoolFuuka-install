@@ -47,6 +47,6 @@
 		'class' => 'btn btn-success btn-large pull-right',
 	)); ?>
 
-	<?= Form::close() ?>
+	<?= \Form::close() ?>
 
 </div>
