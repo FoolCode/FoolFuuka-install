@@ -105,6 +105,30 @@ class Controller_Install extends \Controller
 
 	public function action_modules()
 	{
+		if (\Input::post())
+		{
+			\Config::load('foolframe', 'foolframe');
+
+			$modules = array();
+
+			if (\Input::post('foolfuuka'))
+			{
+				$modules[] = 'foolfuuka';
+				\Migrate::latest('foolfuuka', 'module');
+			}
+
+			if (\Input::post('foolpod'))
+			{
+				$modules[] = 'foolpod';
+				\Migrate::latest('foolpod', 'module');
+			}
+
+			\Config::set('foolframe.modules.installed', $modules);
+			\Config::save('foolframe', 'foolframe');
+
+			\Response::redirect('install/complete');
+		}
+
 		$this->_view_data['method_title'] = 'Module installation';
 		$this->_view_data['main_content_view'] = \View::forge('install::modules');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
