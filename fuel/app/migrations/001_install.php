@@ -27,7 +27,7 @@ class Install
 		if (!\DBUtil::table_exists('plugins'))
 		{
 			\DBUtil::create_table('plugins', array(
-				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'autoincrement' => true),
+				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true),
 				'slug' => array('type' => 'varchar', 'constraint' => 64),
 				'enabled' => array('type' => 'smallint', 'constraint' => 2, 'default' => 1),
 				'revision' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => \DB::expr('NULL'), 'null' => true)
@@ -47,7 +47,7 @@ class Install
 		if (!\DBUtil::table_exists('users'))
 		{
 			\DBUtil::create_table('users', array(
-				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'autoincrement' => true),
+				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true),
 				'username' => array('type' => 'varchar', 'constraint' => 50),
 				'password' => array('type' => 'varchar', 'constraint' => 255),
 				'group' => array('type' => 'int', 'constraint' => 11, 'default' => 1),
@@ -65,6 +65,7 @@ class Install
 				'profile_fields' => array('type' => 'text'),
 				'bio' => array('type' => 'text'),
 				'twitter' => array('type'=> 'varchar', 'constraint' => 32),
+				'display_name' => array('type'=> 'varchar', 'constraint' => 32),
 				'created_at' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true)
 			), array('id'), true, 'innodb', $charset.'_general_ci');
 

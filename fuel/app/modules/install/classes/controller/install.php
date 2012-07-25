@@ -15,7 +15,7 @@ class Controller_Install extends \Controller
 		// don't let in people if it's already installed
 		if (\Config::get('foolframe.install.installed'))
 		{
-			\Response::redirect('');
+			throw new \HttpNotFoundException;
 		}
 	}
 
@@ -87,7 +87,9 @@ class Controller_Install extends \Controller
 				list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
 				\Auth::activate_user($id, $activation_key);
 				\Auth::force_login($id);
-				\Response::redirect('install/complete');
+				$user = \Users::get_user();
+				$user->save(array('group' => 100));
+				\Response::redirect('install/modules');
 			}
 			else
 			{
@@ -100,6 +102,13 @@ class Controller_Install extends \Controller
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
+
+	public function action_modules()
+	{
+		$this->_view_data['method_title'] = 'Module installation';
+		$this->_view_data['main_content_view'] = \View::forge('install::modules');
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
+	}
 
 	public function action_complete()
 	{
