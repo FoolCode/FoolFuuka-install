@@ -23,13 +23,7 @@
 
 <?php if (!$error) : ?>
 	<p><?= e(__('Congratulations! Your server is ready to run FoolFrame. Next, we\'ll check if we can connect to a database.')) ?></p>
-	<?= \Form::open('install/database') ?>
-		<?= \Form::submit(array(
-			'name' => 'submit',
-			'value' => __('Go forth'),
-			'class' => 'btn btn-success btn-large pull-right',
-		)); ?>
-	<?= \Form::close() ?>
+	<a href="<?= \Uri::create('install/database') ?>" class="btn btn-large btn-success pull-right"><?= __('Go forth') ?></a>
 <?php else : ?>
 	<p><?= e(__('FoolFrame won\'t be able to run if the above isn\'t available. You will have to install and update the components to be able to run FoolFrame.')) ?>
 <?php endif; ?>

@@ -6,12 +6,14 @@
 
 	<label><?= __('Username') ?></label>
 	<?= \Form::input(array(
-		'name' => 'username'
+		'name' => 'username',
+		'value' => \Input::post('username')
 	)); ?>
 
 	<label><?= __('Email') ?></label>
 	<?= \Form::input(array(
-		'name' => 'email'
+		'name' => 'email',
+		'value' => \Input::post('email')
 	)); ?>
 
 	<label><?= __('Password') ?></label>

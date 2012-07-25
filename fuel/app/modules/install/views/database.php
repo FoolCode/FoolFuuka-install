@@ -43,7 +43,7 @@
 
 	<?= \Form::submit(array(
 		'name' => 'submit',
-		'value' => __('Test connection'),
+		'value' => __('Connect'),
 		'class' => 'btn btn-success btn-large pull-right',
 	)); ?>
 

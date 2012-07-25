@@ -237,7 +237,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		if (!$activated)
 		{
 			// get a string for validation email
-			$activation_key = Str::random('sha1');
+			$activation_key = \Str::random('sha1');
 		}
 
 		$user = array(

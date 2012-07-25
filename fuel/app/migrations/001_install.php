@@ -85,7 +85,7 @@ class Install
 			\DBUtil::create_index('user_autologin', 'user_id', 'user_id_index');
 		}
 
-    }
+	}
 
     function down()
     {

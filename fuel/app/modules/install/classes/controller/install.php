@@ -15,7 +15,7 @@ class Controller_Install extends \Controller
 		// don't let in people if it's already installed
 		if (\Config::get('foolframe.install.installed'))
 		{
-			Response::redirect('');
+			\Response::redirect('');
 		}
 	}
 
@@ -103,7 +103,14 @@ class Controller_Install extends \Controller
 
 	public function action_complete()
 	{
+		// lock down the install system
+		\Config::load('foolframe');
+		\Config::set('foolframe.install.installed', true);
+		\Config::save('foolframe', 'foolframe');
 
+		$this->_view_data['method_title'] = 'Installation completed';
+		$this->_view_data['main_content_view'] = \View::forge('install::complete');
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
 

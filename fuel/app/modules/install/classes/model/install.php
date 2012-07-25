@@ -83,15 +83,15 @@ class Install extends \Model
 
 	public static function create_salts()
 	{
-		\Config::load('foolframe');
+		\Config::load('foolframe', 'foolframe');
 		\Config::set('foolframe.config.cookie_prefix','foolframe'.\Str::random('alnum', 3).'_');
 		\Config::save('foolframe', 'foolframe');
 
-		\Config::load('auth');
+		\Config::load('auth', 'auth');
 		\Config::set('auth.salt', \Str::random('alnum', 24));
 		\Config::save('auth', 'auth');
 
-		\Config::load('foolauth');
+		\Config::load('foolauth', 'foolauth');
 		\Config::set('foolauth.login_hash_salt', \Str::random('alnum', 24));
 		\Config::save('foolauth', 'foolauth');
 	}
