@@ -16,7 +16,7 @@ return array(
 		'connection'  => array(
 			'hostname' => 'localhost',
 			'port' => '3306',
-			'database' => 'fuuka',
+			'database' => '',
 			'username' => '',
 			'password' => '',
 			'persistent' => false,

@@ -63,6 +63,10 @@ return array(
 		)
 	),
 
+	'config' => array(
+		'cookie_prefix' => ''
+	),
+
 	/**
 	 * Information about the modules supported by FoolFrame
 	 */

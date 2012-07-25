@@ -51,7 +51,7 @@
 						?>
 
 						<div class="alerts">
-
+							<?= isset($error) ? '<div class="alert">'.$error.'</div>' : '' ?>
 						</div>
 
 						<?php

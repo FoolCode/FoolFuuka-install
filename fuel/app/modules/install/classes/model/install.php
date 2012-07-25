@@ -8,7 +8,7 @@ class Install extends \Model
 	/**
 	 * Checks a few basic requirements to run the framework
 	 */
-	public static function system_check()
+	public static function check_system()
 	{
 		$checked = array();
 
@@ -33,6 +33,67 @@ class Install extends \Model
 		);
 
 		return $checked;
+	}
+
+
+	public static function check_database($array)
+	{
+		switch ($array['type'])
+		{
+			case 'mysqli':
+				$test = @new \MySQLi($array['hostname'], $array['username'], $array['password'], $array['database'], 3306);
+				return mysqli_connect_errno();
+		}
+	}
+
+
+	public static function save_database($array)
+	{
+		\Config::load('db', 'db');
+
+		\Config::set('db.default', array(
+			'type' => $array['type'],
+			'connection' => array(
+				'hostname' => $array['hostname'],
+				'port' => '3306',
+				'database' => $array['database'],
+				'username' => $array['username'],
+				'password' => $array['password'],
+				'persistent' => false,
+			),
+			'identifier' => '',
+			'table_prefix' => $array['prefix'],
+			'charset'      => 'utf8',
+			'enable_cache' => true,
+			'profiling'    => false,
+		));
+
+		\Config::save('db', 'db');
+
+		// check if mb4 is supported and in case enable it
+		\DBUtil::set_connection('default');
+		$query = \DB::query("SHOW CHARACTER SET WHERE Charset = 'utf8mb4'", \DB::SELECT)->execute();
+		if (count($query))
+		{
+			\Config::set('db.default.charset', 'utf8mb4');
+			\Config::save('db', 'db');
+		}
+	}
+
+
+	public static function create_salts()
+	{
+		\Config::load('foolframe');
+		\Config::set('foolframe.config.cookie_prefix','foolframe'.\Str::random('alnum', 3).'_');
+		\Config::save('foolframe', 'foolframe');
+
+		\Config::load('auth');
+		\Config::set('auth.salt', \Str::random('alnum', 24));
+		\Config::save('auth', 'auth');
+
+		\Config::load('foolauth');
+		\Config::set('foolauth.login_hash_salt', \Str::random('alnum', 24));
+		\Config::save('foolauth', 'foolauth');
 	}
 
 }

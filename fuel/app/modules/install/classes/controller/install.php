@@ -22,7 +22,7 @@ class Controller_Install extends \Controller
 	public function action_index()
 	{
 		$data = array();
-		$data['check'] = \Install::system_check();
+		$data['check'] = \Install::check_system();
 
 		$this->_view_data['method_title'] = 'Welcome';
 		$this->_view_data['main_content_view'] = \View::forge('install::welcome', $data);
@@ -33,14 +33,7 @@ class Controller_Install extends \Controller
 	{
 		$data = array();
 
-		$this->_view_data['method_title'] = 'Database connection';
-		$this->_view_data['main_content_view'] = \View::forge('install::database', $data);
-		return \Response::forge(\View::forge('install::default', $this->_view_data));
-	}
-
-	public function action_database_confirm()
-	{
-		if (!\Input::post())
+		if (\Input::post())
 		{
 			$val = \Validation::forge('database');
 			$val->add_field('hostname', __('Hostname'), 'required|trim');
@@ -52,10 +45,34 @@ class Controller_Install extends \Controller
 			if ($val->run())
 			{
 				$input = $val->input();
+				$input['type'] = 'mysqli';
 
-				
+				if (!\Install::check_database($input))
+				{
+					\Install::save_database($input);
+					\Migrate::latest();
+					\Install::create_salts();
+					\Response::redirect('install/create_user');
+				}
+				else
+				{
+					$this->_view_data['error'] = __('The database couldn\'t be contacted with the specificed coordinates.');
+				}
+			}
+			else
+			{
+				$this->_view_data['error'] = implode(' ', $val->error());
 			}
 		}
+
+		$this->_view_data['method_title'] = 'Database connection';
+		$this->_view_data['main_content_view'] = \View::forge('install::database', $data);
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
+	}
+
+	public function action_create_user()
+	{
+
 	}
 
 

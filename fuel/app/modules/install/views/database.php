@@ -3,7 +3,7 @@
 
 <div style="text-align:center">
 
-<?= Form::open('install/database-confirm') ?>
+<?= Form::open() ?>
 
 	<label><?= __('Hostname:') ?></label>
 	<?= Form::input(array(
@@ -24,7 +24,7 @@
 	<label><?= __('Username:') ?></label>
 	<?= Form::input(array(
 		'name' => 'username',
-		'value' => \Input::post('hostname')
+		'value' => \Input::post('username')
 	)) ?>
 
 	<label><?= __('Password:') ?></label>
