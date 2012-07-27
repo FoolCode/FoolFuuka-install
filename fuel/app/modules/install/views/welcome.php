@@ -6,18 +6,31 @@
 
 	<?php $error = false ?>
 
-	<?php foreach($check as $key => $item) :?>
-		<li><p><?= e($item['string']) ?></li>
-		<?php if ($item['result']) : ?>
-			<span class="label label-success"><?= __('Available!') ?></span>
-		<?php else : ?>
-			<?php $error = true ?>
-			<span class="label label-important"><?= __('Not available') ?></span>
-			<p style="font-size:0.8em"><?= e($item['not_available_string']) ?></p>
-		<?php endif; ?>
-			</p>
-	<?php endforeach; ?>
+	<?php foreach ($check as $key => $item) : ?>
+		<li><p><?= e($item['string']) ?></p></li>
 
+		<?php if (isset($item['checks'])) : ?>
+			<?php foreach ($item['checks'] as $k => $i) : ?>
+				<li><p><?= e($i['string']) ?></p></li>
+
+				<?php if ($i['result']) : ?>
+					<span class="label label-success"><?= __('Available!') ?></span>
+				<?php else : ?>
+					<?php $error = true ?>
+					<span class="label label-important"><?= __('Not available') ?></span>
+					<p style="font-size:0.8em"><?= e($item['not_available_string']) ?></p>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php else : ?>
+			<?php if ($item['result']) : ?>
+				<span class="label label-success"><?= __('Available!') ?></span>
+			<?php else : ?>
+				<?php $error = true ?>
+				<span class="label label-important"><?= __('Not available') ?></span>
+				<p style="font-size:0.8em"><?= e($item['not_available_string']) ?></p>
+			<?php endif; ?>
+		<?php endif; ?>
+	<?php endforeach; ?>
 </ul>
 </p>
 

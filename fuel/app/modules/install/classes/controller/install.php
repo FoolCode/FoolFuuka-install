@@ -49,7 +49,7 @@ class Controller_Install extends \Controller
 
 				if (!\Install::check_database($input))
 				{
-					\Install::save_database($input);
+					\Install::setup_database($input);
 					\Migrate::latest();
 					\Install::create_salts();
 					\Response::redirect('install/create_user');

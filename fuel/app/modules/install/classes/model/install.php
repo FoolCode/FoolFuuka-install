@@ -12,24 +12,72 @@ class Install extends \Model
 	{
 		$checked = array();
 
-		$checked['php'] = array(
-			'string' => \Str::tr(__('Checking if PHP :version or newer is available. PHP is the engine running the system.'), array(
-				'version' => \Config::get('foolframe.install.requirements.min_php_version'
-			))),
-			'not_available_string' => __('Without a compatible version of PHP, you\'re likely to run into compilation errors. You must upgrade PHP.'),
+		$checked['php_version'] = array(
+			'string' => 'PHP version >= '.\Config::get('foolframe.install.requirements.min_php_version'),
 			'result' => (version_compare(PHP_VERSION, \Config::get('foolframe.install.requirements.min_php_version')) >= 0),
+			'error'  => \Str::tr(__(''), array()),
+			'level'  => 'crit'
 		);
 
-		$checked['finfo'] = array(
-			'string' => __('Checking if FileInfo is available. FileInfo allows discovering the format of files from their contents.'),
-			'not_available_string' => __('FileInfo is necessary for checking validity of uploads. PHP 5.3 and newer usually have it inbuilt, but in some cases you may have to install it through your OS\'s packaging system or by adding a DLL.'),
-			'result' => function_exists('finfo_file'),
+		$checked['extension_mysqli'] = array(
+			'string' => 'MySQLi extension',
+			'result' => extension_loaded('mysqli'),
+			'error'  =>  \Str::tr(__(''), array()),
+			'level'  => 'crit'
 		);
 
-		$checked['mbstring'] = array(
-			'string' => __('Checking if multibyte support is available. Multibyte is necessary for correctly managing strings with special characters.'),
-			'not_available_string' => __('Without multibyte support, asian and special characters may make the system unstable. You must install it with PHP or through your OS\'s packaging system.'),
-			'result' => defined('MBSTRING'),
+		$checked['extension_pdo_mysql'] = array(
+			'string' => 'PDO MySQL extension',
+			'result' => extension_loaded('pdo_mysql'),
+			'error' => \Str::tr(__(''), array()),
+			'level'  => 'crit'
+		);
+
+		$checked['extension_fileinfo'] = array(
+			'string' => 'FileInfo extension',
+			'result' => extension_loaded('fileinfo'),
+			'error'  => \Str::tr(__(''), array()),
+			'level'  => 'crit'
+		);
+
+		$checked['extension_mbstring'] = array(
+			'string' => 'MBString extension',
+			'result' => extension_loaded('mbstring'),
+			'error'  => \Str::tr(__(''), array()),
+			'level'  => 'crit'
+		);
+
+		$checked['extension_extras'] = array(
+			'string' => 'Additional Extensions',
+			'checks' => array(
+				'extension_apc' => array(
+					'string' => 'APC extension',
+					'result' => extension_loaded('apc'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'warn'
+				),
+
+				'extension_bcmath' => array(
+					'string' => 'BCMath extension',
+					'result' => extension_loaded('bcmath'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'warn'
+				),
+
+				'extension_exif' => array(
+					'string' => 'EXIF extension',
+					'result' => extension_loaded('exif'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'warn'
+				),
+
+				'extension_json' => array(
+					'string' => 'JSON extension',
+					'result' => extension_loaded('json'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'warn'
+				)
+			)
 		);
 
 		return $checked;
@@ -47,7 +95,7 @@ class Install extends \Model
 	}
 
 
-	public static function save_database($array)
+	public static function setup_database($array)
 	{
 		\Config::load('db', 'db');
 
