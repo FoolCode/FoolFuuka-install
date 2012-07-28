@@ -22,11 +22,10 @@ class Controller_Admin_Preferences extends Controller_Admin
 		);
 
 		// build the array for the form
-		$form['ff.gen.site_title'] = array(
+		$form['ff.gen.website_title'] = array(
 			'type' => 'input',
 			'label' => 'Title',
 			'class' => 'span3',
-			'placeholder' => FOOL_GEN_WEBSITE_TITLE,
 			'preferences' => TRUE,
 			'validate' => 'trim|max_length[32]',
 			'help' => __('Sets the title of your site.')
@@ -37,7 +36,6 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'input',
 			'label' => 'Index title',
 			'class' => 'span3',
-			'placeholder' => FOOL_GEN_INDEX_TITLE,
 			'preferences' => TRUE,
 			'validate' => 'trim|max_length[32]',
 			'help' => __('Sets the title displayed in the index page.')
@@ -59,42 +57,50 @@ class Controller_Admin_Preferences extends Controller_Admin
 		$themes = array();
 		$theme_obj = new Theme();
 
-		foreach($theme_obj->get_all() as $name => $theme)
+
+
+		foreach (\Config::get('foolframe.modules.installed') as $module)
 		{
-			$themes[] = array(
-				'type' => 'checkbox',
-				'label' => $theme['name'] . ' theme',
-				'help' => sprintf(__('Enable %s theme'), $theme['name']),
-				'array_key' => $name,
+			$theme_obj->set_module($module);
+
+			$identifier = \Config::get($module.'.main.identifier');
+			$module_name = \Config::get($module.'.main.name');
+
+			foreach($theme_obj->get_all() as $name => $theme)
+			{
+				$themes[] = array(
+					'type' => 'checkbox',
+					'label' => $theme['name'] . ' theme',
+					'help' => sprintf(__('Enable %s theme'), $theme['name']),
+					'array_key' => $name,
+					'preferences' => TRUE,
+					'checked' => defined('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') ?
+						constant('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED'):0
+				);
+			}
+
+			$form[$identifier.'.theme.active_themes'] = array(
+				'type' => 'checkbox_array',
+				'label' => __('Active themes'),
+				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'), array('module' => '<strong>'.$module_name.'</strong>')),
+				'checkboxes' => $themes
+			);
+
+			$themes_default = array();
+
+			foreach($theme_obj->get_all() as $name => $theme)
+			{
+				$themes_default[$name] = $theme['name'];
+			}
+
+			$form[$identifier.'.theme.default'] = array(
+				'type' => 'select',
+				'label' => \Str::tr(__('Default theme for :module'), array('module' => '<strong>'.$module_name.'</strong>')),
+				'help' => \Str::tr(__('The theme the users will see as they reach :module.'), array('module' => '<strong>'.$module_name.'</strong>')),
+				'options' => $themes_default,
 				'preferences' => TRUE,
-				'checked' => defined('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') ?
-					constant('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED'):0
 			);
 		}
-
-		$form['ff.theme.active_themes'] = array(
-			'type' => 'checkbox_array',
-			'label' => __('Active themes'),
-			'help' => __('Choose the themes to make available to the users. Admins are able to access any of them even if disabled.'),
-			'checkboxes' => $themes
-		);
-
-		$themes_default = array();
-
-		foreach($theme_obj->get_all() as $name => $theme)
-		{
-			$themes_default[$name] = $theme['name'];
-		}
-
-		$form['ff.theme.default'] = array(
-			'type' => 'select',
-			'label' => __('Default theme'),
-			'help' => __('The theme the users will see as they reach your site.'),
-			'options' => $themes_default,
-			'default_value' => FOOL_THEME_DEFAULT,
-			'preferences' => TRUE,
-		);
-
 		$form['ff.theme.google_analytics'] = array(
 			'type' => 'input',
 			'label' => __('Google Analytics code'),
