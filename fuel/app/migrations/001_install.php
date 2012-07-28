@@ -90,12 +90,12 @@ class Install
 		{
 			\DBUtil::create_table('user_login_attempts', array(
 				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true),
-				'user_id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true),
+				'username' => array('type' => 'varchar', 'constraint' => 50),
 				'time' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true),
 				'ip' => array('type' => 'decimal', 'constraint' => '39,0'),
 			), array('id'), true, 'innodb', 'utf8_general_ci');
 
-			\DBUtil::create_index('user_login_attempts', array('user_id', 'time'), 'user_id_time_index');
+			\DBUtil::create_index('user_login_attempts', array('username', 'time'), 'username_time_index');
 		}
 
 	}

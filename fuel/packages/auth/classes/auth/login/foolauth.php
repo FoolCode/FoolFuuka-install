@@ -119,11 +119,28 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		$this->user = \DB::select_array(\Config::get('foolauth.table_columns', array('*')))
 			->where_open()
 			->where('username', '=', $username_or_email)
-			->or_where('email', '=', $username_or_email)
+		//	->or_where('email', '=', $username_or_email) // @todo get rid of email login or fix it
 			->where_close()
 			->where('password', '=', $password)
 			->from(\Config::get('foolauth.table_name'))
 			->execute(\Config::get('foolauth.db_connection'))->current();
+
+		if ($this->user)
+		{
+			return $this->user;
+		}
+		else
+		{
+			\DB::insert(\Config::get('foolauth.table_login_attempts'))
+				->set(array(
+					'username' => $username_or_email,
+					'ip' => \Input::decimal_ip(),
+					'time' => time()
+				))
+				->execute(\Config::get('foolauth.db_connection'));
+
+			return false;
+		}
 
 		return $this->user ?: false;
 	}

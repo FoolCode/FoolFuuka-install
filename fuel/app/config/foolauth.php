@@ -37,6 +37,11 @@ return array(
 	'table_autologin_name' => 'user_autologin',
 
 	/**
+	 * DB table name for the login attempts table
+	 */
+	'table_login_attempts_name' => 'user_login_attempts',
+
+	/**
 	 * Choose which columns are selected, must include: username, password, email, last_login,
 	 * login_hash, group & profile_fields
 	 */
