@@ -17,7 +17,9 @@
 
 	<body>
 
-		<div class="container-fluid">
+		<div class="container-fluid clearfix">
+
+			<?= $sidebar ?>
 			<div class="row-fluid" style="margin-top:10px;">
 
 
@@ -44,7 +46,7 @@
 						?>
 					</ul>
 
-					<div class="satin clearfix">
+					<div class="satin content-rounded clearfix">
 						<?php
 						if (isset($method_title))
 							echo '<h3>' . $method_title . '</h3>';
@@ -59,9 +61,6 @@
 							echo $main_content_view;
 						?>
 					</div>
-					<footer class="footer">
-							<p><?= \Config::get('foolframe.main.name') ?> Version <?= \Config::get('foolframe.main.version') ?></p>
-						</footer>
 				</div>
 				<div style="clear:both"></div>
 			</div>

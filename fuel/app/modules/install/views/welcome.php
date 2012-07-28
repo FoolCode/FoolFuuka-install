@@ -1,54 +1,9 @@
 <p><?= __('Welcome to the FoolFrame installation.') ?></p>
 
-<p><?= __('Will you be able to run FoolFrame? Here\'s a rundown:') ?></p>
-<p>
-<ul style="margin: 20px 40px">
+<p><?= __('FoolFrame is a framework that provides basic capabilities that can be used through several applications.') ?></p>
 
-	<?php $error = false ?>
+<p><?= __('This installation will check if your server is capable of running FoolFrame, connect it to a database and install the modules you\'re interested in.') ?></p>
 
-	<?php foreach ($check as $key => $item) : ?>
-		<li><p><?= e($item['string']) ?></p></li>
+<hr/>
 
-		<?php if (isset($item['checks'])) : ?>
-			<?php foreach ($item['checks'] as $k => $i) : ?>
-				<li><p><?= e($i['string']) ?></p></li>
-
-				<?php if ($i['result']) : ?>
-					<span class="label label-success"><i class="icon-ok"></i> <?= __('Available!') ?></i></span>
-				<?php else : ?>
-					<?php $error = true ?>
-					<?php if ($i['level'] == 'crit') : ?>
-						<span class="label label-important"><i class="icon-remove"></i>
-					<?php else : ?>
-						<span class="label label-warning"><i class="icon-warning-sign"></i>
-					<?php endif; ?>
-					<?= __('Not available') ?>
-					</span>
-					<p style="font-size:0.8em"><?= e($item['not_available_string']) ?></p>
-				<?php endif; ?>
-			<?php endforeach; ?>
-		<?php else : ?>
-			<?php if ($item['result']) : ?>
-				<span class="label label-success"><i class="icon-ok"></i> <?= __('Available!') ?></span>
-			<?php else : ?>
-				<?php $error = true ?>
-				<?php if ($item['level'] == 'crit') : ?>
-					<span class="label label-important"><i class="icon-remove"></i>
-				<?php else : ?>
-					<span class="label label-warning"><i class="icon-warning-sign"></i>
-				<?php endif; ?>
-				<?= __('Not available') ?>
-				</span>
-				<p style="font-size:0.8em"><?= e($item['not_available_string']) ?></p>
-			<?php endif; ?>
-		<?php endif; ?>
-	<?php endforeach; ?>
-</ul>
-</p>
-
-<?php if (!$error) : ?>
-	<p><?= e(__('Congratulations! Your server is ready to run FoolFrame. Next, we\'ll check if we can connect to a database.')) ?></p>
-	<a href="<?= \Uri::create('install/database') ?>" class="btn btn-large btn-success pull-right"><?= __('Go forth') ?></a>
-<?php else : ?>
-	<p><?= e(__('FoolFrame won\'t be able to run if the above isn\'t available. You will have to install and update the components to be able to run FoolFrame.')) ?>
-<?php endif; ?>
+<a href="<?= \Uri::create('install/system_check') ?>" class="btn btn-large btn-success pull-right"><?= __('Next') ?></a>

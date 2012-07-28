@@ -19,17 +19,43 @@ class Controller_Install extends \Controller
 		}
 	}
 
+	public function sidebar($status)
+	{
+		$sidebar = array(
+			'welcome' => __('Welcome'),
+			'system_check' => __('System check'),
+			'database_connection' => __('Database connection'),
+			'create_user' => __('User creation'),
+			'install_modules' => __('Install modules'),
+			'complete' => __('Complete'),
+		);
+
+		$this->_view_data['sidebar'] = \View::forge('install::sidebar', array('sidebar' => $sidebar, 'current' => $status));
+	}
+
 	public function action_index()
 	{
 		$data = array();
 		$data['check'] = \Install::check_system();
 
+		$this->sidebar('welcome');
 		$this->_view_data['method_title'] = 'Welcome';
 		$this->_view_data['main_content_view'] = \View::forge('install::welcome', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
-	public function action_database()
+	public function action_system_check()
+	{
+		$data = array();
+		$data['check'] = \Install::check_system();
+
+		$this->sidebar('system_check');
+		$this->_view_data['method_title'] = 'Welcome';
+		$this->_view_data['main_content_view'] = \View::forge('install::system_check', $data);
+		return \Response::forge(\View::forge('install::default', $this->_view_data));
+	}
+
+	public function action_database_connection()
 	{
 		$data = array();
 
@@ -65,6 +91,7 @@ class Controller_Install extends \Controller
 			}
 		}
 
+		$this->sidebar('database_connection');
 		$this->_view_data['method_title'] = 'Database connection';
 		$this->_view_data['main_content_view'] = \View::forge('install::database', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
@@ -97,6 +124,7 @@ class Controller_Install extends \Controller
 			}
 		}
 
+		$this->sidebar('create_user');
 		$this->_view_data['method_title'] = 'Administrator account creation';
 		$this->_view_data['main_content_view'] = \View::forge('install::create_user');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
@@ -129,6 +157,7 @@ class Controller_Install extends \Controller
 			\Response::redirect('install/complete');
 		}
 
+		$this->sidebar('install_modules');
 		$this->_view_data['method_title'] = 'Module installation';
 		$this->_view_data['main_content_view'] = \View::forge('install::modules');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
@@ -141,6 +170,7 @@ class Controller_Install extends \Controller
 		\Config::set('foolframe.install.installed', true);
 		\Config::save('foolframe', 'foolframe');
 
+		$this->sidebar('complete');
 		$this->_view_data['method_title'] = 'Installation completed';
 		$this->_view_data['main_content_view'] = \View::forge('install::complete');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));

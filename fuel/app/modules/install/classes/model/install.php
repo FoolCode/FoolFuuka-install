@@ -12,40 +12,47 @@ class Install extends \Model
 	{
 		$checked = array();
 
-		$checked['php_version'] = array(
-			'string' => 'PHP version >= '.\Config::get('foolframe.install.requirements.min_php_version'),
-			'result' => (version_compare(PHP_VERSION, \Config::get('foolframe.install.requirements.min_php_version')) >= 0),
-			'error'  => \Str::tr(__(''), array()),
-			'level'  => 'crit'
+		$checked['extensions_required'] = array(
+			'string' => __('Required extensions'),
+			'checks' => array(
+				'php_version' => array(
+					'string' => 'PHP version >= '.\Config::get('foolframe.install.requirements.min_php_version'),
+					'result' => (version_compare(PHP_VERSION, \Config::get('foolframe.install.requirements.min_php_version')) >= 0),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'crit'
+				),
+
+				'extension_mysqli' => array(
+					'string' => 'MySQLi extension',
+					'result' => extension_loaded('mysqli'),
+					'error'  =>  \Str::tr(__(''), array()),
+					'level'  => 'crit'
+				),
+
+				'extension_pdo_mysql' => array(
+					'string' => 'PDO MySQL extension',
+					'result' => extension_loaded('pdo_mysql'),
+					'error' => \Str::tr(__(''), array()),
+					'level'  => 'crit'
+				),
+
+				'extension_fileinfo' => array(
+					'string' => 'FileInfo extension',
+					'result' => extension_loaded('fileinfo'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'crit'
+				),
+
+				'extension_mbstring' => array(
+					'string' => 'MBString extension',
+					'result' => extension_loaded('mbstring'),
+					'error'  => \Str::tr(__(''), array()),
+					'level'  => 'crit'
+				),
+			)
 		);
 
-		$checked['extension_mysqli'] = array(
-			'string' => 'MySQLi extension',
-			'result' => extension_loaded('mysqli'),
-			'error'  =>  \Str::tr(__(''), array()),
-			'level'  => 'crit'
-		);
 
-		$checked['extension_pdo_mysql'] = array(
-			'string' => 'PDO MySQL extension',
-			'result' => extension_loaded('pdo_mysql'),
-			'error' => \Str::tr(__(''), array()),
-			'level'  => 'crit'
-		);
-
-		$checked['extension_fileinfo'] = array(
-			'string' => 'FileInfo extension',
-			'result' => extension_loaded('fileinfo'),
-			'error'  => \Str::tr(__(''), array()),
-			'level'  => 'crit'
-		);
-
-		$checked['extension_mbstring'] = array(
-			'string' => 'MBString extension',
-			'result' => extension_loaded('mbstring'),
-			'error'  => \Str::tr(__(''), array()),
-			'level'  => 'crit'
-		);
 
 		$checked['extension_extras'] = array(
 			'string' => 'Additional Extensions',
