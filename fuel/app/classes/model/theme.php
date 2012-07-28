@@ -146,7 +146,7 @@ class Theme extends \Model
 		}
 		else
 		{
-			$active_themes = Preferences::get('ff.theme.active_themes');
+			$active_themes = Preferences::get(\Config::get($this->_selected_module.'.main.identifier').'.theme.active_themes');
 			if (!$active_themes || !$active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
@@ -240,7 +240,7 @@ class Theme extends \Model
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir(DOCROOT.$this->_selected_module.'//themes/'.$file))
+				if (is_dir(DOCROOT.$this->_selected_module.'/themes/'.$file))
 				{
 					$array[] = $file;
 				}
