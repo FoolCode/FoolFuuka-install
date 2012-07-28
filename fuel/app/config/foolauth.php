@@ -118,5 +118,5 @@ return array(
 	/**
 	 * The amount of tries before an account is locked
 	 */
-	'attempts_to_lock' => 3,
+	'attempts_to_lock' => 10,
 );
