@@ -30,6 +30,11 @@
 									<?php echo __("Logout") ?>
 								</a>
 							</li>
+							<li>
+								<a href="<?php echo URI::create('/admin/auth/logout_all'); ?>">
+									<?php echo __("Logout all devices") ?>
+								</a>
+							</li>
 						</ul>
 					</li>
 				<?php else : ?>

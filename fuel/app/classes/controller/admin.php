@@ -29,7 +29,7 @@ class Controller_Admin extends Controller_Common
 
     public function action_index()
     {
-		return Response::redirect('admin/preferences');
+		return Response::redirect('admin/preferences/theme');
     }
 
 

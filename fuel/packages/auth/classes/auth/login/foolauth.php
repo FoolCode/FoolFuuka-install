@@ -184,10 +184,16 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	/**
 	 * Logout user
 	 *
+	 * @param   bool $all delete all autologins so it's logged out from every device
 	 * @return  bool
 	 */
-	public function logout()
+	public function logout($all = false)
 	{
+		if ($all)
+		{
+			\DB::delete('user_autologin')->where('user_id', $this->user['id'])->execute();
+		}
+
 		$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
 		\Cookie::delete('autologin');
 		return true;

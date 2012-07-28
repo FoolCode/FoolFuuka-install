@@ -44,6 +44,23 @@ class Controller_Admin_Auth extends Controller_Admin
 	}
 
 
+	public function action_logout()
+	{
+		Auth::logout();
+		Response::redirect('admin');
+	}
+
+
+	/**
+	 * Log out from all the devices
+	 */
+	public function action_logout_all()
+	{
+		Auth::logout(true);
+		Response::redirect('admin');
+	}
+
+
 	public function action_register()
 	{
 		if (Auth::has_access('maccess.user'))

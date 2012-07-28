@@ -86,6 +86,18 @@ class Install
 			\DBUtil::create_index('user_autologin', 'user_id', 'user_id_index');
 		}
 
+		if (!\DBUtil::table_exists('user_login_attempts'))
+		{
+			\DBUtil::create_table('user_login_attempts', array(
+				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true),
+				'user_id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true),
+				'time' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true),
+				'ip' => array('type' => 'decimal', 'constraint' => '39,0'),
+			), array('id'), true, 'innodb', 'utf8_general_ci');
+
+			\DBUtil::create_index('user_login_attempts', array('user_id', 'time'), 'user_id_time_index');
+		}
+
 	}
 
     function down()
