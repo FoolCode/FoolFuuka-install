@@ -22,16 +22,23 @@ class Controller_Admin_Auth extends Controller_Admin
 
 			// check the credentials. This assumes that you have the table created and
 			// you have used the table definition and configuration as mentioned above.
-			if ($auth->login())
+			try
 			{
+				$auth->login();
 				Response::redirect('admin');
 			}
-			else
+			catch (\Auth\FoolUserWrongUsernameOrPassword $e)
 			{
 				// Oops, no soup for you. try to login again. Set some values to
 				// repopulate the username field and give some error text back to the view
 				$data['username'] = Input::post('username');
 				Notices::set('error', __('Wrong username/password. Try again'));
+			}
+			catch (\Auth\FoolUserLimitExceeded $e)
+			{
+				// tell the user to use the forgot password system to go on
+				$data['username'] = Input::post('username');
+				Notices::set('error', \Str::tr(__('The account has been locked because a wrong password  was inserted :number times. You will have to use the forgot password system to reinstate your account.'), array('number' => \Config::get('foolauth.attempts_to_lock'))));
 			}
 		}
 

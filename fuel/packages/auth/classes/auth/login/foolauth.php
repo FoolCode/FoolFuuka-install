@@ -15,6 +15,8 @@ namespace Auth;
 
 class FoolUserUpdateException extends \FuelException {}
 
+class FoolUserWrongUsernameOrPassword extends \FuelException {}
+class FoolUserLimitExceeded extends \FuelException {}
 class FoolUserWrongPassword extends \FuelException {}
 class FoolUserWrongEmail extends \FuelException {}
 class FoolUserWrongKey extends \FuelException {}
@@ -112,7 +114,12 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		if (empty($username_or_email) or empty($password))
 		{
-			return false;
+			throw new FoolUserWrongUsernameOrPassword;
+		}
+
+		if ($this->count_attempts($username_or_email) >= \Config::get('foolauth.attempts_to_lock'))
+		{
+			throw new FoolUserLimitExceeded;
 		}
 
 		$password = $this->hash_password($password);
@@ -131,19 +138,49 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		}
 		else
 		{
-			\DB::insert(\Config::get('foolauth.table_login_attempts'))
+			\DB::insert(\Config::get('foolauth.table_login_attempts_name'))
 				->set(array(
 					'username' => $username_or_email,
-					'ip' => \Input::decimal_ip(),
+					'ip' => \Input::ip_decimal(),
 					'time' => time()
 				))
 				->execute(\Config::get('foolauth.db_connection'));
 
-			return false;
+			throw new FoolUserWrongUsernameOrPassword;
 		}
-
-		return $this->user ?: false;
 	}
+
+
+	/**
+	 * Checks how many attempts have been made to login
+	 *
+	 * @param  string $username the submitted username
+	 * @return int the amount of attempts before successful login
+	 */
+	public function count_attempts($username)
+	{
+		return \DB::select(\DB::expr('COUNT(*) as count'))
+			->from(\Config::get('foolauth.table_login_attempts_name'))
+			->where('username', '=', $username)
+			->as_object()
+			->execute(\Config::get('foolauth.db_connection'))
+			->current()
+			->count;
+	}
+
+
+	/**
+	 * Reset attempts have been made to login
+	 *
+	 * @param  string $username the submitted username
+	 */
+	public function reset_attempts($username)
+	{
+		\DB::delete(\Config::get('foolauth.table_login_attempts_name'))
+			->where('username', $username)
+			->execute(\Config::get('foolauth.db_connection'));
+	}
+
 
 	/**
 	 * Login user
@@ -154,12 +191,26 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function login($username_or_email = '', $password = '')
 	{
-		if ( ! ($this->user = $this->validate_user($username_or_email, $password)))
+		try
+		{
+			$this->user = $this->validate_user($username_or_email, $password);
+		}
+		catch (FoolUserWrongUsernameOrPassword $e)
 		{
 			$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
 			\Cookie::delete('autologin');
-			return false;
+
+			throw new FoolUserWrongUsernameOrPassword;
 		}
+		catch (FoolUserLimitExceeded $e)
+		{
+			$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
+			\Cookie::delete('autologin');
+
+			throw new FoolUserLimitExceeded;
+		}
+
+		$this->reset_attempts($this->user['username']);
 
 		\Cookie::set('autologin', $this->create_login_hash());
 
@@ -208,7 +259,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	{
 		if ($all)
 		{
-			\DB::delete('user_autologin')->where('user_id', $this->user['id'])->execute();
+			\DB::delete(\Config::get('foolauth.table_autologin_name'))
+				->where('user_id', '=', $this->user['id'])
+				->execute(\Config::get('foolauth.db_connection'));
 		}
 
 		$this->user = \Config::get('foolauth.guest_login', true) ? static::$guest_login : false;
@@ -353,6 +406,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$this->logout();
 		$this->force_login($id);
+		$this->reset_attempts($this->user['username']);
 
 		return true;
 	}

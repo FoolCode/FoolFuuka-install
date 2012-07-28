@@ -114,4 +114,9 @@ return array(
 	 * $_POST key for login password
 	 */
 	'password_post_key' => 'password',
+
+	/**
+	 * The amount of tries before an account is locked
+	 */
+	'attempts_to_lock' => 3,
 );
