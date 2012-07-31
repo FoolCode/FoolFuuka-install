@@ -163,6 +163,9 @@ class Controller_Admin_Preferences extends Controller_Admin
 
 		$data['form'] = $form;
 
+		
+		\Preferences::submit_auto($form);
+		
 		// create a form
 		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
 		return Response::forge(View::forge('admin/default', $this->_views));
@@ -226,6 +229,8 @@ class Controller_Admin_Preferences extends Controller_Admin
 
 		$data['form'] = $form;
 
+		\Preferences::submit_auto($form);
+		
 		// create a form
 		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
 		return Response::forge(View::forge('admin/default', $this->_views));
@@ -242,12 +247,12 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'type' => 'open'
 		);
 
-		$form['ff.reg_disabled'] = array(
+		$form['ff.auth.disable_registration'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable New User Registrations')
 		);
-		$form['ff.reg_email_disabled'] = array(
+		$form['ff.auth.disable_registration_email'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable Email Activation')
@@ -262,7 +267,7 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'help' => __('In order to use reCAPTCHA&trade; you need to sign up for the service at <a href="http://www.google.com/recaptcha">reCAPTCHA&trade;</a>, which will provide you with a public and a private key.')
 		);
 
-		$form['ff.reg_recaptcha_public'] = array(
+		$form['ff.auth.recaptcha_public'] = array(
 			'type' => 'input',
 			'label' => __('reCaptcha&trade; Public Key'),
 			'preferences' => TRUE,
@@ -271,9 +276,9 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'class' => 'span4'
 		);
 
-		$form['ff.reg_recaptcha_secret'] = array(
+		$form['ff.auth.recaptcha_private'] = array(
 			'type' => 'input',
-			'label' => __('reCaptcha&trade; Secret Key'),
+			'label' => __('reCaptcha&trade; Prvate Key'),
 			'preferences' => TRUE,
 			'help' => __('Insert the private key provided by reCAPTCHA&trade;.'),
 			'validation' => 'trim',
@@ -297,6 +302,8 @@ class Controller_Admin_Preferences extends Controller_Admin
 
 		$data['form'] = $form;
 
+		\Preferences::submit_auto($form);
+		
 		// create a form
 		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
 		return Response::forge(View::forge('admin/default', $this->_views));

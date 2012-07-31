@@ -16,6 +16,7 @@ Autoloader::add_classes(array(
 	'Uri' => APPPATH.'classes/extend/uri.php',
 	'Validation' => APPPATH.'classes/extend/validation.php',
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
+	'ReCaptcha' => APPPATH.'classes/extend/recaptcha.php',
 ));
 
 // Register the autoloader

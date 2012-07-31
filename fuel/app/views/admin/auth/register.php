@@ -43,6 +43,9 @@
 		'size' => 30,
 		'placeholder' => __('required')
 	)); ?>
+	
+	
+	<?= (\ReCaptcha::available()) ? '<br/><br/>'.\ReCaptcha::instance()->get_html() : '' ?>
 
 
 	<br/><br/>
