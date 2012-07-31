@@ -15,7 +15,7 @@ class Model_Base extends \Model
 	{
 		$class = strtolower(get_class($this));
 
-		$before = Plugins::run_hook($class.'/call/before/'.$name, $parameters);
+		$before = Plugins::run_hook($class.'.'.$name.'.call.before', $parameters);
 
 		if (is_array($before))
 		{
@@ -25,7 +25,7 @@ class Model_Base extends \Model
 
 		// if the replace is anything else than NULL for all the functions ran here, the
 		// replaced function wont' be run
-		$replace = Plugins::run_hook($class.'/call/replace/'.$name, $parameters, array($parameters));
+		$replace = Plugins::run_hook($class.'.'.$name.'.call.replace', $parameters, array($parameters));
 
 		if ($replace['return'] !== NULL)
 		{
@@ -61,7 +61,7 @@ class Model_Base extends \Model
 
 		// in the after, the last parameter passed will be the result
 		array_push($parameters, $return);
-		$after = Plugins::run_hook($class.'/call/after/'.$name, $parameters);
+		$after = Plugins::run_hook($class.'.'.$name.'.call.after', $parameters);
 
 		if (is_array($after))
 		{
@@ -76,7 +76,7 @@ class Model_Base extends \Model
 	{
 		$class = str_replace('\\', '/', strtolower(get_called_class()));
 
-		$before = Plugins::run_hook($class.'/call/before/'.$name, $parameters);
+		$before = Plugins::run_hook($class.'.'.$name.'.call.before', $parameters);
 
 		if (is_array($before))
 		{
@@ -86,7 +86,7 @@ class Model_Base extends \Model
 
 		// if the replace is anything else than NULL for all the functions ran here, the
 		// replaced function wont' be run
-		$replace = Plugins::run_hook($class.'/call/replace/'.$name, $parameters, array($parameters));
+		$replace = Plugins::run_hook($$class.'.'.$name.'.call.replace', $parameters, array($parameters));
 
 		if ($replace['return'] !== NULL)
 		{
@@ -123,7 +123,7 @@ class Model_Base extends \Model
 
 		// in the after, the last parameter passed will be the result
 		array_push($parameters, $return);
-		$after = Plugins::run_hook($class.'/call/after/'.$name, $parameters);
+		$after = Plugins::run_hook($class.'.'.$name.'.call.after', $parameters);
 
 		if (is_array($after))
 		{

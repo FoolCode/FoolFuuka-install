@@ -31,6 +31,14 @@ class Plugins extends \Model
 	 * @var array
 	 */
 	private static $_hooks = array();
+	
+	
+	/**
+	 * List of identifiers and their modules.
+	 * 
+	 * @var array key is the identifier, the value is the lowercase name of the module
+	 */
+	private static $_identifiers = array();
 
 
 	/**
@@ -40,10 +48,41 @@ class Plugins extends \Model
 	 */
 	private static function lookup_plugins()
 	{
-		$slugs = File::read_dir(FOOL_PLUGIN_DIR, 1);
+		$slugs = array();
+				
+		$slugs[\Config::get('foolframe.main.identifier')] = 
+			\File::read_dir(\Config::get('foolframe.directories.plugins'), 1);
+		
+		foreach (\Config::get('foolframe.modules.installed') as $module)
+		{
+			static::$_identifiers[\Config::get($module.'.main.identifier')] = $module;
+			
+			$slugs[\Config::get($module.'.main.identifier')] =
+				\File::read_dir(\Config::get($module.'.directories.plugins'), 1);
+		}
+		
 		return $slugs;
 	}
 
+	
+	/**
+	 * PROBABlY NOT NECESSARY
+	 * 
+	 * @param string $string identifier of the module and plugin name in id.plugin form
+	 * @return array module identifier and plugin name
+	 */
+	private static function split_id_slug($string)
+	{
+		$string = explode('.', $string);
+		return array(array_shift($string), implode('.', $string));
+	}
+	
+	
+	private static function get_plugins_dir($identifier)
+	{
+		return \Config::get(static::$_identifiers[$identifier].'directories.plugins');
+	}
+	
 
 	/**
 	 * Grabs the info from the plugin _info.php file and returns it as object
@@ -51,10 +90,10 @@ class Plugins extends \Model
 	 * @param string $slug the directory of the plugin
 	 * @return object the config
 	 */
-	private static function get_info_by_slug($slug)
+	private static function get_info_by_slug($identifier, $slug)
 	{
-		include(FOOL_PLUGIN_DIR . $slug . '/' . $slug . '_info.php');
-		return (object) $info;
+		$dir = $static::get_plugins_dir($identifier, $slug);
+		return (object) \Fuel::load($dir.'config/config.php');
 	}
 
 
@@ -66,33 +105,48 @@ class Plugins extends \Model
 	public static function get_all()
 	{
 		\Profiler::mark('Plugins::get_all Start');
-		$slugs = $this->lookup_plugins();
+		
+		$slugs = static::lookup_plugins();
 
 		$result = array();
+		
 		if (count($slugs) > 0)
 		{
 			$slugs_to_sql = $slug;
 
 			// we don't care if the database doesn't contain an entry for a plugin
 			// in that case, it means it was never installed
-			$query = \DB::select()->from('plugins');
-			$query->where('slug', array_pop($slugs_to_sql));
+			$query = \DB::select()
+				->from('plugins');
+			
+			/*
+			// must at least select one with where
+			$query->where_open();
+			$pop = array_slice($slugs_to_sql, 0, 1, true);
+			$query->where('identifier', key($pop));
+			$query->where('slug', array_pop($pop));
+			$query->where_close();
+			 * 
+			 */
 
 			foreach ($slugs_to_sql as $key => $slug_to_sql)
 			{
+				$query->or_where_open();
+				$query->or_where('identifier', $key);
 				$query->or_where('slug', $slug_to_sql);
+				$query->or_where_close();
 			}
 
 			$result = $query->execute();
 		}
 
 		$slugs_with_data = array();
-		foreach ($slugs as $slug)
+		foreach ($slugs as $key => $slug)
 		{
 			$done = false;
 			foreach ($result as $r)
 			{
-				if ($slug == $r->slug)
+				if ($key == $r->identifier && $slug == $r->slug)
 				{
 					$slugs_with_data[$slug] = $r;
 					$done = true;
@@ -100,11 +154,11 @@ class Plugins extends \Model
 			}
 
 			if($done === false) $slugs_with_data[$slug] = new stdClass();
-			$slugs_with_data[$slug]->info = $this->get_info_by_slug($slug);
+			$slugs_with_data[$key][$slug]->info = $this->get_info_by_slug($key, $slug);
 
 			if (!$done)
 			{
-				$slugs_with_data[$slug]->enabled = false;
+				$slugs_with_data[$key][$slug]->enabled = false;
 			}
 		}
 
@@ -121,7 +175,10 @@ class Plugins extends \Model
 	 */
 	private static function get_enabled()
 	{
-		return DB::select('*')->from('plugins')->where('enabled', 1)->execute();
+		return \DB::select()
+			->from('plugins')
+			->where('enabled', 1)
+			->execute();
 	}
 
 
@@ -131,16 +188,24 @@ class Plugins extends \Model
 	 * @param string $slug the directory name of the plugin
 	 * @return object The database row of the plugin with extra ->info
 	 */
-	public static function get_by_slug($slug)
+	public static function get_by_slug($identifier, $slug)
 	{
-		$query = DB::select('*')->from('plugins')->where('slug', $slug)->execute();
+		$query = \DB::select()
+			->from('plugins')
+			->where('identifier', $identifier)
+			->where('slug', $slug)
+			->execute();
 
 		if(!count($query))
+		{
 			return false;
+		}
 
-		$query[0]->info = $this->get_info_by_slug($slug);
+		$result = $query->current();
+		
+		$result->info = $this->get_info_by_slug($identifier, $slug);
 
-		return $query[0];
+		return $result;
 	}
 
 
@@ -150,19 +215,20 @@ class Plugins extends \Model
 	 * @param null|string $select the slug of the plugin if you want to choose one
 	 * @param bool $initialize choose if just load the file or effectively run the plugin
 	 */
-	public function load_plugins($select = NULL, $initialize = TRUE)
+	public function load_plugins($identifier = NULL, $slug = NULL, $initialize = TRUE)
 	{
 		$plugins = $this->get_enabled();
 
 		foreach ($plugins as $plugin)
 		{
-			if(!is_null($select) && $plugin->slug != $select)
+			if(!is_null($identifier) && $plugin->identifier != $identifier && $plugin->slug != $slug)
 				continue;
+			
+			$path = static::get_plugins_dir($plugin->identifier).$plugin->slug.'/bootstrap.php';
 
-			$slug = $plugin->slug;
-			if (file_exists(DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php'))
+			if (file_exists($path))
 			{
-				require_once DOCROOT.'content/plugins/'.$slug.'/'.$slug.'.php';
+				require_once $path;
 				$this->$slug = new $slug();
 
 				if ($initialize && method_exists($this->$slug, 'initialize_plugin'))
@@ -378,9 +444,9 @@ class Plugins extends \Model
 	 * @param type $controller_name
 	 * @param type $method
 	 */
-	public static function register_controller_function(&$class, $uri_array, $method)
+	public static function register_controller_method(&$class, $uri_array, $method)
 	{
-		$this->_controller_uris[] = array('uri_array' => $uri_array, 'plugin' => $class, 'method' => $method);
+		$this->_controller_uris[] = array('uri' => $uri, 'plugin' => $class, 'method' => $method);
 	}
 
 
@@ -497,7 +563,7 @@ class Plugins extends \Model
 	 * @param int $priority the lowest, the highest the priority. negatives ALLOWED
 	 * @param string|Closure $method name of the method or the closure to run
 	 */
-	public static function register_hook(&$class, $target, $priority, $method)
+	public static function register_hook(&$class, $target, $method, $priority)
 	{
 		self::$_hooks[$target][] = array('plugin' => $class, 'priority' => $priority, 'method' => $method);
 	}

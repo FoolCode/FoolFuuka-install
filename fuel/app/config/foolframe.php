@@ -62,7 +62,18 @@ return array(
 			'min_php_version' => '5.3.0'
 		)
 	),
+	
+	/**
+	 * Locations of the data out of the module folder
+	 */
+	'directories' => array(
+		'themes' => DOCROOT.'foolframe/themes/',
+		'plugins' => DOCROOT.'foolframe/plugins/'
+	),
 
+	/**
+	 * Configurations that can be changed by the user
+	 */
 	'config' => array(
 		'cookie_prefix' => ''
 	),

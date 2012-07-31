@@ -28,6 +28,7 @@ class Install
 		{
 			\DBUtil::create_table('plugins', array(
 				'id' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true),
+				'identifier' => array('type' => 'varchar', 'constraint' => 3),
 				'slug' => array('type' => 'varchar', 'constraint' => 64),
 				'enabled' => array('type' => 'smallint', 'constraint' => 2, 'default' => 1),
 				'revision' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => \DB::expr('NULL'), 'null' => true)
