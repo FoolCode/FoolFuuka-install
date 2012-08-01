@@ -1,23 +1,23 @@
 <?php
 
+namespace Foolframe\Plugins\Ssl_Tools;
+
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-namespace \Foolframe\Plugins\Ssl_Tools;
-
-class Ssl_Tools extends \Plugins_model
+class Ssl_Tools extends \Plugins
 {
 
 	public static function check()
 	{
 		if(!isset($_SERVER['HTTPS']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'off'))
 		{
-			if(Preferences::get('ff.plugins.ssl_tools.force_everyone')
-				|| (Preferences::get('ff.plugins.ssl_tools.force_for_logged') && \Auth::has_access('maccess.user'))
-				|| (Preferences::get('ff.plugins.ssl_tools.sticky') && \Input::cookie('ff_sticky_ssl')))
+			if(\Preferences::get('ff.plugins.ssl_tools.force_everyone')
+				|| (\Preferences::get('ff.plugins.ssl_tools.force_for_logged') && \Auth::has_access('maccess.user'))
+				|| (\Preferences::get('ff.plugins.ssl_tools.sticky') && \Input::cookie('ff_sticky_ssl')))
 			{
 				// redirect to itself
-				Response::redirect('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+				\Response::redirect('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 			}
 		}
 		else

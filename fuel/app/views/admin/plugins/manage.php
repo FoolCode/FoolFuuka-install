@@ -1,7 +1,7 @@
 <?php foreach ($plugins as $identifier => $plugins_array) : ?>
 
 <h3><?= \Str::tr(__('Plugins for :module'), array('module' => 
-	\Config::get(\Plugins::get_module_by_identifier($identifier).'.main.name'))) ?></h3>
+	\Config::get(\Plugins::get_module_name_by_identifier($identifier).'.main.name'))) ?></h3>
 
 <table class="table table-bordered table-striped table-condensed">
 	<thead>
@@ -19,7 +19,7 @@
 				<td><?php echo $plugin['info']['description'] ?></td>
 				<td>
 					<?php
-					echo \Form::open('admin/plugins/action/' . $plugin['info']['slug'],
+					echo \Form::open('admin/plugins/action/'.$plugin['info']['identifier'].'/'.$plugin['info']['slug'],
 						array('action' => $plugin['enabled'] ? 'disable' : 'enable')
 					);
 					echo '<input type="submit" class="btn" value="' . ($plugin['enabled'] ? __('Disable')

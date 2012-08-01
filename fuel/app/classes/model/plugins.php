@@ -2,6 +2,9 @@
 
 namespace Model;
 
+class PluginException extends \FuelException {}
+
+
 /**
  * FoOlFrame Plugins Model
  *
@@ -23,14 +26,14 @@ class Plugins extends \Model
 	 *
 	 * @var array
 	 */
-	private static $_controller_uris = array();
+	protected static $_routes = array();
 
 	/**
 	 * List of hooks with their associated classes, priority and callback
 	 *
 	 * @var array
 	 */
-	private static $_hooks = array();
+	protected static $_hooks = array();
 	
 	
 	/**
@@ -38,11 +41,22 @@ class Plugins extends \Model
 	 * 
 	 * @var array key is the identifier, the value is the lowercase name of the module
 	 */
-	private static $_identifiers = array();
+	protected static $_identifiers = array();
+	
+	protected static $_admin_sidebars = array();
 
 
 	public static function _init()
 	{
+		// store all the relevant data from the modules
+		foreach (array_merge(array('foolframe'), \Config::get('foolframe.modules.installed')) as $module)
+		{
+			static::$_identifiers[\Config::get($module.'.main.identifier')] = array(
+				'slug' => strtolower(\Config::get($module.'.main.name')),
+				'dir' => \Config::get($module.'.directories.plugins')
+			);
+		}
+		
 		static::load_plugins();
 	}
 	
@@ -51,57 +65,35 @@ class Plugins extends \Model
 	 *
 	 * @return array The directory names
 	 */
-	private static function lookup_plugins()
+	public static function lookup_plugins()
 	{
 		$slugs = array();
-				
-		// the result has a final slash that we better remove
-		$temp = \File::read_dir(\Config::get('foolframe.directories.plugins'), 1);
-
-		$identifier = \Config::get('foolframe.main.identifier');
-		static::$_identifiers['ff'] = 'foolframe';
-		foreach ($temp as $key => $item)
-		{
-			$slugs[$identifier][] = rtrim($key, '/');
-		}
 		
-		foreach (\Config::get('foolframe.modules.installed') as $module)
+		// get all the plugins stacked by identifier
+		foreach (static::$_identifiers as $key => $item)
 		{
-			$identifier = \Config::get($module.'.main.identifier');
-			static::$_identifiers[$identifier] = $module;
-			$temp = \File::read_dir(\Config::get($module.'.directories.plugins'), 1);
-			foreach ($temp as $key => $item)
+			$temp = \File::read_dir($item['dir'], 1);
+
+			// remove the dir's last slash
+			foreach ($temp as $k => $i)
 			{
-				$slugs[$identifier][] = rtrim($key, '/');
+				$slugs[$key][] = rtrim($k, '/');
 			}
 		}
-		
+
 		return $slugs;
 	}
-
 	
-	/**
-	 * PROBABlY NOT NECESSARY
-	 * 
-	 * @param string $string identifier of the module and plugin name in id.plugin form
-	 * @return array module identifier and plugin name
-	 */
-	private static function split_id_slug($string)
+	
+	public static function get_module_name_by_identifier($identifier)
 	{
-		$string = explode('.', $string);
-		return array(array_shift($string), implode('.', $string));
+		return static::$_identifiers[$identifier]['slug'];
 	}
 	
 	
-	public static function get_module_by_identifier($identifier)
+	private static function get_plugin_dir($identifier, $slug)
 	{
-		return static::$_identifiers[$identifier];
-	}
-	
-	
-	private static function get_plugins_dir($identifier, $slug)
-	{
-		return \Config::get(static::$_identifiers[$identifier].'.directories.plugins').$slug.'/';
+		return static::$_identifiers[$identifier]['dir'].$slug.'/';
 	}
 	
 
@@ -111,9 +103,9 @@ class Plugins extends \Model
 	 * @param string $slug the directory of the plugin
 	 * @return object the config
 	 */
-	private static function get_info_by_slug($identifier, $slug)
+	public static function get_info($identifier, $slug)
 	{
-		$dir = static::get_plugins_dir($identifier, $slug);
+		$dir = static::get_plugin_dir($identifier, $slug);
 		return \Fuel::load($dir.'config/config.php');
 	}
 
@@ -170,7 +162,7 @@ class Plugins extends \Model
 				}
 
 				if($done === false) $slugs_with_data[$key][$slug] = array();
-				$slugs_with_data[$key][$slug]['info'] = static::get_info_by_slug($key, $slug);
+				$slugs_with_data[$key][$slug]['info'] = static::get_info($key, $slug);
 
 				if (!$done)
 				{
@@ -206,7 +198,7 @@ class Plugins extends \Model
 	 * @param string $slug the directory name of the plugin
 	 * @return object The database row of the plugin with extra ->info
 	 */
-	public static function get_by_slug($identifier, $slug)
+	public static function get($identifier, $slug)
 	{
 		$query = \DB::select()
 			->from('plugins')
@@ -221,7 +213,7 @@ class Plugins extends \Model
 
 		$result = $query->current();
 		
-		$result['info'] = $this->get_info_by_slug($identifier, $slug);
+		$result['info'] = static::get_info($identifier, $slug);
 
 		return $result;
 	}
@@ -239,19 +231,14 @@ class Plugins extends \Model
 
 		foreach ($plugins as $plugin)
 		{
-			if(!is_null($identifier) && $plugin->identifier != $identifier && $plugin->slug != $slug)
+			if(!is_null($identifier) && $plugin['identifier'] != $identifier && $plugin['slug'] != $slug)
 				continue;
 			
-			$path = static::get_plugins_dir($plugin->identifier).$plugin->slug.'/bootstrap.php';
+			$path = static::get_plugin_dir($plugin['identifier'], $plugin['slug']).'/bootstrap.php';
 
 			if (file_exists($path))
 			{
-				require_once $path;
-				$this->$slug = new $slug();
-			}
-			else
-			{
-				log_message('error', 'Plugin to be loaded couldn\'t be found: '.$slug);
+				\Fuel::load($path);
 			}
 		}
 	}
@@ -293,41 +280,27 @@ class Plugins extends \Model
 	 */
 	public function upgrade($idenfitier, $slug)
 	{}
-
-
-	/**
-	 * Send an array, if shorter than the URI it will trigger the class method requested
-	 *
-	 * @param type $controller_name
-	 * @param type $method
-	 */
-	public static function register_route($path, $map, $method)
+	
+	
+	public static function run_route($slug, $identifier, $params)
 	{
-		// we need a way to distinguish which of the requests has been matched, we use a simple number
-		static $id = 0;
-		$id++;
 		
-		// make the path match the plugin, and set it to prepend so it overrides other requests
-		\Router::add($path, 'plugin/'.$id.'/'.$map, true);
-
-		// save the path mapped with the method
-		$this->_controller_uris[$id] = $method;
 	}
+
 	
-	
-	public static function run_route($id, $params)
+	protected static function load_route($current_dir, $map)
 	{
-		return call_user_func_array($this->_controller_uris[$id], $params);
+		
 	}
-
-
+	
+	
 	/**
 	 * Adds a sidebar element when admin controller is accessed.
 	 *
 	 * @param string $section under which controller/section of the sidebar must this sidebar element appear
 	 * @param array $array the overriding array, comprehending only the additions and modifications to the sidebar
 	 */
-	public static function register_admin_sidebar_element($path, $array = null)
+	public static function register_sidebar_element($type, $section, $array = null)
 	{
 		// the user can also send an array with the index inseted in $section
 		if(!is_null($array))
@@ -336,14 +309,22 @@ class Plugins extends \Model
 			$array2[$section] = $array;
 			$array = $array2;
 		}
+		
+		static::$_admin_sidebars[$type][] = $array;
 
-		$CI = & get_instance();
-		if($CI instanceof Admin_Controller)
-		{
-			$CI->add_sidebar_element($array);
-		}
+		\Controller_Admin::add_sidebar_element($array);
 	}
 
+	
+	public static function get_sidebar_elements($type)
+	{
+		if (!isset(static::$_admin_sidebars[$type]))
+		{
+			return array();
+		}
+		
+		return static::$_admin_sidebars[$type];
+	}
 
 	/**
 	 * Runs functions stored in the hook
@@ -365,7 +346,6 @@ class Plugins extends \Model
 		{
 			return NULL;
 		}
-
 
 		$hook_array = static::$_hooks[$target];
 

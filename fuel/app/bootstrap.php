@@ -11,6 +11,7 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
+	'Router' => APPPATH.'classes/extend/router.php',
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
 	'Uri' => APPPATH.'classes/extend/uri.php',
@@ -116,3 +117,5 @@ else
 
 	}
 }
+
+\Plugins::_init();

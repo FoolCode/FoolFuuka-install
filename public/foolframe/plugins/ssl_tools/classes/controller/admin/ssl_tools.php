@@ -1,16 +1,23 @@
 <?php
 
+namespace Foolframe\Plugins\Ssl_Tools;
+
 if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
-namespace \Foolframe\Plugins\Ssl_Tools;
-
-class Ssl_Tools_Controller extends \Controller_Admin
+class Controller_Plugin_Ff_Ssl_Tools_Admin_Ssl_Tools extends \Controller_Admin
 {
-
-	function manage()
+	
+	public function before()
 	{
-		$this->viewdata["method_title"] = "SSL";
+		parent::before();
+		
+		$this->_views['controller_title'] = __('SSL Tools');
+	}
+
+	public function action_manage()
+	{
+		$this->_views['method_title'] = 'SSL';
 
 		$form = array();
 
@@ -71,7 +78,7 @@ class Ssl_Tools_Controller extends \Controller_Admin
 
 		// create a form
 		$this->_views["main_content_view"] = \View::forge("admin/form_creator", $data);
-		return Response::forge(\View::forge("admin/default", $this->_views));
+		return \Response::forge(\View::forge("admin/default", $this->_views));
 	}
 
 }

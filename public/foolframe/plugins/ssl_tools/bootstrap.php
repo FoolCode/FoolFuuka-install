@@ -9,19 +9,17 @@ if (PHP_SAPI === 'cli')
 	return false;
 }
 
-Autoloader::add_classes(array(
-	'\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools' => __DIR__.'/classes/Ssl_Tools.php',
-	'\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools_Controller' => __DIR__.'/classes/Ssl_Tools_Controller.php'
+\Autoloader::add_classes(array(
+	'Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools' => __DIR__.'/classes/model/ssl_tools.php',
+	'Foolframe\\Plugins\\Ssl_Tools\\Controller_Plugin_Ff_Ssl_Tools_Admin_Ssl_Tools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
 ));
 
 // don't add the admin panels if the user is not an admin
 if (\Auth::has_access('maccess.admin'))
 {
-	\Plugins::register_controller_method(
-		'admin/plugins/ssl_tools', '\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools_Controller::manage'
-	);
+	\Router::add('admin/plugins/ssl_tools', 'plugin/ff/ssl_tools/admin/ssl_tools/manage');
 
-	\Plugins::register_admin_sidebar_element('plugins', array(
+	\Plugins::register_sidebar_element('admin', 'plugins', array(
 		"content" => array("ssl_tools" => array("level" => "admin", "name" => __("SSL Tools"), "icon" => 'icon-lock'))
 	));
 }
