@@ -21,7 +21,7 @@ return array(
 	
 	'author_link' => 'http://www.foolz.us',
 	
-	'plugin_link' => '',
+	'support_link' => '',
 	
 	'license' => 'Apache License 2.0',
 	

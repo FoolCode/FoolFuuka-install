@@ -195,7 +195,7 @@ class Theme extends \Model
 	{
 		if ($theme_styles = $this->get_available_styles($this->_selected_theme))
 		{
-			$style = Cookie::get('theme_'.$this->_selected_theme.'_style');
+			$style = \Cookie::get('theme_'.$this->_selected_theme.'_style');
 			if ($style !== false && in_array($style, $theme_styles))
 				$class[] = $style;
 			else
@@ -260,16 +260,7 @@ class Theme extends \Model
 	 */
 	private function load_config($name)
 	{
-		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$name.'/theme_config.php'))
-		{
-			include DOCROOT.$this->_selected_module.'/themes/'.$name.'/theme_config.php';
-			if (!isset($config))
-				return false;
-
-			return $config;
-		}
-
-		return false;
+		return \Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$name.'/config.php');
 	}
 
 
@@ -306,20 +297,8 @@ class Theme extends \Model
 		$result = $this->get_by_name($theme);
 		$this->_selected_theme = $theme;
 
-		// load the theme functions if there is such a file
-		$theme_functions_file = DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_module.'/'.$theme.'/theme_functions.php';
-		if (file_exists($theme_functions_file))
-		{
-			require_once $theme_functions_file;
-		}
-
 		// load the theme plugin file if present
-		$theme_plugin_file = DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_module.'/'.$theme.'/theme_plugin.php';
-		if (file_exists($theme_plugin_file))
-		{
-			Plugins::inject_plugin('theme', 'Theme_Plugin_'.\Config::get($this->_selected_module.'.main.class_name')
-				.'_'.$theme, true, $theme_plugin_file);
-		}
+		\Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$theme.'/bootstrap.php');
 
 		return $result;
 	}

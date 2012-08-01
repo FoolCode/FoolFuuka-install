@@ -10,7 +10,7 @@
 				</li>
 			</ul>
 			<ul class="nav pull-right">
-				<li><a href="<?php echo URI::create('@default') ?>"><?php echo __('Boards') ?></a></li>
+				<li><a href="<?php echo URI::base('@default') ?>"><?php echo __('Boards') ?></a></li>
 				<li class="divider-vertical"></li>
 				<?php
 				if (\Auth::has_access('maccess.user')):?>

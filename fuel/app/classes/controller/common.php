@@ -13,5 +13,6 @@ class Controller_Common extends Controller
 
 		parent::before();
 	}
+	
 
 }

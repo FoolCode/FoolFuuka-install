@@ -15,6 +15,12 @@ class Router extends \Fuel\Core\Router
 			$namespace = 
 				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).'\\Plugins\\'.\Inflector::words_to_upper($segments[2]).'\\';
 		}
+		
+		if ($segments[0] === 'theme')
+		{
+			$namespace = 
+				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).'\\Theme\\'.\Inflector::words_to_upper($segments[2]).'\\';
+		}
 
 		// First port of call: request for a module?
 		if (\Module::exists($segments[0]))
