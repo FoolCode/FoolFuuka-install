@@ -91,7 +91,7 @@ class Plugins extends \Model
 	}
 	
 	
-	private static function get_plugin_dir($identifier, $slug)
+	protected static function get_plugin_dir($identifier, $slug)
 	{
 		return static::$_identifiers[$identifier]['dir'].$slug.'/';
 	}
@@ -157,6 +157,7 @@ class Plugins extends \Model
 					if ($key == $r['identifier'] && $slug == $r['slug'])
 					{
 						$slugs_with_data[$key][$slug] = $r;
+						$slugs_with_data[$key][$slug]['installed'] = true;
 						$done = true;
 					}
 				}
@@ -164,9 +165,10 @@ class Plugins extends \Model
 				if($done === false) $slugs_with_data[$key][$slug] = array();
 				$slugs_with_data[$key][$slug]['info'] = static::get_info($key, $slug);
 
-				if (!$done)
+				if ($done === false)
 				{
 					$slugs_with_data[$key][$slug]['enabled'] = false;
+					$slugs_with_data[$key][$slug]['installed'] = false;
 				}
 			}
 		}
@@ -182,7 +184,7 @@ class Plugins extends \Model
 	 *
 	 * @return array Array of objects, the rows or the active plugins
 	 */
-	private static function get_enabled()
+	protected static function get_enabled()
 	{
 		return \DB::select()
 			->from('plugins')
@@ -242,33 +244,94 @@ class Plugins extends \Model
 			}
 		}
 	}
-
+	
+	
+	public static function install($identifier, $slug)
+	{
+		$dir = static::get_plugin_dir($identifier, $slug);
+		
+		if (file_exists($dir.'install.php'))
+		{
+			\Fuel::load($dir.'install.php');
+		}
+		
+		\DB::insert('plugins')->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 1))->execute();
+	}
+	
+	
+	/**
+	 * Deletes the plugin directory after running plugin_remove()
+	 *
+	 * @param string $slug the directory name of the plugin
+	 */
+	public static function uninstall($idenfitier, $slug)
+	{
+		$dir = static::get_plugin_dir($identifier, $slug);
+		
+		if (file_exists($dir.'uninstall.php'))
+		{
+			\Fuel::load($dir.'uninstall.php');
+		}
+		
+		\DB::delete('plugins')
+			->where('identifier', $identifier)
+			->where('slug', $slug)
+			->execute();
+	}
+	
 
 	/**
 	 * Enables the plugin after running the upgrade function
 	 */
-	public function enable($identifier, $slug)
+	public static function enable($identifier, $slug)
 	{
-		\DB::insert('plugins')->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 1))->execute();
+		$dir = static::get_plugin_dir($identifier, $slug);
+		
+		$count = \DB::select(\DB::expr('COUNT(*) as count'))
+			->from('plugins')
+			->where('identifier', $identifier)
+			->where('slug', $slug)
+			->as_object()
+			->execute()
+			->current()->count;
+		
+		// if the plugin isn't installed yet, we will run install.php and NOT enable.php
+		if (!$count)
+		{
+			return static::install($identifier, $slug);
+		}
+		
+		if (file_exists($dir.'enable.php'))
+		{
+			\Fuel::load($dir.'enable.php');
+		}
+		
+		\DB::update('plugins')
+			->where('identifier', $identifier)
+			->where('slug', $slug)
+			->value('enabled', 1)
+			->execute();
 	}
 
 
 	/**
 	 * Disables plugin and runs plugin_disable()
 	 */
-	public function disable($slug)
+	public static function disable($identifier, $slug)
 	{
-		\DB::insert('plugins')->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 0))->execute();
+		$dir = static::get_plugin_dir($identifier, $slug);
+		
+		if (file_exists($dir.'disable.php'))
+		{
+			\Fuel::load($dir.'disable.php');
+		}
+		
+		\DB::update('plugins')
+			->where('identifier', $identifier)
+			->where('slug', $slug)
+			->value('enabled', 0)
+			->execute();
 	}
-
-
-	/**
-	 * Deletes the plugin directory after running plugin_remove()
-	 *
-	 * @param string $slug the directory name of the plugin
-	 */
-	public function remove($idenfitier, $slug)
-	{}
 
 
 	/**
@@ -278,21 +341,8 @@ class Plugins extends \Model
 	 * @param string $slug the directory name of the plugin
 	 * @return boolean TRUE on success, FALSE on failure
 	 */
-	public function upgrade($idenfitier, $slug)
+	public static function upgrade($idenfitier, $slug)
 	{}
-	
-	
-	public static function run_route($slug, $identifier, $params)
-	{
-		
-	}
-
-	
-	protected static function load_route($current_dir, $map)
-	{
-		
-	}
-	
 	
 	/**
 	 * Adds a sidebar element when admin controller is accessed.
