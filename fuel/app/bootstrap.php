@@ -106,14 +106,14 @@ else
 	{
 		\Module::load($module);
 		\Config::load($module.'::'.$module, $module);
-		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
-
-			// load the module routing
+		// load the module routing
 		$autoroutes = \Config::load($module.'::autoroutes', 'autoroutes');
 		foreach($autoroutes as $key => $item)
 		{
 			\Router::add($key, $item);
 		}
+
+		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
 
 	}
 }

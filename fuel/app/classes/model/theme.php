@@ -91,8 +91,29 @@ class Theme extends \Model
 	 * @var array
 	 */
 	private $_metadata = array();
+	
+	private static $_instances = array();
+	
+	private static $_set_instance = null;
 
+	
+	public static function forge($name = 'default')
+	{
+		static::$_set_instance = $name;
+		return static::$_instances[$name] = new \Theme();
+	}
 
+	public static function instance($name = null)
+	{
+		if ($name === null)
+		{
+			$name = static::$_set_instance;
+		}
+		
+		static::$_set_instance = $name;
+		return static::$_instances[$name];
+	}
+	
 	/**
 	 * Returns all the themes available and saves the array in a variable
 	 *
