@@ -318,7 +318,7 @@ class Theme extends \Model
 		$result = $this->get_by_name($theme);
 		$this->_selected_theme = $theme;
 
-		// load the theme plugin file if present
+		// load the theme bootstrap file if present
 		\Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$theme.'/bootstrap.php');
 
 		return $result;
