@@ -76,7 +76,7 @@ class Controller_Install extends \Controller
 				$input = $val->input();
 				$input['type'] = 'mysqli';
 
-				if (!\Install::check_database($input))
+				if ( ! \Install::check_database($input))
 				{
 					\Install::setup_database($input);
 					\Install::create_salts();
