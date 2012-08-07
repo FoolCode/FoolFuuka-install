@@ -4,8 +4,8 @@ class Controller_Admin extends Controller_Common
 {
 
 	protected $_views = null;
-	private $sidebar = NULL;
-	private $sidebar_dynamic = NULL;
+	private static $sidebar = array();
+	private static $sidebar_dynamic = array();
 
     public function before()
     {
@@ -15,16 +15,19 @@ class Controller_Admin extends Controller_Common
 			return Response::redirect('admin/auth/login');
 
 		// returns the static sidebar array (can't use functions in )
-		$this->sidebar = $this->get_sidebar_values();
+		self::$sidebar = static::get_sidebar_values();
 
+		// get the plugin sidebars
+		self::$sidebar_dynamic = array_merge(self::$sidebar_dynamic, \Plugins::get_sidebar_elements('admin'));
+		
 		// merge if there were sidebar elements added dynamically
-		if (!is_null($this->sidebar_dynamic))
+		if (!empty(self::$sidebar_dynamic))
 		{
-			$this->sidebar = $this->merge_sidebars($this->sidebar, $this->sidebar_dynamic);
+			self::$sidebar = self::merge_sidebars(self::$sidebar, self::$sidebar_dynamic);
 		}
 
 		$this->_views['navbar'] = View::forge('admin/navbar');
-		$this->_views['sidebar'] = View::forge('admin/sidebar', array('sidebar' => $this->get_sidebar($this->sidebar)));
+		$this->_views['sidebar'] = View::forge('admin/sidebar', array('sidebar' => self::get_sidebar(self::$sidebar)));
 	}
 
     public function action_index()
@@ -45,7 +48,7 @@ class Controller_Admin extends Controller_Common
 	 *
 	 * @return sidebar array
 	 */
-	private function get_sidebar_values()
+	private static function get_sidebar_values()
 	{
 
 		$sidebar = array();
@@ -134,14 +137,14 @@ class Controller_Admin extends Controller_Common
 	 *
 	 * @param array $array
 	 */
-	public function add_sidebar_element($array)
+	public static function add_sidebar_element($array)
 	{
-		if (is_null($this->sidebar_dynamic))
+		if (is_null(static::$sidebar_dynamic))
 		{
-			$this->sidebar_dynamic = array();
+			static::$sidebar_dynamic = array();
 		}
 
-		$this->sidebar_dynamic[] = $array;
+		static::$sidebar_dynamic[] = $array;
 	}
 
 
@@ -153,7 +156,7 @@ class Controller_Admin extends Controller_Common
 	 * @param array $array2 sidebar array with elements to merge
 	 * @return array resulting sidebar
 	 */
-	public function merge_sidebars($array1, $array2)
+	public static function merge_sidebars($array1, $array2)
 	{
 		// there's a numbered index on the outside!
 		foreach ($array2 as $key_top => $item_top)
@@ -192,11 +195,11 @@ class Controller_Admin extends Controller_Common
 					{
 						if (isset($array1[$key]['content']))
 						{
-							$array1[$key]['content'] = $this->merge_sidebars($array1[$key]['content'], $item);
+							$array1[$key]['content'] = self::merge_sidebars($array1[$key]['content'], $item);
 						}
 						else
 						{
-							$array1[$key]['content'] = $this->merge_sidebars(array(), $item);
+							$array1[$key]['content'] = self::merge_sidebars(array(), $item);
 						}
 					}
 				}
@@ -261,7 +264,7 @@ class Controller_Admin extends Controller_Common
 	 *
 	 * @todo comment this
 	 */
-	public function get_sidebar($array)
+	public static function get_sidebar($array)
 	{
 		// not logged in users don't need the sidebar
 		if (Auth::member('guest'))

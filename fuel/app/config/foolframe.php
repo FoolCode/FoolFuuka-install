@@ -67,7 +67,18 @@ return array(
 			'min_mysql_version' => '5.5.0'
 		)
 	),
+	
+	/**
+	 * Locations of the data out of the module folder
+	 */
+	'directories' => array(
+		'themes' => DOCROOT.'foolframe/themes/',
+		'plugins' => DOCROOT.'foolframe/plugins/'
+	),
 
+	/**
+	 * Configurations that can be changed by the user
+	 */
 	'config' => array(
 		'cookie_prefix' => ''
 	),

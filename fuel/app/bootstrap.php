@@ -11,11 +11,13 @@ require COREPATH.'bootstrap.php';
 Autoloader::add_classes(array(
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
+	'Router' => APPPATH.'classes/extend/router.php',
 	'View' => APPPATH.'classes/extend/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
 	'Uri' => APPPATH.'classes/extend/uri.php',
 	'Validation' => APPPATH.'classes/extend/validation.php',
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
+	'ReCaptcha' => APPPATH.'classes/extend/recaptcha.php',
 ));
 
 // Register the autoloader
@@ -104,14 +106,16 @@ else
 	{
 		\Module::load($module);
 		\Config::load($module.'::'.$module, $module);
-		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
-
-			// load the module routing
+		// load the module routing
 		$autoroutes = \Config::load($module.'::autoroutes', 'autoroutes');
 		foreach($autoroutes as $key => $item)
 		{
 			\Router::add($key, $item);
 		}
 
+		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
+
 	}
 }
+
+\Plugins::_init();

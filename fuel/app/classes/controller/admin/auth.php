@@ -82,13 +82,16 @@ class Controller_Admin_Auth extends Controller_Admin
 
 		if (Input::post())
 		{
+			
 			$val = Validation::forge('register');
 			$val->add_field('username', __('Username'), 'required|trim|min_length[4]|max_length[32]');
 			$val->add_field('email', __('Email'), 'required|trim|valid_email');
 			$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
 			$val->add_field('confirm_password', __('Confirm password'), 'required|match_field[password]');
 
-			if($val->run())
+			$recaptcha = !\ReCaptcha::available() || \ReCaptcha::instance()->check_answer(Input::ip(), Input::post('recaptcha_challenge_field'), Input::post('recaptcha_response_field'));
+			
+			if($val->run() && $recaptcha)
 			{
 				$input = $val->input();
 
@@ -141,7 +144,13 @@ class Controller_Admin_Auth extends Controller_Admin
 			}
 			else
 			{
-				Notices::set('error', $val->error());
+				$error = $val->error();
+				if (!$recaptcha)
+				{
+					$error[] = __('The ReCaptcha code you entered doesn\'t match the displayed one.');
+				}
+				
+				Notices::set('error', implode(' ', $error));
 			}
 
 		}
@@ -189,6 +198,10 @@ class Controller_Admin_Auth extends Controller_Admin
 				$input = $val->input();
 
 				return $this->send_change_password_email($input['email']);
+			}
+			else
+			{
+				Notices::set('error', implode(' ', $val->error()));
 			}
 		}
 
