@@ -1,9 +1,11 @@
-<p><?= __('Welcome to the FoolFrame installation.') ?></p>
+<p>
+	<?= __('FoolFrame is a customized framework built upon the open source FuelPHP framework. It provides basic and extended capabilities that are not present within the original FuelPHP framework but specific to our software only. This customized framework serves as the basis of all modules written for FoolFrame.') ?>
+</p>
 
-<p><?= __('FoolFrame is a framework that provides basic capabilities that can be used through several applications.') ?></p>
+<p>
+	<?= __('The installation procedure is split into 6 simple steps and should take approximately 10 minutes to complete.') ?>
+</p>
 
-<p><?= __('This installation will check if your server is capable of running FoolFrame, connect it to a database and install the modules you\'re interested in.') ?></p>
-
-<hr/>
+<hr />
 
 <a href="<?= \Uri::create('install/system_check') ?>" class="btn btn-large btn-success pull-right"><?= __('Next') ?></a>

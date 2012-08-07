@@ -6,8 +6,8 @@ class Controller_Install extends \Controller
 {
 
 	protected $_view_data = array(
-		'title' => 'Installing FoolFrame',
-		'controller_title' => 'Installing FoolFrame'
+		'title' => 'FoolFrame Installation',
+		'controller_title' => 'FoolFrame Installation'
 	);
 
 	public function before()
@@ -19,43 +19,46 @@ class Controller_Install extends \Controller
 		}
 	}
 
-	public function sidebar($status)
+
+	public function process($action)
 	{
-		$sidebar = array(
+		$procedure = array(
 			'welcome' => __('Welcome'),
-			'system_check' => __('System check'),
-			'database_connection' => __('Database connection'),
-			'create_user' => __('User creation'),
-			'install_modules' => __('Install modules'),
-			'complete' => __('Complete'),
+			'system_check' => __('System Check'),
+			'database_setup' => __('Database Setup'),
+			'create_admin' => __('Admin Account'),
+			'modules' => __('Install Modules'),
+			'complete' => __('Congratulations'),
 		);
 
-		$this->_view_data['sidebar'] = \View::forge('install::sidebar', array('sidebar' => $sidebar, 'current' => $status));
+		$this->_view_data['sidebar'] = \View::forge('install::sidebar', array('sidebar' => $procedure, 'current' => $action));
 	}
+
 
 	public function action_index()
 	{
 		$data = array();
-		$data['check'] = \Install::check_system();
 
-		$this->sidebar('welcome');
-		$this->_view_data['method_title'] = 'Welcome';
+		$this->process('welcome');
+		$this->_view_data['method_title'] = __('Welcome');
 		$this->_view_data['main_content_view'] = \View::forge('install::welcome', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
+
 	public function action_system_check()
 	{
 		$data = array();
-		$data['check'] = \Install::check_system();
+		$data['system'] = \Install::check_system();
 
-		$this->sidebar('system_check');
-		$this->_view_data['method_title'] = 'Welcome';
+		$this->process('system_check');
+		$this->_view_data['method_title'] = __('System Check');
 		$this->_view_data['main_content_view'] = \View::forge('install::system_check', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
-	public function action_database_connection()
+
+	public function action_database_setup()
 	{
 		$data = array();
 
@@ -76,29 +79,39 @@ class Controller_Install extends \Controller
 				if (!\Install::check_database($input))
 				{
 					\Install::setup_database($input);
-					\Migrate::latest();
 					\Install::create_salts();
-					\Response::redirect('install/create_user');
+					\Migrate::latest();
+					\Response::redirect('install/create_admin');
 				}
 				else
 				{
-					$this->_view_data['error'] = __('The database couldn\'t be contacted with the specificed coordinates.');
+					$this->_view_data['errors'] = __('Connection to specified database failed. Please check your connection details again.');
 				}
 			}
 			else
 			{
-				$this->_view_data['error'] = implode(' ', $val->error());
+				$this->_view_data['errors'] = $val->error();
 			}
 		}
 
-		$this->sidebar('database_connection');
-		$this->_view_data['method_title'] = 'Database connection';
-		$this->_view_data['main_content_view'] = \View::forge('install::database', $data);
+		$this->process('database_setup');
+		$this->_view_data['method_title'] = __('Database Setup');
+		$this->_view_data['main_content_view'] = \View::forge('install::database_setup', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
-	public function action_create_user()
+
+	public function action_create_admin()
 	{
+		// if an admin account exists, lock down this step and redirect to the next step instead
+		\Config::load('foolauth', 'foolauth');
+		$check_users = \Users::get_all();
+
+		if ($check_users['count'] > 0)
+		{
+			\Response::redirect('install/modules');
+		}
+
 		if (\Input::post())
 		{
 			$val = \Validation::forge('database');
@@ -120,19 +133,22 @@ class Controller_Install extends \Controller
 			}
 			else
 			{
-				$this->_view_data['error'] = implode(' ', $val->error());
+				$this->_view_data['errors'] = $val->error();
 			}
 		}
 
-		$this->sidebar('create_user');
-		$this->_view_data['method_title'] = 'Administrator account creation';
-		$this->_view_data['main_content_view'] = \View::forge('install::create_user');
+		$this->process('create_admin');
+		$this->_view_data['method_title'] = __('Admin Account');
+		$this->_view_data['main_content_view'] = \View::forge('install::create_admin');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
 
 	public function action_modules()
 	{
+		$data = array();
+		$data['modules'] = \Install::modules();
+
 		if (\Input::post())
 		{
 			\Config::load('foolframe', 'foolframe');
@@ -151,17 +167,31 @@ class Controller_Install extends \Controller
 				\Migrate::latest('foolpod', 'module');
 			}
 
-			\Config::set('foolframe.modules.installed', $modules);
-			\Config::save('foolframe', 'foolframe');
+			if (\Input::post('foolslide'))
+			{
+				$modules[] = 'foolslide';
+				\Migrate::latest('foolslide', 'module');
+			}
 
-			\Response::redirect('install/complete');
+			if (count($modules) > 0)
+			{
+				\Config::set('foolframe.modules.installed', $modules);
+				\Config::save('foolframe', 'foolframe');
+
+				\Response::redirect('install/complete');
+			}
+			else
+			{
+				$this->_view_data['errors'] = __('Please select at least one module.');
+			}
 		}
 
-		$this->sidebar('install_modules');
-		$this->_view_data['method_title'] = 'Module installation';
-		$this->_view_data['main_content_view'] = \View::forge('install::modules');
+		$this->process('modules');
+		$this->_view_data['method_title'] = __('Install FoolFrame Modules');
+		$this->_view_data['main_content_view'] = \View::forge('install::modules', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
+
 
 	public function action_complete()
 	{
@@ -170,11 +200,10 @@ class Controller_Install extends \Controller
 		\Config::set('foolframe.install.installed', true);
 		\Config::save('foolframe', 'foolframe');
 
-		$this->sidebar('complete');
-		$this->_view_data['method_title'] = 'Installation completed';
+		$this->process('complete');
+		$this->_view_data['method_title'] = __('Congratulations');
 		$this->_view_data['main_content_view'] = \View::forge('install::complete');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
-
 
 }
