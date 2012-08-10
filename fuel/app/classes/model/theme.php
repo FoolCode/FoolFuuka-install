@@ -384,6 +384,12 @@ class Theme extends \Model
 
 		return $this;
 	}
+	
+	
+	public function get_var($name)
+	{
+		return $this->_view_variables[$name];
+	}
 
 
 	/**
