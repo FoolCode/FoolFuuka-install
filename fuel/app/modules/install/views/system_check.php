@@ -1,52 +1,75 @@
-<p><?= __('Will you be able to run FoolFrame? Here\'s a rundown:') ?></p>
+<p>
+	<?= __('FoolFrame is checking to ensure that your server meets the minimum requirements to run the framework. It will also determine if your server environment is properly configured to run the framework properly.') ?>
+</p>
 
 <p>
-<ul style="margin: 20px 40px">
-
+	<ul style="margin: 20px 40px">
 	<?php $error = false ?>
+	<?php foreach ($system as $key => $item) : ?>
+		<h4><?= e($item['string']) ?></h4>
 
-
-
-	<?php foreach ($check as $key => $item) : ?>
-		<h3><?= e($item['string']) ?></h3>
-
-		<table style="width:80%; margin: 0 auto 10px;">
-			<thead></thead>
+		<table style="width: 90%; margin: 0 auto 10px;">
 			<tbody>
-			<?php foreach ($item['checks'] as $k => $i) : ?>
-				<tr style="border-bottom: 1px solid #ddd">
-					<td style="padding:2px 0 2px 10px; width:200px; text-align:left"><?= e($i['string']) ?></td>
-					<td style="padding:2px 10px 2px 0;  text-align:right">
-					<?php if ($i['result']) : ?>
-						<span class="label label-success"><i class="icon-ok"></i> <?= __('Available!') ?></i></span>
-					<?php else : ?>
-						<?php $error = true ?>
-						<?php if ($i['level'] == 'crit') : ?>
-							<span class="label label-important"><i class="icon-remove"></i>
-						<?php else : ?>
-							<span class="label label-warning"><i class="icon-warning-sign"></i>
+			<?php foreach ($item['checks'] as $k => $check) : ?>
+				<tr<?php if ($check['result']) : ?> style="border-bottom: 1px solid #ddd;"<?php endif; ?>>
+					<td style="width: 10px">
+						<?php if (isset($check['debug'])) : ?>
+							<a href="#<?= $k ?>" rel="popover" data-title="<?= htmlspecialchars($check['string']) ?>" data-content="<?= htmlspecialchars($check['debug']) ?>" data-placement="left"><i class="icon-info-sign" style="color: #d3d3d3"></i></a>
 						<?php endif; ?>
-						<?= __('Not available') ?>
-						</span></td>
-						</tr>
-						<tr style="border-bottom: 1px solid #ddd"><td style="font-size:0.8em"><?= e($i['error']) ?></td></tr>
-						<tr>
-					<?php endif; ?>
+
+					</td>
+
+					<td style="padding: 2px 0 2px 5px; width: 200px; text-align: left">
+						<?= e($check['string']) ?>
+					</td>
+
+					<td style="padding: 2px 10px 2px 0; text-align: right">
+						<?= e($check['value']) ?>
+
+						<?php
+						if ($check['result'])
+						{
+							$icon = array('label' => 'label-success', 'sign' => 'icon-ok');
+						}
+						else
+						{
+							switch ($check['level'])
+							{
+								case 'crit':
+									$error = true;
+									$icon = array('label' => 'label-important', 'sign' => 'icon-remove');
+									break;
+								default:
+									$icon = array('label' => 'label-warning', 'sign' => 'icon-warning-sign');
+							}
+						}
+						?>
+						<span class="label <?= $icon['label'] ?>"><i class="<?= $icon['sign'] ?>"</span>
+					</td>
 				</tr>
+
+				<?php if ( ! $check['result'] && isset($check['error'])) : ?>
+					<tr style="border-bottom: 1px solid #ddd;">
+						<td style="padding: 0 0 0 20px; font-size: 0.8em; color: #ff0000;" colspan="3">
+							<?= e($check['error']) ?>
+						</td>
+					</tr>
+				<?php endif; ?>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
-	<?php endforeach; ?>
 
-</ul>
+		<br class="clearfix" />
+	<?php endforeach; ?>
+	</ul>
 </p>
 
-<br/>
+<?php if ( ! $error) : ?>
+	<p style="text-align:center;"><?= e(__('Congratulations! It seems that your server passed all system requirements to run FoolFrame.')) ?></p>
 
-<?php if (!$error) : ?>
-	<p><?= e(__('Congratulations! Your server is able to run FoolFrame. Next, we\'ll check if we can connect to a database.')) ?></p>
-	<hr/>
-	<a href="<?= \Uri::create('install/database_connection') ?>" class="btn btn-large btn-success pull-right"><?= __('Next') ?></a>
+	<hr />
+
+	<a href="<?= \Uri::create('install/database_setup') ?>" class="btn btn-large btn-success pull-right"><?= __('Next') ?></a>
 <?php else : ?>
-	<p><?= e(__('FoolFrame won\'t be able to run if the above isn\'t available. You will have to install and update the components to be able to run FoolFrame.')) ?>
+	<p style="text-align:center;"><?= e(__('Sorry, your server failed to pass all of the essential requirements to run FoolFrame. Please view the information above and ensure that your environment is properly configured.')) ?></p>
 <?php endif; ?>

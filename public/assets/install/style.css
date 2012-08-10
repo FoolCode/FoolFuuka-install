@@ -32,12 +32,17 @@ hr {
 	padding: 15px 2% 25px;
 }
 
-.satin h3, .sidebar h3 {
+
+.satin h2, .satin h3, .satin h4, .sidebar h2, .sidebar h3, .sidebar h4 {
 	color: #555;
 	margin-bottom:15px;
 	border-bottom: 1px solid #ddd;
 	padding-bottom:10px;
 	text-align:center;
+}
+
+.satin h2, .satin h3, .satin h4 {
+    text-align:left;
 }
 
 .footer {
@@ -67,4 +72,8 @@ hr {
 
 .sidebar ol li.green {
 	color: green;
+}
+
+.small-text {
+    font-size: 0.8em;
 }

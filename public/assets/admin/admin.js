@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
-	
-	jQuery('[rel=popover-right]').popover();
-	
+
+	jQuery('[rel=popover]').popover();
+
 	jQuery('body').on('change', '[data-function]', function(event){
 		var el = jQuery(this);
 		switch(el.data('function'))
@@ -23,5 +23,5 @@ jQuery(document).ready(function() {
 				break;
 		}
 	});
-	
+
 });

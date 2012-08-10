@@ -59,7 +59,12 @@ return array(
 			/**
 			* Minimal PHP requirement
 			*/
-			'min_php_version' => '5.3.0'
+			'min_php_version' => '5.3.0',
+
+			/**
+			 * Minimal MySQL requirement
+			 */
+			'min_mysql_version' => '5.5.0'
 		)
 	),
 	

@@ -98,7 +98,6 @@ class Install
 
 			\DBUtil::create_index('user_login_attempts', array('username', 'time'), 'username_time_index');
 		}
-
 	}
 
     function down()

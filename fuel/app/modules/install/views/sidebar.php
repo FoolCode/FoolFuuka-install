@@ -1,5 +1,5 @@
 <div class="sidebar content-rounded pull-left">
-	<h3><?= __('Progress') ?></h3>
+	<h2><?= \Config::get('foolframe.main.name') ?></h2>
 
 	<ol>
 		<?php $count = 0 ?>
@@ -34,6 +34,6 @@
 	</div>
 
 	<footer class="footer">
-		<p>Installing<br/><?= \Config::get('foolframe.main.name') ?> Version <?= \Config::get('foolframe.main.version') ?></p>
+		<p>Version <?= \Config::get('foolframe.main.version') ?></p>
 	</footer>
 </div>
