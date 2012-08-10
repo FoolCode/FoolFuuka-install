@@ -43,9 +43,9 @@ class Ssl_Tools extends \Plugins
 	{
 		if(\Preferences::get('ff.plugins.ssl_tools.enable_'.$position.'_link') && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off'))
 		{
-			$top_nav[] = array('href' => 'https' . substr(\Uri::current(), 4), 'text' => '<i class="icon-lock"></i> SSL');
+			$nav[] = array('href' => 'https' . substr(\Uri::current(), 4), 'text' => '<i class="icon-lock"></i> SSL');
 		}
-		return array('return' => $top_nav);
+		return array('return' => $nav);
 	}
 
 }
