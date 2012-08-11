@@ -34,19 +34,19 @@ class Plugins extends \Model
 	 * @var array
 	 */
 	protected static $_hooks = array();
-	
-	
+
+
 	/**
 	 * List of identifiers and their modules.
-	 * 
+	 *
 	 * @var array key is the identifier, the value is the lowercase name of the module
 	 */
 	protected static $_identifiers = array();
-	
+
 	protected static $_admin_sidebars = array();
 
 
-	public static function _init()
+	public static function initialize()
 	{
 		// store all the relevant data from the modules
 		foreach (array_merge(array('foolframe'), \Config::get('foolframe.modules.installed')) as $module)
@@ -56,10 +56,10 @@ class Plugins extends \Model
 				'dir' => \Config::get($module.'.directories.plugins')
 			);
 		}
-		
+
 		static::load_plugins();
 	}
-	
+
 	/**
 	 * The plugin slugs are the folder names
 	 *
@@ -68,7 +68,7 @@ class Plugins extends \Model
 	public static function lookup_plugins()
 	{
 		$slugs = array();
-		
+
 		// get all the plugins stacked by identifier
 		foreach (static::$_identifiers as $key => $item)
 		{
@@ -83,19 +83,19 @@ class Plugins extends \Model
 
 		return $slugs;
 	}
-	
-	
+
+
 	public static function get_module_name_by_identifier($identifier)
 	{
 		return static::$_identifiers[$identifier]['slug'];
 	}
-	
-	
+
+
 	protected static function get_plugin_dir($identifier, $slug)
 	{
 		return static::$_identifiers[$identifier]['dir'].$slug.'/';
 	}
-	
+
 
 	/**
 	 * Grabs the info from the plugin _info.php file and returns it as object
@@ -118,11 +118,11 @@ class Plugins extends \Model
 	public static function get_all()
 	{
 		\Profiler::mark('Plugins::get_all Start');
-		
+
 		$slugs = static::lookup_plugins();
 
 		$result = array();
-		
+
 		if (count($slugs) > 0)
 		{
 			$slugs_to_sql = $slugs;
@@ -214,7 +214,7 @@ class Plugins extends \Model
 		}
 
 		$result = $query->current();
-		
+
 		$result['info'] = static::get_info($identifier, $slug);
 
 		return $result;
@@ -235,7 +235,7 @@ class Plugins extends \Model
 		{
 			if(!is_null($identifier) && $plugin['identifier'] != $identifier && $plugin['slug'] != $slug)
 				continue;
-			
+
 			$path = static::get_plugin_dir($plugin['identifier'], $plugin['slug']).'/bootstrap.php';
 
 			if (file_exists($path))
@@ -244,21 +244,21 @@ class Plugins extends \Model
 			}
 		}
 	}
-	
-	
+
+
 	public static function install($identifier, $slug)
 	{
 		$dir = static::get_plugin_dir($identifier, $slug);
-		
+
 		if (file_exists($dir.'install.php'))
 		{
 			\Fuel::load($dir.'install.php');
 		}
-		
+
 		\DB::insert('plugins')->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 1))->execute();
 	}
-	
-	
+
+
 	/**
 	 * Deletes the plugin directory after running plugin_remove()
 	 *
@@ -267,18 +267,18 @@ class Plugins extends \Model
 	public static function uninstall($idenfitier, $slug)
 	{
 		$dir = static::get_plugin_dir($identifier, $slug);
-		
+
 		if (file_exists($dir.'uninstall.php'))
 		{
 			\Fuel::load($dir.'uninstall.php');
 		}
-		
+
 		\DB::delete('plugins')
 			->where('identifier', $identifier)
 			->where('slug', $slug)
 			->execute();
 	}
-	
+
 
 	/**
 	 * Enables the plugin after running the upgrade function
@@ -286,7 +286,7 @@ class Plugins extends \Model
 	public static function enable($identifier, $slug)
 	{
 		$dir = static::get_plugin_dir($identifier, $slug);
-		
+
 		$count = \DB::select(\DB::expr('COUNT(*) as count'))
 			->from('plugins')
 			->where('identifier', $identifier)
@@ -294,18 +294,18 @@ class Plugins extends \Model
 			->as_object()
 			->execute()
 			->current()->count;
-		
+
 		// if the plugin isn't installed yet, we will run install.php and NOT enable.php
 		if (!$count)
 		{
 			return static::install($identifier, $slug);
 		}
-		
+
 		if (file_exists($dir.'enable.php'))
 		{
 			\Fuel::load($dir.'enable.php');
 		}
-		
+
 		\DB::update('plugins')
 			->where('identifier', $identifier)
 			->where('slug', $slug)
@@ -320,12 +320,12 @@ class Plugins extends \Model
 	public static function disable($identifier, $slug)
 	{
 		$dir = static::get_plugin_dir($identifier, $slug);
-		
+
 		if (file_exists($dir.'disable.php'))
 		{
 			\Fuel::load($dir.'disable.php');
 		}
-		
+
 		\DB::update('plugins')
 			->where('identifier', $identifier)
 			->where('slug', $slug)
@@ -343,7 +343,7 @@ class Plugins extends \Model
 	 */
 	public static function upgrade($idenfitier, $slug)
 	{}
-	
+
 	/**
 	 * Adds a sidebar element when admin controller is accessed.
 	 *
@@ -359,20 +359,20 @@ class Plugins extends \Model
 			$array2[$section] = $array;
 			$array = $array2;
 		}
-		
+
 		static::$_admin_sidebars[$type][] = $array;
 
 		\Controller_Admin::add_sidebar_element($array);
 	}
 
-	
+
 	public static function get_sidebar_elements($type)
 	{
 		if (!isset(static::$_admin_sidebars[$type]))
 		{
 			return array();
 		}
-		
+
 		return static::$_admin_sidebars[$type];
 	}
 
@@ -407,10 +407,10 @@ class Plugins extends \Model
 		foreach($hook_array as $hook)
 		{
 			// if this is 'after', we might already have an extra parameter in the array that is the previous result
-			
+
 			// this works whether it's a closure or \Some\method::calling
 			$return_temp = call_user_func_array($hook['method'], $parameters);
-				
+
 			if(is_null($return_temp))
 			{
 				// if NULL, the plugin creator didn't want to send a message outside

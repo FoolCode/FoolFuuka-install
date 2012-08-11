@@ -81,6 +81,8 @@ class Controller_Install extends \Controller
 					\Install::setup_database($input);
 					\Install::create_salts();
 					\Migrate::latest();
+					// due to random salt generation, truncate users table
+					\Install::clear_database_users();
 					\Response::redirect('install/create_admin');
 				}
 				else

@@ -223,6 +223,14 @@ class Install extends \Model
 		}
 	}
 
+	public static function clear_database_users()
+	{
+		\Config::load('foolauth', 'foolauth');
+		
+		\DBUtil::set_connection('default');
+		\DBUtil::truncate_table(\Config::get('foolauth.table_name'));
+	}
+
 
 	public static function create_salts()
 	{

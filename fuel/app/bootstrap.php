@@ -116,6 +116,6 @@ else
 		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
 
 	}
-}
 
-\Plugins::_init();
+	\Plugins::initialize();
+}
