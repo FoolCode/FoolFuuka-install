@@ -226,7 +226,7 @@ class Install extends \Model
 	public static function clear_database_users()
 	{
 		\Config::load('foolauth', 'foolauth');
-		
+
 		\DBUtil::set_connection('default');
 		\DBUtil::truncate_table(\Config::get('foolauth.table_name'));
 	}
@@ -235,7 +235,7 @@ class Install extends \Model
 	public static function create_salts()
 	{
 		\Config::load('foolframe', 'foolframe');
-		\Config::set('foolframe.config.cookie_prefix','foolframe'.\Str::random('alnum', 3).'_');
+		\Config::set('foolframe.config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::save('foolframe', 'foolframe');
 
 		\Config::load('auth', 'auth');
@@ -245,6 +245,11 @@ class Install extends \Model
 		\Config::load('foolauth', 'foolauth');
 		\Config::set('foolauth.login_hash_salt', \Str::random('alnum', 24));
 		\Config::save('foolauth', 'foolauth');
+
+		\Config::load('cache', 'cache');
+		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
+		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
+		\Config::save('cache', 'cache');
 	}
 
 
