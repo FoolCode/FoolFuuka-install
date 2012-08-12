@@ -149,6 +149,7 @@ class Preferences extends \Model
 		if (\Input::post())
 		{
 			$post = array();
+			
 			foreach (\Input::post() as $key => $item)
 			{
 				// PHP doesn't allow periods in POST array

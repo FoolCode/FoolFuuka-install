@@ -326,7 +326,14 @@
 						$data_form = array();
 						if (!isset($item['value']))
 						{
-							$item['value'] = array();
+							if($unserialized = unserialize(\Preferences::get(str_replace(',', '.', $name))))
+							{
+								$item['value'] = $unserialized;
+							}
+							else
+							{
+								$item['value'] = array();
+							}
 						}
 
 						foreach($helpers['checkboxes'] as $checkbox)
@@ -334,7 +341,7 @@
 							$checked = FALSE;
 							if(isset($item['value'][$checkbox['array_key']]))
 							{
-								$checked = (bool)$item['value'][$checkbox['array_key']];
+								$checked = (bool) $item['value'][$checkbox['array_key']];
 							}
 							else if(isset($checkbox['checked']))
 							{

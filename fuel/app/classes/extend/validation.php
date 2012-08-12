@@ -16,7 +16,7 @@ class Validation extends \Fuel\Core\Validation
 		// merge the result.
 
 		$input = !is_null($alternate) ? $alternate : \Input::post();
-
+		
 		foreach ($form as $name => $item)
 		{
 			if(isset($item['sub']))
@@ -38,7 +38,7 @@ class Validation extends \Fuel\Core\Validation
 
 				foreach($item['checkboxes'] as $checkbox)
 				{
-					$form_temp[$name . '[' . $checkbox['array_key'] . ']'] = $checkbox;
+					$form_temp[$name . ',' . $checkbox['array_key'] . ''] = $checkbox;
 				}
 
 				$form = array_merge($form, $form_temp);
@@ -127,43 +127,36 @@ class Validation extends \Fuel\Core\Validation
 			foreach ($form as $name => $item)
 			{
 				// not interested in data that is not related to database
-				if ((!isset($item['database']) || $item['database'] !== TRUE) &&
+				if ($item['type'] != 'checkbox_array' &&
+					(!isset($item['database']) || $item['database'] !== TRUE) &&
 					(!isset($item['preferences']) || $item['preferences'] === FALSE))
 				{
 					continue;
 				}
-
-				// create a version without array index
-				if(isset($item['array_key']) && substr($name, -1, 1) == ']' && substr($name, -2, 1) != '[')
+				
+				if ($item['type'] == 'checkbox_array')
 				{
-					$pos = strrpos($name, '[');
-					$name_no_index = substr($name, 0, $pos);
+					foreach ($item['checkboxes'] as $checkbox_key => $checkbox)
+					{
+						if (isset($input[$name][$checkbox['array_key']]) && $input[$name][$checkbox['array_key']] == 1)
+						{
+							$result[$name][$checkbox['array_key']] = 1;
+						}
+						else
+						{
+							$result[$name][$checkbox['array_key']] = 0;
+						}
+					}
 				}
-
-				if ($item['type'] == 'checkbox' && isset($input[$name]))
+				else if ($item['type'] == 'checkbox' && isset($item[$name]))
 				{
 					if ($input[$name] == 1)
 					{
-						// support for multidimensional checkbox groups
-						if(isset($item['array_key']))
-						{
-							$result[$name_no_index][$item['array_key']] = 1;
-						}
-						else
-						{
-							$result[$name] = 1;
-						}
+						$result[$name] = 1;
 					}
 					else
 					{
-						if(isset($item['array_key']))
-						{
-							$result[$name_no_index][$item['array_key']] = 0;
-						}
-						else
-						{
-							$result[$name] = 0;
-						}
+						$result[$name] = 0;
 					}
 				}
 				else
