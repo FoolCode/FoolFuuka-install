@@ -15,6 +15,8 @@ class Model_Base extends \Model
 	{
 		$class = strtolower(get_class($this));
 
+		$parameters = array_merge($parameters + array(&$this));
+		
 		$before = \Plugins::run_hook($class.'.'.$name.'.call.before', $parameters);
 
 		if (is_array($before))
