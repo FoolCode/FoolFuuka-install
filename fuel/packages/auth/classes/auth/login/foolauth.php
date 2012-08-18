@@ -51,6 +51,17 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		'login_hash' => false,
 		'email' => false
 	);
+	
+	/**
+	 * @var  array  value for cli login
+	 */
+	protected static $cli_login = array(
+		'id' => 0,
+		'username' => 'cli_admin',
+		'group' => '100',
+		'login_hash' => false,
+		'email' => false
+	);
 
 	/**
 	 * @var  array  FoolAuth class config
@@ -67,6 +78,12 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	protected function perform_check()
 	{
+		if (PHP_SAPI === 'cli')
+		{
+			$this->user = static::$cli_login;
+			return true;
+		}
+		
 		$autologin_hash = \Cookie::get('autologin');
 
 		if ( ! empty($autologin_hash))
