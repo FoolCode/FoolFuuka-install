@@ -236,28 +236,39 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 	}
 
 	
-	function remove($id)
+	public function action_remove($id)
 	{
-		if(!$article = $this->get_by_id($id))
+		try
 		{
-			show_404();
+			$article = Articles::get_by_id($id);
+		}
+		catch (ArticlesArticleNotFoundException $e)
+		{
+			throw new \HttpNotFoundException;
 		}
 		
-		if($this->input->post())
+		if (\Input::post())
 		{
-			$this->db->where('id', $id)->delete('plugin_ff-articles');
-			$this->clear_cache();
-			flash_notice('success', __('The article was removed'));
-			redirect('admin/articles/manage');
+			try
+			{
+				Articles::remove($id);
+			}
+			catch (ArticlesArticleNotFoundException $e)
+			{
+				throw new \HttpNotFoundException;
+			}
+			
+			\Response::redirect('admin/articles');
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . Uri::create('admin/articles') . '">' . __('Articles') . '</a>';
-		$this->viewdata["function_title"] = __('Removing article:') . ' ' . $article->title;
+		
+		$this->_views["controller_title"] = __('Articles');
+		$this->_views["method_title"] = __('Removing article:') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
 
-		$this->viewdata["main_content_view"] = $this->load->view('admin/confirm', $data, TRUE);
-		$this->load->view('admin/default', $this->viewdata);
+		$this->_views["main_content_view"] = \View::forge('admin/confirm', $data);
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 		
 	}
 	

@@ -14,7 +14,7 @@ class Articles extends \Plugins
 	public static function remove($id)
 	{
 		// this might throw ArticlesArticleNotFound, catch in controller
-		$article = static::get_by_id($id);
+		static::get_by_id($id);
 		
 		\DB::delete('plugin_ff-articles')
 			->where('id', $id)
@@ -83,7 +83,7 @@ class Articles extends \Plugins
 	public static function get_by_id($id)
 	{
 		$query = \DB::select()
-			->from('plugin_f-articles')
+			->from('plugin_ff-articles')
 			->where('id', $id);
 			
 		if ( ! \Auth::has_access('maccess.mod'))
