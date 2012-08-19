@@ -13,9 +13,8 @@ if (!defined('DOCROOT'))
 // don't add the admin panels if the user is not an admin
 if (\Auth::has_access('maccess.admin'))
 {
-	
-	\Router::add('admin/plugins/articles', 'plugin/ff/articles/admin/articles/manage');
-	\Router::add('admin/plugins/articles/(:any)', 'plugin/ff/articles/admin/articles/$1');
+	\Router::add('admin/articles', 'plugin/ff/articles/admin/articles/manage');
+	\Router::add('admin/articles/(:any)', 'plugin/ff/articles/admin/articles/$1');
 
 	\Plugins::register_sidebar_element('admin', 'articles', array(
 			"name" => __("Articles"),
@@ -32,7 +31,7 @@ if (\Auth::has_access('maccess.admin'))
 	);
 }
 
-\Router::add('_/article/(:any)', 'plugin/ff/articles/chan/article/$1', true);
+\Router::add('_/articles/(:any)', 'plugin/ff/articles/chan/articles/$1', true);
 
 \Plugins::register_hook('ff.themes.generic_top_nav_buttons', 'Foolframe\\Plugins\\Articles\\Articles::get_top', 3);
 \Plugins::register_hook('ff.themes.generic_bottom_nav_buttons', 'Foolframe\\Plugins\\Articles\\Articles::get_bottom', 3);

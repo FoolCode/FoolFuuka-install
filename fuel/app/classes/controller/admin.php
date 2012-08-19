@@ -18,7 +18,7 @@ class Controller_Admin extends Controller_Common
 		self::$sidebar = static::get_sidebar_values();
 
 		// get the plugin sidebars
-		self::$sidebar_dynamic = array_merge(self::$sidebar_dynamic, \Plugins::get_sidebar_elements('admin'));
+		self::$sidebar_dynamic = \Plugins::get_sidebar_elements('admin');
 		
 		// merge if there were sidebar elements added dynamically
 		if (!empty(self::$sidebar_dynamic))

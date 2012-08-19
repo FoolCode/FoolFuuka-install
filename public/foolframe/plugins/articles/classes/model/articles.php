@@ -6,7 +6,7 @@ if (!defined('DOCROOT'))
 	exit('No direct script access allowed');
 
 
-class ArticlesArticleNotFoundException extends \Exception {};
+class ArticlesArticleNotFoundException extends \Exception {};
 
 
 class Articles extends \Plugins
@@ -37,7 +37,7 @@ class Articles extends \Plugins
 	public static function get_all()
 	{
 		$query = \DB::select()
-			->from('plugin_fs-articles');
+			->from('plugin_ff-articles');
 			
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
@@ -56,7 +56,7 @@ class Articles extends \Plugins
 	public static function get_by_slug($slug)
 	{
 		$query = \DB::select()
-			->from('plugin_fs-articles')
+			->from('plugin_ff-articles')
 			->where('slug', $slug);
 			
 		if ( ! \Auth::has_access('maccess.mod'))
@@ -70,20 +70,20 @@ class Articles extends \Plugins
 		$result = $query->as_object()
 			->execute()
 			->as_array();
-		
+
 		if ( ! count($result))
 		{
 			throw new ArticlesArticleNotFoundException;
 		}
 
-		return $result;
+		return $result[0];
 	}
 
 
 	public static function get_by_id($id)
 	{
 		$query = \DB::select()
-			->from('plugin_fs-articles')
+			->from('plugin_f-articles')
 			->where('id', $id);
 			
 		if ( ! \Auth::has_access('maccess.mod'))
@@ -103,7 +103,7 @@ class Articles extends \Plugins
 			throw new ArticlesArticleNotFoundException;
 		}
 		
-		return $result;
+		return $result[0];
 	}
 	
 	
@@ -127,7 +127,7 @@ class Articles extends \Plugins
 		catch (\CacheNotFoundException $e)
 		{
 			$result = \DB::select('slug', 'title')
-				->from('plugin_fs-articles')
+				->from('plugin_ff-articles')
 				->where($where, 1)
 				->as_object()
 				->execute()
@@ -153,7 +153,7 @@ class Articles extends \Plugins
 	public static function get_index($nav)
 	{
 		$result = \DB::select('slug', 'title')
-			->from('plugin_fs-articles')
+			->from('plugin_ff-articles')
 			->as_object()
 			->execute()
 			->as_array();
@@ -181,14 +181,14 @@ class Articles extends \Plugins
 	{
 		if (isset($data['id']))
 		{
-			\DB::update('plugin_fs-articles')
+			\DB::update('plugin_ff-articles')
 				->where('id', $data['id'])
 				->set($data)
 				->execute();
 		}
 		else
 		{
-			\DB::insert('plugin_fs-articles')
+			\DB::insert('plugin_ff-articles')
 				->set($data)
 				->execute();
 		}

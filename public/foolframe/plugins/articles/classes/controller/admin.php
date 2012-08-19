@@ -8,7 +8,7 @@ if (!defined('DOCROOT'))
 class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 {
 	
-	function structure()
+	public function structure()
 	{
 		return array(
 			'open' => array(
@@ -21,7 +21,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 				{
 					// check that the ID exists
 					$query = \DB::select()
-						->from('plugin_fs-articles')
+						->from('plugin_ff-articles')
 						->where('id', $input['id'])
 						->execute();
 					if (count($query) != 1)
@@ -60,7 +60,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 					{
 						// existence ensured by CRITICAL in the ID check
 						$result = \DB::select()
-							->from('plugin_fs-articles')
+							->from('plugin_ff-articles')
 							->where('id', $input['id'])
 							->as_object()
 							->execute()
@@ -76,7 +76,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 
 					// check that there isn't already an article with that name
 					$result = \DB::select()
-						->from('plugin_fs-articles')
+						->from('plugin_ff-articles')
 						->where('slug', $input['slug'])
 						->execute();
 					
@@ -133,12 +133,12 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 		);
 	}
 
-	function manage()
+	public function action_manage()
 	{
 		$this->_views['controller_title'] = __("Articles");
 		$this->_views['method_title'] = __('Manage');
 
-		$articles = static::get_all();
+		$articles = Articles::get_all();
 		
 		ob_start();
 		?>
@@ -176,20 +176,18 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			</table>
 
 		<?php
-		$data['content'] = ob_get_clean();
-		$this->_views["main_content_view"] = \View::forge('admin/plugin', $data);
-		\Response::forge(\View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = ob_get_clean();
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 
-	function edit($slug = null)
+	public function action_edit($slug = null)
 	{
 		$data['form'] = $this->structure();
 		
-		if($this->input->post())
+		if(\Input::post())
 		{
-			$this->load->library('form_validation');
-			$result = $this->form_validation->form_validate($data['form']);
+			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
 			{
 				set_notice('warning', $result['error']);
@@ -197,44 +195,44 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			else
 			{
 				// it's actually fully checked, we just have to throw it in DB
-				$this->save($result['success']);
+				Articles::save($result['success']);
 				if (is_null($slug))
 				{
-					flash_notice('success', __('New article created!'));
-					redirect('admin/articles/edit/' . $result['success']['slug']);
+					\Notices::set_flash('success', __('New article created!'));
+					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				else if ($slug != $result['success']['slug'])
 				{
 					// case in which letter was changed
-					flash_notice('success', __('Article information updated.'));
-					redirect('admin/article/edit/' . $result['success']['slug']);
+					\Notices::set_flash('success', __('Article information updated.'));
+					\Response::redirect('admin/article/edit/' . $result['success']['slug']);
 				}
 				else
 				{
-					set_notice('success', __('Article information updated.'));
+					\Notices::set('success', __('Article information updated.'));
 				}
 			}
 		}
 		
 		if(!is_null($slug))
 		{
-			$data['object'] = $this->get_by_slug($slug);
+			$data['object'] = Articles::get_by_slug($slug);
 			if($data['object'] == FALSE)
 			{
 				show_404();
 			}	
 			
-			$this->viewdata["function_title"] = __('Article') . ': ' . $data['object']->slug;
+			$this->_views["method_title"] = __('Article') . ': ' . $data['object']->slug;
 		}
 		else 
 		{
-			$this->viewdata["function_title"] = __('New article') ;
+			$this->_views["method_title"] = __('New article') ;
 		}
 		
-		$this->viewdata["controller_title"] = '<a href="' . Uri::create('admin/articles') . '">' . __('Articles') . '</a>';
+		$this->_views["controller_title"] = __('Articles');
 		
-		$this->viewdata["main_content_view"] = $this->load->view("admin/form_creator.php", $data, TRUE);
-		$this->load->view("admin/default.php", $this->viewdata);
+		$this->_views["main_content_view"] = \View::forge('admin/form_creator', $data);
+		return \Response::forge(\View::forge('admin/default', $this->_views));
 	}
 
 	
@@ -247,7 +245,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 		
 		if($this->input->post())
 		{
-			$this->db->where('id', $id)->delete('plugin_fs-articles');
+			$this->db->where('id', $id)->delete('plugin_ff-articles');
 			$this->clear_cache();
 			flash_notice('success', __('The article was removed'));
 			redirect('admin/articles/manage');
