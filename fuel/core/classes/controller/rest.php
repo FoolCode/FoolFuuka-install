@@ -99,7 +99,7 @@ abstract class Controller_Rest extends \Controller
 			$valid_login = $this->_prepare_digest_auth();
 		}
 
-		//If the request passes auth then execute as normal
+		//If the request passes account then execute as normal
 		if(\Config::get('rest.auth') == '' or $valid_login)
 		{
 			// If they call user, go to $this->post_user();
@@ -354,7 +354,7 @@ abstract class Controller_Rest extends \Controller
 
 		/* The $_SESSION['error_prompted'] variabile is used to ask
 		  the password again if none given or if the user enters
-		  a wrong auth. informations. */
+		  a wrong account. informations. */
 		if (empty($digest_string))
 		{
 			static::_force_login($uniqid);

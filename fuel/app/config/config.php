@@ -202,11 +202,11 @@ return array(
 		 * These packages are loaded on Fuel's startup.  You can specify them in
 		 * the following manner:
 		 *
-		 * array('auth'); // This will assume the packages are in PKGPATH
+		 * array('account'); // This will assume the packages are in PKGPATH
 		 *
 		 * // Use this format to specify the path to the package explicitly
 		 * array(
-		 *     array('auth'	=> PKGPATH.'auth/')
+		 *     array('account'	=> PKGPATH.'account/')
 		 * );
 		 */
 		'packages'  => array(
@@ -234,8 +234,8 @@ return array(
 		 * Configs to autoload
 		 *
 		 * Examples: if you want to load 'session' config into a group 'session' you only have to
-		 * add 'session'. If you want to add it to another group (example: 'auth') you have to
-		 * add it like 'session' => 'auth'.
+		 * add 'session'. If you want to add it to another group (example: 'account') you have to
+		 * add it like 'session' => 'account'.
 		 * If you don't want the config in a group use null as groupname.
 		 */
 		'config'  => array(),

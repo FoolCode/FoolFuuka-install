@@ -4,15 +4,15 @@
 		<title><?= $title ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<link rel="stylesheet" type="text/css" href="<?= \URI::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<link rel="stylesheet" type="text/css" href="<?= \URI::base().'assets/font-awesome/css/font-awesome.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Config::get('foolframe.main.version') ?>" />
 		<!--[if lt IE 8]>
-			<link href="<?= \URI::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
-		<link rel="stylesheet" type="text/css" href="<?= \URI::base().'assets/install/style.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<script type="text/javascript" src="<?= \URI::base().'assets/js/jquery.js?v='.\Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \URI::base().'assets/admin/admin.js?v='.\Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \URI::base().'assets/bootstrap2/js/bootstrap.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/install/style.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Config::get('foolframe.main.version') ?>"></script>
 	</head>
 
 	<body>

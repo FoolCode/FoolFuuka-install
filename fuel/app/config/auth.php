@@ -11,4 +11,4 @@ return array(
     'salt' => 'give_me_salt',
 );
 
-/* End of file auth.php */
+/* End of file account.php */

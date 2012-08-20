@@ -427,4 +427,4 @@ class Auth
 	}
 }
 
-/* end of file auth.php */
+/* end of file account.php */

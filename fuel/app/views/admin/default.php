@@ -4,78 +4,90 @@
 		<title><?php echo Preferences::get('fu.gen.website_title'); ?> <?php echo __('Control Panel') ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/bootstrap2/css/bootstrap.min.css?v=<?= \Config::get('foolframe.main.version') ?>" />
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/admin/admin.css?v=<?= \Config::get('foolframe.main.version') ?>" />
-		<script type="text/javascript" src="<?= URI::base() ?>assets/js/jquery.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= URI::base() ?>assets/bootstrap2/js/bootstrap.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
-		<link rel="stylesheet" type="text/css" href="<?= URI::base() ?>assets/font-awesome/css/font-awesome.css?v=<?= \Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/admin/admin.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='. \Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Config::get('foolframe.main.version') ?>" />
 		<!--[if lt IE 8]>
-			<link href="<?= URI::base() ?>assets/font-awesome/css/font-awesome-ie7.css?v=<?= \Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
-		<script type="text/javascript" src="<?= URI::base() ?>assets/admin/admin.js?v=<?= \Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Config::get('foolframe.main.version') ?>"></script>
 	</head>
 
 	<body>
 
-		<?= $navbar; ?>
+		<?= $navbar ?>
 
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div style="width:16%" class="pull-left">
-					<?php echo $sidebar ?>
+					<?= $sidebar ?>
 				</div>
 
 
 				<div style="width:82%" class="pull-right">
 					<ul class="breadcrumb">
-						<?php
-						echo '<li>' . $controller_title . '</li>';
+						<li><?= $controller_title ?></li>
 
-						if (isset($method_title))
-							echo ' <span class="divider">/</span> <li>' . $method_title . '</li>';
+						<?php if (isset($method_title)) : ?>
+							<span class="divider">/</span> <li><?= $method_title ?></li>
+						<?php endif; ?>
+
+						<?php
 						if (isset($extra_title) && !empty($extra_title))
 						{
-							$breadcrumbs = count($extra_title);
 							$count = 1;
 							foreach ($extra_title as $item)
 							{
 								echo ' <span class="divider">/</span> ';
-								if ($count == $breadcrumbs)
-									echo '<li class="active">' . $item . '</li>';
+								if ($count == count($extra_title))
+								{
+									echo '<li class="active">'.$item.'</li>';
+								}
 								else
-									echo '<li>' . $item . '</li>';
+								{
+									echo '<li>'.$item.'</li>';
+								}
+
+								$count++;
 							}
 						}
 						?>
 					</ul>
 
-					<?php
-					if (isset($method_title))
-						echo '<h3>' . $method_title . '</h3>';
-					?>
+					<?php if (isset($method_title)) : ?>
+						<h3><?= $method_title ?></h3>
+					<?php endif; ?>
 
 					<div class="alerts">
-						<?php
-							$notices = array_merge(Notices::get(), Notices::flash());
-							foreach($notices as $notice) : ?>
+						<?php $notices = array_merge(\Notices::get(), \Notices::flash()); ?>
+						<?php foreach ($notices as $notice) : ?>
 							<div class="alert alert-"<?= $notice['level'] ?>">
-								<?= htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+								<?php if (is_array($notice['message'])) : ?>
+									<ul>
+										<?php foreach ($notice['message'] as $message) : ?>
+											<li><?= htmlentities($message, ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?></li>
+										<?php endforeach; ?>
+									</ul>
+								<?php else : ?>
+									<?= htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+								<?php endif; ?>
 							</div>
-						<?php endforeach ?>
+						<?php endforeach; ?>
 					</div>
 
-					<?php
-					if (isset($main_content_view))
-						echo $main_content_view;
-					?>
-
+					<?php if (isset($main_content_view)) : ?>
+						<?= $main_content_view ?>
+					<?php endif; ?>
 
 					<footer class="footer">
-						<p style="padding-left: 20px;"><?php echo \Config::get('foolframe.main.name') ?> Version <?php
-						echo \Config::get('foolframe.main.version');
-						if (Auth::member('admin') && (\Config::get('foolframe.main.version') != Preferences::get('ff.cron.autoupgrade_version') && (Preferences::get('ff.cron.autoupgrade_version'))))
-							echo ' – <a href="' . site_url('admin/system/upgrade/') . '">' . __('New upgrade available:') . ' ' . Preferences::get('ff.cron.autoupgrade_version') . '</a>';
-						?></p>
+						<p style="padding-left: 20px;">
+							<?= \Config::get('foolframe.main.name') ?> Version <?= \Config::get('foolframe.main.version') ?>
+							<?php if (\Auth::member('admin') && (\Config::get('foolframe.main.version') != \Preferences::get('ff.cron.latest_version') && \Preferences::get('ff.cron.latest_version'))) : ?>
+								- <a href="<?= Uri::create('admin/system/upgrade') ?>"><?= \Str::tr(__('New Version Available: :version'), array('version' => \Preferences::get('ff.cron.latest_version'))) ?></a>
+							<?php endif; ?>
+						</p>
 					</footer>
 				</div>
 				<div style="clear:both"></div>
@@ -84,7 +96,7 @@
 
 		<?php if(isset($backend_vars)) : ?>
 		<script>
-			var backend_vars = <?php echo json_encode($backend_vars) ?>;
+			var backend_vars = <?= json_encode($backend_vars) ?>;
 		</script>
 		<?php endif; ?>
 	</body>

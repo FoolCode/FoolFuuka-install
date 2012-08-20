@@ -7,38 +7,42 @@ class Controller_Admin extends Controller_Common
 	private static $sidebar = array();
 	private static $sidebar_dynamic = array();
 
+
     public function before()
     {
 		parent::before();
 
-		if(!Auth::has_access('maccess.user') && \Uri::segment(2) != 'auth')
-			return Response::redirect('admin/auth/login');
+		if( ! \Auth::has_access('maccess.user') && \Uri::segment(2) != 'account')
+		{
+			return \Response::redirect('admin/account/login');
+		}
 
-		// returns the static sidebar array (can't use functions in )
+		// returns the hardcoded sidebar array (can't use functions when declaring a class variable)
 		self::$sidebar = static::get_sidebar_values();
 
 		// get the plugin sidebars
 		self::$sidebar_dynamic = array_merge(self::$sidebar_dynamic, \Plugins::get_sidebar_elements('admin'));
-		
+
 		// merge if there were sidebar elements added dynamically
-		if (!empty(self::$sidebar_dynamic))
+		if ( ! empty(self::$sidebar_dynamic))
 		{
 			self::$sidebar = self::merge_sidebars(self::$sidebar, self::$sidebar_dynamic);
 		}
 
-		$this->_views['navbar'] = View::forge('admin/navbar');
-		$this->_views['sidebar'] = View::forge('admin/sidebar', array('sidebar' => self::get_sidebar(self::$sidebar)));
+		$this->_views['navbar'] = \View::forge('admin/navbar');
+		$this->_views['sidebar'] = \View::forge('admin/sidebar', array('sidebar' => self::get_sidebar(self::$sidebar)));
 	}
+
 
     public function action_index()
     {
-		return Response::redirect('admin/preferences/theme');
+		return \Response::redirect('admin/preferences/theme');
     }
 
 
 	public function action_404()
 	{
-		return Response::forge('404', 404);
+		return \Response::forge('404', 404);
 	}
 
 
@@ -50,7 +54,6 @@ class Controller_Admin extends Controller_Common
 	 */
 	private static function get_sidebar_values()
 	{
-
 		$sidebar = array();
 
 		// load sidebars from modules and leave FoolFrame sidebar on bottom
@@ -63,15 +66,15 @@ class Controller_Admin extends Controller_Common
 			}
 		}
 
-		$sidebar["auth"] = array(
+		$sidebar["account"] = array(
 			"name" => __("Account"),
 			"level" => "user",
 			"default" => "change_email",
 			"content" => array(
 				"profile" => array("level" => "user", "name" => __("Profile"), "icon" => 'icon-user'),
-				"change_email_request" => array("level" => "user", "name" => __("Change Email"), "icon" => 'icon-envelope'),
-				"change_password_request" => array("level" => "user", "name" => __("Change Password"), "icon" => 'icon-lock'),
-				"delete_account_request" => array("level" => "user", "name" => __("Delete Account"), "icon" => 'icon-remove-circle'),
+				"change_email" => array("level" => "user", "name" => __("Change Email"), "icon" => 'icon-envelope'),
+				"change_password" => array("level" => "user", "name" => __("Change Password"), "icon" => 'icon-lock'),
+				"delete" => array("level" => "user", "name" => __("Delete Account"), "icon" => 'icon-remove-circle'),
 			)
 		);
 
@@ -103,8 +106,8 @@ class Controller_Admin extends Controller_Common
 			"content" => array(
 				"information" => array("level" => "admin", "name" => __("Information"), "icon" => 'icon-info-sign'),
 				"preferences" => array("level" => "admin", "name" => __("Preferences"), "icon" => 'icon-check'),
-				"upgrade" => array("level" => "admin", "name" => __("Upgrade") . ((Preferences::get('ff.cron_autoupgrade_version') && version_compare(\Config::get('foolframe.main.version'),
-						Preferences::get('ff.cron_autoupgrade_version')) < 0) ? ' <span class="label label-success">' . __('New') . '</span>'
+				"upgrade" => array("level" => "admin", "name" => __("Upgrade") . ((\Preferences::get('ff.cron_autoupgrade_version') && version_compare(\Config::get('foolframe.main.version'),
+						\Preferences::get('ff.cron_autoupgrade_version')) < 0) ? ' <span class="label label-success">' . __('New') . '</span>'
 							: ''), "icon" => 'icon-refresh'),
 			)
 		);
@@ -267,8 +270,10 @@ class Controller_Admin extends Controller_Common
 	public static function get_sidebar($array)
 	{
 		// not logged in users don't need the sidebar
-		if (Auth::member('guest'))
+		if (\Auth::member('guest'))
+		{
 			return array();
+		}
 
 		$result = array();
 		foreach ($array as $key => $item)
@@ -278,7 +283,7 @@ class Controller_Admin extends Controller_Common
 				$subresult = $item;
 
 				// segment 2 contains what's currently active so we can set it lighted up
-				if (Uri::segment(2) == $key)
+				if (\Uri::segment(2) == $key)
 				{
 					$subresult['active'] = TRUE;
 				}
@@ -310,7 +315,7 @@ class Controller_Admin extends Controller_Common
 						$default_uri = $item['default'];
 					}
 					array_unshift($default_uri, 'admin', $key);
-					$subresult['href'] = Uri::create(implode('/', $default_uri));
+					$subresult['href'] = \Uri::create(implode('/', $default_uri));
 				}
 
 				$subresult['content'] = array();
@@ -322,10 +327,10 @@ class Controller_Admin extends Controller_Common
 					$subsubresult = $subitem;
 					if (\Auth::has_access('maccess.' . $subitem['level']))
 					{
-						if ($subresult['active'] && (Uri::segment(3) == $subkey ||
+						if ($subresult['active'] && (\Uri::segment(3) == $subkey ||
 							(
 							isset($subitem['alt_highlight']) &&
-							in_array(Uri::segment(3), $subitem['alt_highlight'])
+							in_array(\Uri::segment(3), $subitem['alt_highlight'])
 							)
 							))
 						{
@@ -356,7 +361,7 @@ class Controller_Admin extends Controller_Common
 								$default_uri = $subkey;
 							}
 							array_unshift($default_uri, 'admin', $key);
-							$subsubresult['href'] = Uri::create(implode('/', $default_uri));
+							$subsubresult['href'] = \Uri::create(implode('/', $default_uri));
 						}
 
 						$subresult['content'][] = $subsubresult;
