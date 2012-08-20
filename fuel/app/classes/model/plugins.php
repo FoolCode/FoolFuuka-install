@@ -359,6 +359,10 @@ class Plugins extends \Model
 			$array2[$section] = $array;
 			$array = $array2;
 		}
+		else
+		{
+			$array = $section;
+		}
 
 		static::$_admin_sidebars[$type][] = $array;
 

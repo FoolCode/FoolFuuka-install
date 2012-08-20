@@ -4,3 +4,6 @@
 [submodule "public/foolfuuka"]
 	path = public/foolfuuka
 	url = git@github.com:FoolRulez/FoolFuuka-public.git
+[submodule "fuel/packages/sphinxql"]
+	path = fuel/packages/sphinxql
+	url = git@github.com:FoolRulez/fuel-sphinxql.git
