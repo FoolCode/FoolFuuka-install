@@ -1,15 +1,9 @@
 <?php
-
-if (!defined('BASEPATH'))
-	exit('No direct script access allowed');
-
-/*
- * This view depends fully on the default theme
- */
-echo link_tag('content/themes/default/style.css?v=' . FOOL_VERSION);
+	foreach($theme->fallback_override('style.css', $theme->get_config('extends_css')) as $css)
+		echo '<link href="'.Uri::base().$css.'"rel="stylesheet" type="text/css" />';
 ?>
-<script src="<?php echo site_url() ?>content/themes/default/plugins.js?v=<?php echo FOOL_VERSION ?>"></script>
-<script src="<?php echo site_url() ?>content/themes/default/board.js?v=<?php echo FOOL_VERSION ?>"></script>
+<script defer src="<?= Uri::base() . $theme->fallback_asset('plugins.js') ?>"></script>
+<script defer src="<?= Uri::base() . $theme->fallback_asset('board.js') ?>"></script>
 <style>
 	[data-function=activateModeration] {
 		display:none !important;
@@ -22,15 +16,10 @@ echo link_tag('content/themes/default/style.css?v=' . FOOL_VERSION);
 <div class="theme_default clearfix" style="padding-bottom: 15px">
 	<article class="thread clearfix">
 		<?php
-		
-		$modifiers['post_show_board_name'] = TRUE;
-		
-		foreach ($posts as $key => $p)
+				
+		foreach ($reports as $key => $report)
 		{
-			if ($p->thread_num == 0)
-				$p->thread_num = $p->num;
-
-			include('content/themes/default/views/board_comment.php');
+			echo $report->get_comment()->formatted;
 		}
 		?>
 	</article>

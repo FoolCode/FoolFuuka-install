@@ -77,7 +77,7 @@ return array(
 			'access' => array('admin'),
 			'maccess' => array('user', 'mod', 'admin'),
 			'boards' => array('edit'),
-			'comment' => array('see_ip', 'passwordless_deletion', 'limitless_comment', 'reports'. 'mod_capcode', 'admin_capcode'),
+			'comment' => array('see_ip', 'passwordless_deletion', 'limitless_comment', 'reports', 'mod_capcode', 'admin_capcode'),
 			'users' => array('access', 'change_credentials', 'change_group')
 		),
 		/**
