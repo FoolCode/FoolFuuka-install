@@ -15,7 +15,7 @@ class Model_Base extends \Model
 	{
 		$class = strtolower(get_class($this));
 
-		$parameters = array_merge($parameters, array(&$this));
+		$parameters = array_merge(array(&$this), $parameters);
 		
 		$before = \Plugins::run_hook($class.'.'.$name.'.call.before', $parameters);
 
@@ -26,7 +26,7 @@ class Model_Base extends \Model
 		}
 
 		// get rid of the $this
-		array_pop($parameters);
+		array_shift($parameters);
 		
 		// if the replace is anything else than NULL for all the functions ran here, the
 		// replaced function wont' be run
