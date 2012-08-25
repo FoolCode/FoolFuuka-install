@@ -43,6 +43,17 @@ class Controller_Admin_Users extends Controller_Admin
 			throw new HttpNotFoundException;
 		}
 
+		try
+		{
+			$data['object'] = Users::get_user_by('id', $id);
+			$data['object']->password = '';
+		}
+		catch (Model\UsersWrongIdException $e)
+		{
+			throw new HttpNotFoundException;
+		}
+		
+		
 		$form = array();
 
 		$form['open'] = array(
@@ -56,7 +67,7 @@ class Controller_Admin_Users extends Controller_Admin
 
 		$form['paragraph-2'] = array(
 			'type' => 'paragraph',
-			'help' => '<img src="'.Gravatar::get_gravatar(Auth::get_email()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+			'help' => '<img src="'.Gravatar::get_gravatar($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
 				Str::tr(__('The avatar is automatically fetched from :gravatar, based on the user\'s registration email.'),
 				array('gravatar' => '<a href="http://gravatar.com" target="_blank">Gravatar</a>'))
 		);
@@ -167,10 +178,6 @@ class Controller_Admin_Users extends Controller_Admin
 				$user->save($result['success']);
 			}
 		}
-
-		$data['object'] = Users::get_user_by('id', $id);
-
-		$data['object']->password = '';
 
 		// create a form
 		$this->_views["controller_title"] = __('Users');

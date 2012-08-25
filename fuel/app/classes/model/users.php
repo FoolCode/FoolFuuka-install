@@ -2,7 +2,7 @@
 
 namespace Model;
 
-class UsersWrongId extends \FuelException {}
+class UsersWrongIdException extends \FuelException {}
 
 class Users extends \Model
 {
@@ -25,7 +25,7 @@ class Users extends \Model
 
 		if (!count($query))
 		{
-			throw new UsersWrongId;
+			throw new UsersWrongIdException;
 		}
 
 		return User::forge($query->current());
@@ -48,7 +48,7 @@ class Users extends \Model
 
 		if ( ! count($query))
 		{
-			throw new UsersWrongId;
+			throw new UsersWrongIdException;
 		}
 
 		return User::forge($query->current());
