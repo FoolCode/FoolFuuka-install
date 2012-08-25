@@ -3,8 +3,9 @@
 namespace Model;
 
 
-class ThemeException extends \FuelException {};
-class ThemeModuleNotSelectedException extends ThemeException {};
+class ThemeException extends \FuelException {}
+class ThemeModuleNotSelectedException extends ThemeException {}
+class ThemeFileNotFoundException extends ThemeException {}
 
 /**
  * FoOlFrame Theme Model
@@ -565,6 +566,11 @@ class Theme extends \Model
 			}
 			if (isset($_location))
 				break;
+		}
+		
+		if ( ! isset($_location))
+		{
+			throw new ThemeFileNotFoundException;
 		}
 
 		// get rid of interfering variables
