@@ -6,6 +6,12 @@ class Controller_Admin_Preferences extends Controller_Admin
 	public function before()
 	{
 		parent::before();
+		
+		if( ! Auth::has_access('maccess.admin'))
+		{
+			Response::redirect('admin');
+		}
+		
 		// set controller title
 		$this->_views['controller_title'] = '<a href="' . Uri::Create("admin/preferences") . '">' . __("Preferences") . '</a>';
 	}
