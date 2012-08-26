@@ -58,12 +58,12 @@ class Preferences extends \Model
 
 	public static function get($setting, $fallback = null)
 	{
-		if (isset(self::$_preferences[$setting]))
+		if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '')
 		{
-			return self::$_preferences[$setting];
+			return static::$_preferences[$setting];
 		}
 
-		if ($fallback != null)
+		if ($fallback !== null)
 		{
 			return $fallback;
 		}

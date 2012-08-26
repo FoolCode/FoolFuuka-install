@@ -7,8 +7,9 @@
 <table class="table table-bordered table-striped table-condensed">
 	<thead>
 			<tr>
-				<th><?php echo __('Board') ?></th>
+				<th><?php echo __('ID') ?></th>
 				<th><?php echo __('Shortname') ?></th>
+				<th><?php echo __('Board') ?></th>
 				<th><?php echo __('Quick functions') ?></th>
 			</tr>
 		</thead>
@@ -17,11 +18,18 @@
 			<tr>
 				<td>
 					<a href="<?php echo Uri::create("admin/boards/board/".$board->shortname) ?>">
-					   <?php echo e($board->name) ?>
+					   <?php echo e($board->id) ?>
 					</a>
 				</td>
 				<td>
-					 <?php echo e($board->shortname) ?>
+					<a href="<?php echo Uri::create("admin/boards/board/".$board->shortname) ?>">
+					   <?php echo e($board->shortname) ?>
+					</a>
+				</td>
+				<td>
+					<a href="<?php echo Uri::create("admin/boards/board/".$board->shortname) ?>">
+						<?php echo e($board->name) ?>
+					</a>
 				</td>
 				<td>
 					<div class="btn-group">
