@@ -10,6 +10,11 @@ class Controller_Plugin_Ff_Ssl_Tools_Admin_Ssl_Tools extends \Controller_Admin
 	
 	public function before()
 	{
+		if ( ! \Auth::has_access('maccess.admin'))
+		{
+			\Response::redirect('admin');
+		}
+		
 		parent::before();
 		
 		$this->_views['controller_title'] = __('SSL Tools');

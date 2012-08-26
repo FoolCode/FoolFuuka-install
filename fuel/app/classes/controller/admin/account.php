@@ -24,8 +24,14 @@ class Controller_Admin_Account extends Controller_Admin
 		$data = array();
 
 		// the login button has been submitted - authenticate username and password
-		if (\Input::post())
+		if (\Input::post() && ! \Security::check_token())
 		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (\Input::post())
+		{
+			
+			
 			// load authentication instance
 			$auth = \Auth::instance();
 
@@ -59,6 +65,11 @@ class Controller_Admin_Account extends Controller_Admin
 
 	public function action_logout()
 	{
+		if ( ! \Security::check_token(\Input::get('token')))
+		{
+			die('The security token didn\'t match or has expired.');
+		}
+		
 		\Auth::logout(false);
 		\Response::redirect('admin');
 	}
@@ -69,6 +80,11 @@ class Controller_Admin_Account extends Controller_Admin
 	 */
 	public function action_logout_all()
 	{
+		if ( ! \Security::check_token(\Input::get('token')))
+		{
+			die('The security token didn\'t match or has expired.');
+		}
+		
 		\Auth::logout(true);
 		\Response::redirect('admin');
 	}
@@ -86,7 +102,11 @@ class Controller_Admin_Account extends Controller_Admin
 			throw new HttpNotFoundException;
 		}
 
-		if (\Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (\Input::post())
 		{
 
 			$val = \Validation::forge('register');
@@ -190,7 +210,11 @@ class Controller_Admin_Account extends Controller_Admin
 			\Response::redirect('admin');
 		}
 
-		if (\Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (\Input::post())
 		{
 			$val = \Validation::forge('forgotten_password');
 			$val->add_field('email', __('Email'), 'required|trim|valid_email');
@@ -220,7 +244,11 @@ class Controller_Admin_Account extends Controller_Admin
 		{
 			if (\Auth::check_new_password_key($id, $password_key))
 			{
-				if (\Input::post())
+				if (\Input::post() && ! \Security::check_token())
+				{
+					\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+				}
+				else if (\Input::post())
 				{
 					$val = \Validation::forge('forgotten_password');
 					$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
@@ -266,7 +294,11 @@ class Controller_Admin_Account extends Controller_Admin
 				\Response::redirect('admin');
 			}
 
-			if (\Input::post())
+			if (\Input::post() && ! \Security::check_token())
+			{
+				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			}
+			else if (\Input::post())
 			{
 				return static::send_change_password_email(\Auth::get_email());
 			}
@@ -305,7 +337,11 @@ class Controller_Admin_Account extends Controller_Admin
 		}
 		else
 		{
-			if (\Input::post())
+			if (\Input::post() && ! \Security::check_token())
+			{
+				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			}
+			else if (\Input::post())
 			{
 				$val = \Validation::forge('change_password');
 				$val->add_field('password', __('Password'), 'required');
@@ -412,7 +448,11 @@ class Controller_Admin_Account extends Controller_Admin
 				\Response::redirect('admin/account/login');
 			}
 
-			if (\Input::post())
+			if (\Input::post() && ! \Security::check_token())
+			{
+				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			}
+			else if (\Input::post())
 			{
 				$val = \Validation::forge('change_password');
 				$val->add_field('password', __('Password'), 'required');
@@ -588,7 +628,11 @@ class Controller_Admin_Account extends Controller_Admin
 
 		$data['form'] = $form;
 
-		if (\Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (\Input::post())
 		{
 			$result = \Validation::form_validate($form);
 

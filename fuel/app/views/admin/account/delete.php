@@ -5,7 +5,8 @@
 	</p>
 
 	<?= \Form::open() ?>
-
+	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
+	
 	<label><?= \Form::label(__('Password'), 'password') ?></label>
 	<?= \Form::password(array(
 		'name' => 'password',

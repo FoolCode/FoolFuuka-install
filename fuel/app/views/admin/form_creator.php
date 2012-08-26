@@ -158,19 +158,12 @@
 
 
 					case 'open':
-						// a special case for the hidden
-						if (isset($item['hidden']))
-						{
-							// better not supporting it, things might get messy
-							log_message('error',
-								'The form automator doesn\'t support hidden in Form::opens.');
-							show_error('The form automator doesn\'t support hidden in Form::opens.');
-						}
-
 						echo Form::open(
 							isset($item['attributes']) ? $item['attributes'] : '',
 							isset($item['hidden']) ? $item['hidden'] : array()
 						);
+						
+						echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 						break;
 
 

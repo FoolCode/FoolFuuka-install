@@ -24,6 +24,12 @@ class Controller_Admin_Plugins extends Controller_Admin
 
 	function action_action($identifier, $slug)
 	{
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set_flash('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			\Response::redirect('admin/plugins/manage');
+		}
+		
 		if (!\Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
 		{
 			throw new HttpNotFoundException;
@@ -90,7 +96,7 @@ class Controller_Admin_Plugins extends Controller_Admin
 				break;
 		}
 
-		Response::redirect('admin/plugins/manage');
+		\Response::redirect('admin/plugins/manage');
 	}
 
 

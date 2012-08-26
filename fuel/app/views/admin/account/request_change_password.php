@@ -5,6 +5,7 @@
 	</p>
 
 	<?= \Form::open() ?>
+	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 
 	<?= \Form::submit(array('name' => 'submit', 'value' => __('Request Password Change'), 'class' => 'btn btn-primary')) ?>
 

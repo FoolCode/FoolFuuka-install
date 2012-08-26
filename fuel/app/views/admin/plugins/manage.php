@@ -22,6 +22,7 @@
 					echo \Form::open('admin/plugins/action/'.$plugin['info']['identifier'].'/'.$plugin['info']['slug'],
 						array('action' => $plugin['enabled'] ? 'disable' : 'enable')
 					);
+					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 					echo '<input type="submit" class="btn" value="' . ($plugin['enabled'] ? __('Disable')
 							: __('Enable')) . '" />';
 					echo \Form::close();
@@ -30,6 +31,7 @@
 				<td><?php
 					echo \Form::open('admin/plugins/action', array('action' => 'remove')
 					);
+					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 					echo '<input type="submit" class="btn" value="' . __('Remove') . '" />';
 					echo \Form::close();
 					?>

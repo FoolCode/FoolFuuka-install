@@ -1,6 +1,7 @@
 <div class="well">
 
 	<?= \Form::open() ?>
+	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 
 	<label><?= \Form::label(__('Username'), 'username') ?></label>
 	<?= Form::input(array(

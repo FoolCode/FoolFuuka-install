@@ -148,6 +148,12 @@ class Preferences extends \Model
 	{
 		if (\Input::post())
 		{
+			if ( ! \Security::check_token())
+			{
+				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+				return false;
+			}
+			
 			$post = array();
 			
 			foreach (\Input::post() as $key => $item)

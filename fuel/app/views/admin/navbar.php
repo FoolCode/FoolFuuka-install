@@ -25,12 +25,12 @@
 								</a>
 							</li>
 							<li>
-								<a href="<?= \Uri::create('/admin/account/logout') ?>">
+								<a href="<?= \Uri::create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
 									<?= __('Logout') ?>
 								</a>
 							</li>
 							<li>
-								<a href="<?= \Uri::create('/admin/account/logout_all') ?>">
+								<a href="<?= \Uri::create('/admin/account/logout_all').'?token='.\Security::fetch_token() ?>">
 									<?= __('Logout on All Devices') ?>
 								</a>
 							</li>

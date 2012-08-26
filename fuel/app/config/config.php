@@ -107,8 +107,8 @@ return array(
 	 */
 	'security' => array(
 		'csrf_autoload'    => false,
-		'csrf_token_key'   => 'foolfuuka_csrf_token',
-		'csrf_expiration'  => 0,
+		'csrf_token_key'   => 'foolframe_csrf_token',
+		'csrf_expiration'  => 7200,
 		'uri_filter'       => array('htmlentities'),
 
 		/**

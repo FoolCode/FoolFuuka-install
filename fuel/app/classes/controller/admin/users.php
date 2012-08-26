@@ -17,6 +17,7 @@ class Controller_Admin_Users extends Controller_Admin
 		parent::before();
 	}
 
+	
 	public function action_manage($page = 1)
 	{
 		if (intval($page) < 1)
@@ -156,7 +157,11 @@ class Controller_Admin_Users extends Controller_Admin
 
 		$data['form'] = $form;
 
-		if (Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (Input::post())
 		{
 			$result = \Validation::form_validate($form);
 

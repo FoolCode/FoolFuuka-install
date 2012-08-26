@@ -8,6 +8,16 @@ if (!defined('DOCROOT'))
 class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 {
 	
+	public function before()
+	{
+		if( ! \Auth::has_access('maccess.mod'))
+		{
+			\Response::redirect('admin');
+		}
+
+		parent::before();
+	}
+	
 	public function structure()
 	{
 		return array(
@@ -185,7 +195,11 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 	{
 		$data['form'] = $this->structure();
 		
-		if(\Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if(\Input::post())
 		{
 			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
@@ -247,7 +261,11 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			throw new \HttpNotFoundException;
 		}
 		
-		if (\Input::post())
+		if (\Input::post() && ! \Security::check_token())
+		{
+			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+		}
+		else if (\Input::post())
 		{
 			try
 			{
