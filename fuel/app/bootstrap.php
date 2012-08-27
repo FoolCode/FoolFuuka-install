@@ -66,9 +66,10 @@ Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOP
 
 
 // Initialize the framework with the config file.
+\Config::load('foolframe', 'foolframe');
 Fuel::init('config.php');
 
-\Config::load('foolframe', 'foolframe');
+
 
 Autoloader::add_classes(array(
 	'Model\\Model_Base' => APPPATH.'classes/model/model_base.php',
@@ -82,8 +83,6 @@ Autoloader::add_classes(array(
 ));
 
 Autoloader::add_core_namespace('Model');
-
-
 
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
@@ -108,7 +107,7 @@ else
 
 		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
 	}
-	
+
 	$available_langs = \Config::get('foolframe.preferences.lang.available');
 	$lang = \Cookie::get('language');
 
