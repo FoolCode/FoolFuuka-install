@@ -46,16 +46,15 @@ class Controller_Admin_Preferences extends Controller_Admin
 			'validate' => 'trim|max_length[32]',
 			'help' => __('Sets the title displayed in the index page.')
 		);
-		/*
-		$form['ff_lang_default'] = array(
-			'type' => 'dropdown',
+
+		$form['ff.lang.default'] = array(
+			'type' => 'select',
 			'label' => __('Default language'),
 			'help' => __('The language the users will see as they reach your site.'),
-			'options' => config_item('ff_available_languages'),
-			'default_value' => FOOL_LANG_DEFAULT,
+			'options' => \Config::get('foolframe.preferences.lang.available'),
 			'preferences' => TRUE,
 		);
-		*/
+
 		$form['separator-2'] = array(
 			'type' => 'separator'
 		);

@@ -106,7 +106,12 @@ return array(
 
 		'lang' => array(
 			'default' => 'en_EN',
-			'available' => array('en_EN')
+			'available' => array(
+				'en_EN' => 'English',
+				'fr_FR' => 'French',
+				'it_IT' => 'Italian',
+				'pt_PT' => 'Portuguese',
+			)
 		)
 	),
 
