@@ -17,10 +17,23 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 {
 
 	protected static $_valid_roles = array();
+	protected static $_role_permissions = array();
 
 	public static function _init()
 	{
 		static::$_valid_roles = array_keys(\Config::get('foolauth.roles'));
+		
+		static::$_role_permissions = \Config::get('foolauth.roles', array());
+		
+		foreach (\Config::get('foolframe.modules.installed') as $module)
+		{
+			$permissions = \Config::load($module.'::foolauth', 'foolauth_'.$module);
+			foreach ($permissions['roles'] as $key => $item)
+			{
+				static::$_role_permissions[$key] = array_merge(static::$_role_permissions[$key], $item);
+			}
+			
+		}
 	}
 
 	public function has_access($condition, Array $entity)
@@ -40,7 +53,8 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 		$current_rights = array();
 		if (is_array($current_roles))
 		{
-			$roles = \Config::get('foolauth.roles', array());
+			$roles = static::$_role_permissions;
+			
 			array_key_exists('#', $roles) && array_unshift($current_roles, '#');
 			foreach ($current_roles as $r_role)
 			{
