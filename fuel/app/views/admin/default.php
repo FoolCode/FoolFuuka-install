@@ -94,6 +94,7 @@
 			</div>
 		</div>
 
+		<?= \Security::js_set_token(); ?>
 		<?php if(isset($backend_vars)) : ?>
 		<script>
 			var backend_vars = <?= json_encode($backend_vars) ?>;

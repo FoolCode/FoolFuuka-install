@@ -77,7 +77,7 @@ class Theme extends \Model
 	 *
 	 * @var string
 	 */
-	private $_title_separator = '»';
+	private $_title_separator = ' » ';
 
 	/**
 	 * The breadcrumbs of which the title is composed
@@ -169,13 +169,13 @@ class Theme extends \Model
 		else
 		{
 			$active_themes = Preferences::get(\Config::get($this->_selected_module.'.main.identifier').'.theme.active_themes');
-			if (!$active_themes || !$active_themes = @unserialize($active_themes))
+			if ( ! $active_themes || ! $active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
 				return array(
 					'default',
-					'tanline',
-					'fuuka'
+					'fuuka',
+					'yotsuba2'
 				);
 			}
 			else
@@ -311,9 +311,9 @@ class Theme extends \Model
 			return FALSE;
 		}
 
-		if (!in_array($theme, $this->get_available_themes()))
+		if ( ! in_array($theme, $this->get_available_themes()))
 		{
-			$theme = \Config::get($this->_selected_module.'.preferences.themes.default');
+			$theme = \Preferences::get(\Config::get($this->_selected_module.'.main.identifier').'.themes.default');
 		}
 
 		$result = $this->get_by_name($theme);

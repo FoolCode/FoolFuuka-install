@@ -1,6 +1,6 @@
 <div class="alert alert-block alert-<?php echo $alert_level ?> fade in">
 	<p><?php echo $message ?></p>
-	<p><?php echo Form::open();
+	<p><?php echo Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);'));
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo Form::submit(array(
 			'name' => 'confirm',

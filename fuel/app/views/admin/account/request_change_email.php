@@ -4,7 +4,7 @@
 		<?= __('Enter the new email address you wish to associate with your account. You must enter your password and complete the email verification process to confirm this change being made.') ?>
 	</p>
 
-	<?= \Form::open() ?>
+	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 
 	<label><?= \Form::label(__('New Email Address'), 'email') ?></label>

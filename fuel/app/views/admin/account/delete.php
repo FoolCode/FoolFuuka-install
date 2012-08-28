@@ -4,7 +4,7 @@
 		<?= __('If you wish to delete your account, an email will be sent to email address associated with your account providing you with a link to securely delete your account.') ?>
 	</p>
 
-	<?= \Form::open() ?>
+	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 	
 	<label><?= \Form::label(__('Password'), 'password') ?></label>

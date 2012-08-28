@@ -158,8 +158,9 @@
 
 
 					case 'open':
+						$open_default_attr = array('onsubmit' => 'fuel_set_csrf_token(this);');
 						echo Form::open(
-							isset($item['attributes']) ? $item['attributes'] : '',
+							isset($item['attributes']) ? merge($item['attributes'], $open_default_attr) : $open_default_attr,
 							isset($item['hidden']) ? $item['hidden'] : array()
 						);
 						
