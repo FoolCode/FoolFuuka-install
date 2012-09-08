@@ -23,7 +23,7 @@ class User extends \Model
 	public $bio = null;
 	public $twitter = null;
 	public $display_name = null;
-	public $created_ad = null;
+	public $created_at = null;
 
 	public $password_current = null;
 
