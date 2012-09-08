@@ -52,7 +52,7 @@ class Install
 				'username' => array('type' => 'varchar', 'constraint' => 50),
 				'password' => array('type' => 'varchar', 'constraint' => 255),
 				'group' => array('type' => 'int', 'constraint' => 11, 'default' => 1),
-				'email' => array('type' => 'varchar', 'constraint' => 255, 'default' => \DB::expr('NULL'), 'null' => true),
+				'email' => array('type' => 'varchar', 'constraint' => 100, 'default' => \DB::expr('NULL'), 'null' => true),
 				'last_login' => array('type' => 'int', 'constraint' => 11, 'unsigned' => true),
 				'new_email' => array('type' => 'varchar', 'constraint' => 255, 'default' => \DB::expr('NULL'), 'null' => true),
 				'new_email_key' => array('type' => 'varchar', 'constraint' => 128, 'default' => \DB::expr('NULL'), 'null' => true),
