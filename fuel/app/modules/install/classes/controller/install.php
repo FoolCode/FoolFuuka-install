@@ -178,7 +178,7 @@ class Controller_Install extends \Controller
 			if (count($modules) > 0)
 			{
 				\Config::set('foolframe.modules.installed', $modules);
-				\Config::save('foolframe', 'foolframe');
+				\Config::save(\Fuel::$env.DS.'foolframe', 'foolframe');
 
 				\Response::redirect('install/complete');
 			}
@@ -200,7 +200,7 @@ class Controller_Install extends \Controller
 		// lock down the install system
 		\Config::load('foolframe');
 		\Config::set('foolframe.install.installed', true);
-		\Config::save('foolframe', 'foolframe');
+		\Config::save(\Fuel::$env.DS.'foolframe', 'foolframe');
 
 		$this->process('complete');
 		$this->_view_data['method_title'] = __('Congratulations');

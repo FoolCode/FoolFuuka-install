@@ -211,7 +211,7 @@ class Install extends \Model
 			'profiling'    => false,
 		));
 
-		\Config::save('db', 'db');
+		\Config::save(\Fuel::$env.DS.'db', 'db');
 
 		// check if mb4 is supported and in case enable it
 		\DBUtil::set_connection('default');
@@ -219,7 +219,7 @@ class Install extends \Model
 		if (count($query))
 		{
 			\Config::set('db.default.charset', 'utf8mb4');
-			\Config::save('db', 'db');
+			\Config::save(\Fuel::$env.DS.'db', 'db');
 		}
 	}
 
@@ -236,20 +236,20 @@ class Install extends \Model
 	{
 		\Config::load('foolframe', 'foolframe');
 		\Config::set('foolframe.config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
-		\Config::save('foolframe', 'foolframe');
+		\Config::save(\Fuel::$env.DS.'foolframe', 'foolframe');
 
 		\Config::load('auth', 'auth');
 		\Config::set('auth.salt', \Str::random('alnum', 24));
-		\Config::save('auth', 'auth');
+		\Config::save(\Fuel::$env.DS.'auth', 'auth');
 
 		\Config::load('foolauth', 'foolauth');
 		\Config::set('foolauth.login_hash_salt', \Str::random('alnum', 24));
-		\Config::save('foolauth', 'foolauth');
+		\Config::save(\Fuel::$env.DS.'foolauth', 'foolauth');
 
 		\Config::load('cache', 'cache');
 		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
-		\Config::save('cache', 'cache');
+		\Config::save(\Fuel::$env.DS.'cache', 'cache');
 	}
 
 
