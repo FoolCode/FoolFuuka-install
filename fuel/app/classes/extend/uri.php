@@ -35,6 +35,8 @@ class Uri extends \Fuel\Core\Uri
 			$uri = explode('/', $uri);
 		}
 		
+		$uri[count($uri) - 1] = $uri[count($uri) - 1].'.'.\Input::extension();
+		
 		for ($i = 0; $i < $index; $i++)
 		{
 			array_shift($uri);
