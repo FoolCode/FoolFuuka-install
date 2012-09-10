@@ -466,6 +466,16 @@ class Plugins extends \Model
 	 */
 	public static function register_hook($target, $method, $priority = 5)
 	{
+		if (is_array($target))
+		{
+			foreach ($target as $t)
+			{
+				static::register_hook($t, $method, $priority);
+			}	
+			
+			return null;
+		}
+		
 		static::$_hooks[$target][] = array('method' => $method, 'priority' => $priority);
 	}
 
