@@ -250,6 +250,22 @@ class Install extends \Model
 		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::save(\Fuel::$env.DS.'cache', 'cache');
+		
+		$crypt = array();
+		
+		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
+		{
+			$crypto = '';
+			for ($i = 0; $i < 8; $i++)
+			{
+				$crypto .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
+			}
+			
+			$crypt[$key] = $crypto;
+		}
+		
+		\Config::set('crypt', $crypt);
+		\Config::save(\Fuel::$env.DS.'crypt', 'crypt');
 	}
 
 

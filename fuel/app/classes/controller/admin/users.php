@@ -181,6 +181,8 @@ class Controller_Admin_Users extends Controller_Admin
 				$user = Users::get_user_by('id', $id);
 
 				$user->save($result['success']);
+				$data['object'] = $user;
+				$data['object']->password = '';
 			}
 		}
 

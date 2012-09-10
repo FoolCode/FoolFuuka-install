@@ -48,6 +48,7 @@ Autoloader::add_classes(array(
 	'Uri' => APPPATH.'classes/extend/uri.php',
 	'Validation' => APPPATH.'classes/extend/validation.php',
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
+	'Fuel\Core\Image_Imagemagick' => APPPATH.'classes/extend/imagemagick.php',
 	'ReCaptcha' => APPPATH.'classes/extend/recaptcha.php',
 ));
 
