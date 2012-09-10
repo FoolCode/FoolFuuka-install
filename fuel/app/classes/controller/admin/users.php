@@ -7,7 +7,7 @@ class Controller_Admin_Users extends Controller_Admin
 	public function before()
 	{
 		// only mods and admins can see and edit users
-		if(!Auth::has_access('users.access'))
+		if(!Auth::has_access('maccess.mod'))
 		{
 			Response::redirect('admin');
 		}
@@ -17,7 +17,7 @@ class Controller_Admin_Users extends Controller_Admin
 		parent::before();
 	}
 
-	
+
 	public function action_manage($page = 1)
 	{
 		if (intval($page) < 1)
@@ -53,8 +53,8 @@ class Controller_Admin_Users extends Controller_Admin
 		{
 			throw new HttpNotFoundException;
 		}
-		
-		
+
+
 		$form = array();
 
 		$form['open'] = array(
