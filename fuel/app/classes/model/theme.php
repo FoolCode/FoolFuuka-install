@@ -173,9 +173,7 @@ class Theme extends \Model
 			{
 				// default WORKING themes coming with the application
 				return array(
-					'default',
-					'fuuka',
-					'yotsuba2'
+					'default'
 				);
 			}
 			else
