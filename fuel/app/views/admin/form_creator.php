@@ -299,6 +299,7 @@
 								$data['hide'] = TRUE;
 							else
 								$data['hide'] = FALSE;
+							if (isset($object)) $data['object'] = $object;
 							$data['parent'] = $name;
 							echo View::forge('admin/form_creator', $data);
 						}
@@ -310,6 +311,7 @@
 								$data['hide'] = TRUE;
 							else
 								$data['hide'] = FALSE;
+							if (isset($object)) $data['object'] = $object;
 							$data['parent'] = $name . '_inverse';
 							echo View::forge('admin/form_creator', $data);
 						}
