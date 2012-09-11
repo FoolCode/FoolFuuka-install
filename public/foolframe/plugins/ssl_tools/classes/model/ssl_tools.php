@@ -17,7 +17,7 @@ class Ssl_Tools extends \Plugins
 				|| (\Preferences::get('ff.plugins.ssl_tools.sticky') && \Input::cookie('ff_sticky_ssl')))
 			{
 				// redirect to itself
-				\Response::redirect('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+				\Response::redirect('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 			}
 		}
 		else
