@@ -168,7 +168,7 @@ class Articles extends \Plugins
 		foreach($result as $article)
 		{
 			$nav['articles']['elements'][] = array(
-				'href' => \Uri::create('articles/' . $article->slug), 
+				'href' => \Uri::create('_/articles/' . $article->slug), 
 				'text' => e($article->title)
 			);
 		}
