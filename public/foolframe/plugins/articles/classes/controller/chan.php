@@ -19,7 +19,7 @@ class Controller_Plugin_Ff_Articles_Chan extends \Foolfuuka\Controller_Chan
 		{
 			$article = Articles::get_by_slug($slug);
 		}
-		catch (ArticlesArticleNotFound $e)
+		catch (ArticlesArticleNotFoundException $e)
 		{
 			throw new \HttpNotFoundException;
 		}

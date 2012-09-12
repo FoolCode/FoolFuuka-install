@@ -73,7 +73,7 @@ class Articles extends \Plugins
 
 		if ( ! count($result))
 		{
-			throw new ArticlesArticleNotFoundException;
+			throw new ArticlesArticleNotFoundException(__('The article you were looking for does not exist.'));
 		}
 
 		return $result[0];
