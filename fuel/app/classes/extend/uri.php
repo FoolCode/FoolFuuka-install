@@ -11,7 +11,7 @@ class Uri extends \Fuel\Core\Uri
 		
 		if (is_bool($uri))
 		{
-			\Log::error(debug_backtrace());
+			\Log::error(print_r(debug_backtrace(), true));
 		}
 		
 		if(is_string($uri))
