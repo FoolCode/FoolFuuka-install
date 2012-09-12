@@ -9,6 +9,11 @@ class Uri extends \Fuel\Core\Uri
 			return parent::create($uri, $variables, $get_variables, $secure);
 		}
 		
+		if (is_bool($uri))
+		{
+			\Log::error(debug_backtrace());
+		}
+		
 		if(is_string($uri))
 		{
 			$uri = explode('/', $uri);
