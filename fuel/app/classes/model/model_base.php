@@ -24,15 +24,15 @@ class Model_Base extends \Model
 			// if the value returned is an Array, a plugin was active
 			$parameters = $before['parameters'];
 		}
-
-		// get rid of the $this
-		array_shift($parameters);
 		
 		// if the replace is anything else than NULL for all the functions ran here, the
 		// replaced function wont' be run
 		$replace = \Plugins::run_hook($class.'.'.$name.'.call.replace', $parameters, array($parameters));
+		
+		// get rid of the $this
+		array_shift($parameters);
 
-		if ($replace['return'] !== NULL)
+		if ($replace['return'] !== null)
 		{
 			$return = $replace['return'];
 		}
@@ -93,7 +93,7 @@ class Model_Base extends \Model
 		// replaced function wont' be run
 		$replace = \Plugins::run_hook($class.'.'.$name.'.call.replace', $parameters, array($parameters));
 
-		if ($replace['return'] !== NULL)
+		if ($replace['return'] !== null)
 		{
 			$return = $replace['return'];
 		}
