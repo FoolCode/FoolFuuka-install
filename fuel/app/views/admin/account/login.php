@@ -34,7 +34,7 @@
 	<?= \Form::submit(array('name' => 'submit', 'value' => __('Login'), 'class' => 'btn btn-primary')) ?>
 
 	<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" class="btn" value="<?= htmlspecialchars(__("Forgot Password")) ?>" />
-	<?php if ( ! \Preferences::get('ff.reg_disabled')) : ?>
+	<?php if ( ! \Preferences::get('ff.auth.disable_registration')) : ?>
 		<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" class="btn" value="<?= htmlspecialchars(__("Register")) ?>" />
 	<?php endif; ?>
 

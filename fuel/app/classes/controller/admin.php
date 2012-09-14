@@ -12,7 +12,7 @@ class Controller_Admin extends Controller_Common
     {
 		parent::before();
 
-		if( ! \Auth::has_access('maccess.user') && \Uri::segment(2) != 'account')
+		if( ! \Auth::has_access('maccess.user') && \Uri::string() != 'admin/account/login')
 		{
 			return \Response::redirect('admin/account/login');
 		}
