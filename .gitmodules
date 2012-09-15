@@ -7,3 +7,6 @@
 [submodule "fuel/packages/sphinxql"]
 	path = fuel/packages/sphinxql
 	url = git@github.com:FoolRulez/fuel-sphinxql.git
+[submodule "fuel/packages/inet"]
+	path = fuel/packages/inet
+	url = git@github.com:FoolRulez/Inet.git

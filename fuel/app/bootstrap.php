@@ -70,11 +70,8 @@ Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOP
 \Config::load('foolframe', 'foolframe');
 Fuel::init('config.php');
 
-
-
 Autoloader::add_classes(array(
 	'Model\\Model_Base' => APPPATH.'classes/model/model_base.php',
-	'Model\\Inet' => APPPATH.'classes/model/inet.php',
 	'Model\\Preferences' => APPPATH.'classes/model/preferences.php',
 	'Model\\Notices' => APPPATH.'classes/model/notices.php',
 	'Model\\Plugins' => APPPATH.'classes/model/plugins.php',
@@ -85,6 +82,9 @@ Autoloader::add_classes(array(
 
 Autoloader::add_core_namespace('Model');
 
+// load Inet class for decimal use: \Inet::ptod($ip)
+Package::load('inet');
+Autoloader::alias_to_namespace('Foolz\\Inet\\Inet');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
 if (!\Config::get('foolframe.install.installed'))
