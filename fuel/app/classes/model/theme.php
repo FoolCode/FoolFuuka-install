@@ -598,7 +598,6 @@ class Theme extends \Model
 		}
 
 		$string = ob_get_clean();
-	//	$string = preg_replace('#(?ix)(?>[^\S ]\s*|\s{2,})(?=(?:(?:[^<]++|<(?!/?(?:textarea|pre)\b))*+)(?:<(?>textarea|pre)\b|\z))#', ' ', $string);
 		return $string;
 	}
 
