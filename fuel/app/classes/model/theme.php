@@ -509,7 +509,7 @@ class Theme extends \Model
 		if ($without_layout || $this->_selected_layout === FALSE)
 		{
 			\Profiler::mark_memory($content, 'Theme $content');
-			\Profiler::mark('Theme::build End Prematurely');
+			\Profiler::mark('Theme::build End without layout');
 			return $content;
 		}
 

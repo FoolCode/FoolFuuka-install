@@ -430,7 +430,6 @@ class Plugins extends \Model
 			return end($parameters);
 		}
 
-
 		if(!isset(static::$_hooks[$target]))
 		{
 			return NULL;
