@@ -21,7 +21,7 @@ class Preferences extends \Model
 		\Profiler::mark('Preferences::load_settings Start');
 		if ($reload === true)
 		{
-			\Cache::delete('model.preferences.settings');
+			\Cache::delete('ff.model.preferences.settings');
 		}
 
 		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
@@ -35,7 +35,7 @@ class Preferences extends \Model
 
 		try
 		{
-			static::$_preferences = \Cache::get('model.preferences.settings');
+			static::$_preferences = \Cache::get('ff.model.preferences.settings');
 		}
 		catch (\CacheNotFoundException $e)
 		{
@@ -47,7 +47,7 @@ class Preferences extends \Model
 				static::$_preferences[$pref['name']] = $pref['value'];
 			}
 
-			\Cache::set('model.preferences.settings', static::$_preferences, 3600);
+			\Cache::set('ff.model.preferences.settings', static::$_preferences, 3600);
 		}
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');

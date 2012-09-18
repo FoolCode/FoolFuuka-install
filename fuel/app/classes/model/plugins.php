@@ -109,6 +109,12 @@ class Plugins extends \Model
 		return \Fuel::load($dir.'config/config.php');
 	}
 
+	
+	public static function clear_cache()
+	{
+		\Cache::delete('ff.model.plugins.get_all.query');
+		\Cache::delete('ff.model.plugins.get_enabled.query');
+	}
 
 	/**
 	 * Retrieve all the available plugins and their status
@@ -118,7 +124,7 @@ class Plugins extends \Model
 	public static function get_all()
 	{
 		\Profiler::mark('Plugins::get_all Start');
-
+		
 		$slugs = static::lookup_plugins();
 
 		$result = array();
@@ -127,23 +133,31 @@ class Plugins extends \Model
 		{
 			$slugs_to_sql = $slugs;
 
-			// we don't care if the database doesn't contain an entry for a plugin
-			// in that case, it means it was never installed
-			$query = \DB::select()
-				->from('plugins');
-
-			foreach ($slugs_to_sql as $key => $item)
+			try
 			{
-				foreach ($item as $slug)
-				{
-					$query->or_where_open();
-					$query->where('identifier', $key);
-					$query->where('slug', $slug);
-					$query->or_where_close();
-				}
+				$result = \Cache::get('ff.model.plugins.get_all.query');
 			}
+			catch (\CacheNotFoundException $e)
+			{
+				// we don't care if the database doesn't contain an entry for a plugin
+				// in that case, it means it was never installed
+				$query = \DB::select()
+					->from('plugins');
 
-			$result = $query->execute()->as_array();
+				foreach ($slugs_to_sql as $key => $item)
+				{
+					foreach ($item as $slug)
+					{
+						$query->or_where_open();
+						$query->where('identifier', $key);
+						$query->where('slug', $slug);
+						$query->or_where_close();
+					}
+				}
+
+				$result = $query->execute()->as_array();
+				\Cache::set('ff.model.plugins.get_all.query', $result, 3600);
+			}
 		}
 
 		$slugs_with_data = array();
@@ -186,11 +200,22 @@ class Plugins extends \Model
 	 */
 	protected static function get_enabled()
 	{
-		return \DB::select()
-			->from('plugins')
-			->where('enabled', 1)
-			->execute()
-			->as_array();
+		try
+		{
+			$result = \Cache::get('ff.model.plugins.get_enabled.query');
+		}
+		catch (\CacheNotFoundException $e)
+		{
+			$result = \DB::select()
+				->from('plugins')
+				->where('enabled', 1)
+				->execute()
+				->as_array();
+			
+			\Cache::set('ff.model.plugins.get_enabled.query', $result, 3600);
+		}
+			
+		return $result;
 	}
 
 
@@ -255,7 +280,11 @@ class Plugins extends \Model
 			\Fuel::load($dir.'install.php');
 		}
 
-		\DB::insert('plugins')->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 1))->execute();
+		\DB::insert('plugins')
+			->set(array('identifier' => $identifier, 'slug' => $slug, 'enabled' => 1))
+			->execute();
+		
+		static::clear_cache();
 	}
 
 
@@ -277,6 +306,8 @@ class Plugins extends \Model
 			->where('identifier', $identifier)
 			->where('slug', $slug)
 			->execute();
+		
+		static::clear_cache();
 	}
 
 
@@ -311,6 +342,8 @@ class Plugins extends \Model
 			->where('slug', $slug)
 			->value('enabled', 1)
 			->execute();
+		
+		static::clear_cache();
 	}
 
 
@@ -331,6 +364,8 @@ class Plugins extends \Model
 			->where('slug', $slug)
 			->value('enabled', 0)
 			->execute();
+		
+		static::clear_cache();
 	}
 
 
