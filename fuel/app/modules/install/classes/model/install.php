@@ -267,6 +267,14 @@ class Install extends \Model
 		\Config::set('crypt', $crypt);
 		\Config::save(\Fuel::$env.DS.'crypt', 'crypt');
 	}
+	
+	
+	private static function safe_b64encode($value)
+	{
+		$data = base64_encode($value);
+		$data = str_replace(array('+','/','='), array('-','_',''), $data);
+		return $data;
+	}
 
 
 	public static function modules()

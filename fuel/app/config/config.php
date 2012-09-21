@@ -53,7 +53,7 @@ return array(
 	/**
 	 * Setttings for the file finder cache (the Cache class has it's own config!)
 	 */
-	'caching'         => false,
+	'caching'         => true,
 	'cache_lifetime'  => 3600, // In Seconds
 
 	/**

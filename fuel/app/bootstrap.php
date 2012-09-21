@@ -105,10 +105,14 @@ else
 		{
 			\Router::add($key, $item);
 		}
-
+	}
+	
+	// run the bootstrap for each module
+	foreach(\Config::get('foolframe.modules.installed') as $module)
+	{
 		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
 	}
-
+	
 	$available_langs = \Config::get('foolframe.preferences.lang.available');
 	$lang = \Cookie::get('language');
 

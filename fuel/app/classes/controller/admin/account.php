@@ -115,7 +115,7 @@ class Controller_Admin_Account extends Controller_Admin
 			$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
 			$val->add_field('confirm_password', __('Confirm password'), 'required|match_field[password]');
 
-			$recaptcha = !\ReCaptcha::available() || \ReCaptcha::instance()->check_answer(\Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field'));
+			$recaptcha = ! \ReCaptcha::available() || \ReCaptcha::instance()->check_answer(\Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field'));
 
 			if($val->run() && $recaptcha)
 			{

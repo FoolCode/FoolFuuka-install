@@ -10,3 +10,9 @@
 [submodule "fuel/packages/inet"]
 	path = fuel/packages/inet
 	url = git@github.com:FoolRulez/Inet.git
+[submodule "fuel/app/modules/foolpod"]
+	path = fuel/app/modules/foolpod
+	url = git@github.com:FoolRulez/FoolPod-module.git
+[submodule "public/foolpod"]
+	path = public/foolpod
+	url = git@github.com:FoolRulez/FoolPod-public.git
