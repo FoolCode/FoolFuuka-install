@@ -574,6 +574,19 @@ class Theme extends \Model
 	 */
 	private function _build($_file, $_type, $_data = array())
 	{
+		// check if we have a class corresponding the view we looked for
+		foreach (array($this->get_selected_theme(), $this->get_config('extends')) as $_directory)
+		{
+			$class = ucfirst($this->_selected_module).'\\Themes\\'
+				.($_directory === 'default' ?'Default_' : ucfirst($_directory)).'\\Views\\'.ucfirst($_file);
+			if (class_exists($class))
+			{
+				return (string) new $class($_data);
+			}
+		}
+		
+		unset($class, $view);
+		
 		foreach (array($this->get_selected_theme(), $this->get_config('extends')) as $_directory)
 		{
 			switch ($_type)
