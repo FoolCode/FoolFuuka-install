@@ -581,7 +581,7 @@ class Theme extends \Model
 				.($_directory === 'default' ?'Default_' : ucfirst($_directory)).'\\Views\\'.ucfirst($_file);
 			if (class_exists($class))
 			{
-				return (string) new $class($_data);
+				return (string) new $class($_data, $this);
 			}
 		}
 		
