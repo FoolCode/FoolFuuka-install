@@ -21,6 +21,9 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 
 	public static function _init()
 	{
+		\Profiler::mark('Start Auth_Acl_FoolAcl::__init()');
+		\Profiler::mark_memory(false, 'Start Auth_Acl_FoolAcl::__init()');
+		
 		static::$_valid_roles = array_keys(\Config::get('foolauth.roles'));
 		
 		static::$_role_permissions = \Config::get('foolauth.roles', array());
@@ -34,6 +37,9 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 			}
 			
 		}
+		
+		\Profiler::mark('End Auth_Acl_FoolAcl::__init()');
+		\Profiler::mark_memory(false, 'End Auth_Acl_FoolAcl::__init()');
 	}
 
 	public function has_access($condition, Array $entity)
