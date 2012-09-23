@@ -122,6 +122,9 @@ class Theme extends \Model
 	 */
 	public function get_all()
 	{
+		\Profiler::mark('Start Theme::get_all');
+		\Profiler::mark_memory($this, 'Start Theme::get_all');
+		
 		if ($this->_is_all_loaded)
 			return $this->_loaded;
 
@@ -136,6 +139,9 @@ class Theme extends \Model
 		$this->_loaded = $array;
 
 		return $array;
+		
+		\Profiler::mark('End Theme::get_all');
+		\Profiler::mark_memory($this, 'End Theme::get_all');
 	}
 
 
@@ -161,6 +167,9 @@ class Theme extends \Model
 	 */
 	public function get_available_themes()
 	{
+		\Profiler::mark('Start Theme::get_available_themes');
+		\Profiler::mark_memory($this, 'Start Theme::get_available_themes');
+		
 		if (\Auth::has_access('maccess.mod'))
 		{
 			// admins get all the themes
@@ -189,6 +198,9 @@ class Theme extends \Model
 				return $active_themes = array_keys($active_themes);
 			}
 		}
+		
+		\Profiler::mark('End Theme::get_available_themes');
+		\Profiler::mark_memory($this, 'End Theme::get_available_themes');
 	}
 
 
@@ -251,6 +263,9 @@ class Theme extends \Model
 	 */
 	public function get_all_names()
 	{
+		\Profiler::mark('Start Theme::get_all_names');
+		\Profiler::mark_memory($this, 'Start Theme::get_all_names');
+		
 		$array = array();
 
 		if ($handle = opendir(DOCROOT.$this->_selected_module.'/themes/'))
@@ -268,6 +283,9 @@ class Theme extends \Model
 			closedir($handle);
 		}
 
+		\Profiler::mark('End Theme::get_available_themes');
+		\Profiler::mark_memory($this, 'End Theme::get_available_themes');
+		
 		return $array;
 	}
 
@@ -280,7 +298,13 @@ class Theme extends \Model
 	 */
 	private function load_config($name)
 	{
+		\Profiler::mark('Start Theme::load_config');
+		\Profiler::mark_memory($this, 'Start Theme::load_config');
+		
 		return \Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$name.'/config.php');
+		
+		\Profiler::mark('End Theme::load_config');
+		\Profiler::mark_memory($this, 'End Theme::load_config');
 	}
 
 
@@ -298,6 +322,9 @@ class Theme extends \Model
 	 */
 	public function set_theme($theme)
 	{
+		\Profiler::mark('Start Theme::load_config');
+		\Profiler::mark_memory($this, 'Start Theme::load_config');
+		
 		if (is_null($this->_selected_module))
 		{
 			throw new ThemeModuleNotSelectedException;
@@ -320,6 +347,9 @@ class Theme extends \Model
 		// load the theme bootstrap file if present
 		\Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$theme.'/bootstrap.php');
 
+		\Profiler::mark('End Theme::load_config');
+		\Profiler::mark_memory($this, 'End Theme::load_config');
+		
 		return $result;
 	}
 
