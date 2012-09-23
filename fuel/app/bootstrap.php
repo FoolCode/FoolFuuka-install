@@ -87,7 +87,7 @@ Package::load('inet');
 Autoloader::alias_to_namespace('Foolz\\Inet\\Inet');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
-if (!\Config::get('foolframe.install.installed'))
+if ( ! \Config::get('foolframe.install.installed'))
 {
 	\Module::load('install');
 	\Fuel::load(APPPATH.'modules/install/bootstrap.php');
@@ -110,7 +110,13 @@ else
 	// run the bootstrap for each module
 	foreach(\Config::get('foolframe.modules.installed') as $module)
 	{
+		\Profiler::mark('Start module '.$module.' bootstrap');
+		\Profiler::mark_memory(false, 'Start module '.$module.' bootstrap');
+		
 		\Fuel::load(APPPATH.'modules/'.$module.'/bootstrap.php');
+		
+		\Profiler::mark('End module '.$module.' bootstrap');
+		\Profiler::mark_memory(false, 'End module '.$module.' bootstrap');
 	}
 	
 	$available_langs = \Config::get('foolframe.preferences.lang.available');
@@ -142,5 +148,11 @@ else
 	bind_textdomain_codeset($lang, 'UTF-8');
 	textdomain($lang);
 
+	\Profiler::mark('Start plugins initialization');
+	\Profiler::mark_memory(false, 'Start plugins initialization');
+	
 	\Plugins::initialize();
+	
+	\Profiler::mark('End plugins initialization');
+	\Profiler::mark_memory(false, 'End plugins initialization');
 }
