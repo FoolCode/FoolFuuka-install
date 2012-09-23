@@ -44,9 +44,6 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 
 	public function has_access($condition, Array $entity)
 	{
-		\Profiler::mark('Start Auth_Acl_FoolAcl::has_access()');
-		\Profiler::mark_memory($this, 'Start Auth_Acl_FoolAcl::has_access()');
-		
 		$group = \Auth::group($entity[0]);
 
 		$condition = static::_parse_conditions($condition);
@@ -87,9 +84,6 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 			}
 		}
 		
-		\Profiler::mark('End Auth_Acl_FoolAcl::has_access()');
-		\Profiler::mark_memory($this, 'End Auth_Acl_FoolAcl::has_access()');
-
 		// start checking rights, terminate false when right not found
 		foreach ($rights as $right)
 		{
