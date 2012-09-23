@@ -1,5 +1,11 @@
 <?php
 
+// we don't want to use the massive Security::htmlentities() function
+function e($string)
+{
+	return htmlentities($string);
+}
+
 if (function_exists('_'))
 {
 	function __($text)
