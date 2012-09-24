@@ -52,6 +52,13 @@ class Theme extends \Model
 	private $_selected_theme = false;
 
 	/**
+	 * The version of the selected theme
+	 *
+	 * @var string the version number of the theme
+	 */
+	private $_selected_theme_version = null;
+
+	/**
 	 * The selected layout
 	 *
 	 * @var string|bool FALSE when not choosen
@@ -92,12 +99,12 @@ class Theme extends \Model
 	 * @var array
 	 */
 	private $_metadata = array();
-	
+
 	private static $_instances = array();
-	
+
 	private static $_set_instance = null;
 
-	
+
 	public static function forge($name = 'default')
 	{
 		static::$_set_instance = $name;
@@ -110,11 +117,11 @@ class Theme extends \Model
 		{
 			$name = static::$_set_instance;
 		}
-		
+
 		static::$_set_instance = $name;
 		return static::$_instances[$name];
 	}
-	
+
 	/**
 	 * Returns all the themes available and saves the array in a variable
 	 *
@@ -124,7 +131,7 @@ class Theme extends \Model
 	{
 		\Profiler::mark('Start Theme::get_all');
 		\Profiler::mark_memory($this, 'Start Theme::get_all');
-		
+
 		if ($this->_is_all_loaded)
 			return $this->_loaded;
 
@@ -139,7 +146,7 @@ class Theme extends \Model
 		$this->_loaded = $array;
 
 		return $array;
-		
+
 		\Profiler::mark('End Theme::get_all');
 		\Profiler::mark_memory($this, 'End Theme::get_all');
 	}
@@ -169,7 +176,7 @@ class Theme extends \Model
 	{
 		\Profiler::mark('Start Theme::get_available_themes');
 		\Profiler::mark_memory($this, 'Start Theme::get_available_themes');
-		
+
 		if (\Auth::has_access('maccess.mod'))
 		{
 			// admins get all the themes
@@ -198,7 +205,7 @@ class Theme extends \Model
 				return $active_themes = array_keys($active_themes);
 			}
 		}
-		
+
 		\Profiler::mark('End Theme::get_available_themes');
 		\Profiler::mark_memory($this, 'End Theme::get_available_themes');
 	}
@@ -220,6 +227,12 @@ class Theme extends \Model
 	public function get_selected_theme()
 	{
 		return $this->_selected_theme;
+	}
+
+
+	public function get_selected_theme_version()
+	{
+		return $this->_selected_theme_version;
 	}
 
 
@@ -265,7 +278,7 @@ class Theme extends \Model
 	{
 		\Profiler::mark('Start Theme::get_all_names');
 		\Profiler::mark_memory($this, 'Start Theme::get_all_names');
-		
+
 		$array = array();
 
 		if ($handle = opendir(DOCROOT.$this->_selected_module.'/themes/'))
@@ -285,7 +298,7 @@ class Theme extends \Model
 
 		\Profiler::mark('End Theme::get_available_themes');
 		\Profiler::mark_memory($this, 'End Theme::get_available_themes');
-		
+
 		return $array;
 	}
 
@@ -300,9 +313,9 @@ class Theme extends \Model
 	{
 		\Profiler::mark('Start Theme::load_config');
 		\Profiler::mark_memory($this, 'Start Theme::load_config');
-		
+
 		return \Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$name.'/config.php');
-		
+
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
 	}
@@ -324,16 +337,16 @@ class Theme extends \Model
 	{
 		\Profiler::mark('Start Theme::load_config');
 		\Profiler::mark_memory($this, 'Start Theme::load_config');
-		
+
 		if (is_null($this->_selected_module))
 		{
 			throw new ThemeModuleNotSelectedException;
 		}
 
 		// sending FALSE leaves the situation unchanged
-		if ($theme === FALSE)
+		if ($theme === false)
 		{
-			return FALSE;
+			return false;
 		}
 
 		if ( ! in_array($theme, $this->get_available_themes()))
@@ -343,13 +356,14 @@ class Theme extends \Model
 
 		$result = $this->get_by_name($theme);
 		$this->_selected_theme = $theme;
+		$this->_selected_theme_version = $result['version'];
 
 		// load the theme bootstrap file if present
 		\Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$theme.'/bootstrap.php');
 
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
-		
+
 		return $result;
 	}
 
@@ -413,8 +427,8 @@ class Theme extends \Model
 
 		return $this;
 	}
-	
-	
+
+
 	public function get_var($name)
 	{
 		return $this->_view_variables[$name];
@@ -465,7 +479,7 @@ class Theme extends \Model
 	{
 		$asset = ltrim($asset, '/');
 
-		$version = \Config::get($this->_selected_module.'.main.version');
+		$version = $this->_selected_theme_version;
 		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset))
 		{
 			return $this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
@@ -484,7 +498,7 @@ class Theme extends \Model
 	 * @param string $asset the location of the asset with theme folder as root
 	 * @return array the paths to each file in the overriding order
 	 */
-	public function fallback_override($asset, $double = FALSE)
+	public function fallback_override($asset, $double = false)
 	{
 		// if we aren't going to have stuff like two CSS overrides, return the theme's file
 		if (!$double || $this->get_config('extends') == $this->_selected_theme)
@@ -492,7 +506,7 @@ class Theme extends \Model
 			return array($this->fallback_asset($asset));
 		}
 
-		$version = \Config::get($this->_selected_module.'.main.version');
+		$version = $this->_selected_theme_version;
 		$result = array();
 		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset))
 			$result[] = $this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
@@ -513,7 +527,7 @@ class Theme extends \Model
 	 * @param bool $return TRUE to return the HTML as string
 	 * @return string the HTML
 	 */
-	public function build($view, $data = array(), $without_layout = FALSE)
+	public function build($view, $data = array(), $without_layout = false)
 	{
 		\Profiler::mark('Theme::build Start');
 		foreach ($data as $key => $item)
@@ -536,7 +550,7 @@ class Theme extends \Model
 		);
 
 		// if there's no selected layout output or return this
-		if ($without_layout || $this->_selected_layout === FALSE)
+		if ($without_layout || $this->_selected_layout === false)
 		{
 			\Profiler::mark_memory($content, 'Theme $content');
 			\Profiler::mark('Theme::build End without layout');
@@ -584,9 +598,9 @@ class Theme extends \Model
 				return (string) new $class($_data, $this);
 			}
 		}
-		
+
 		unset($class, $view);
-		
+
 		foreach (array($this->get_selected_theme(), $this->get_config('extends')) as $_directory)
 		{
 			switch ($_type)
@@ -608,7 +622,7 @@ class Theme extends \Model
 			if (isset($_location))
 				break;
 		}
-		
+
 		if ( ! isset($_location))
 		{
 			throw new ThemeFileNotFoundException;
@@ -622,7 +636,7 @@ class Theme extends \Model
 		ob_start();
 
 		// rewrite short tags from CodeIgniter 2.1
-		if (version_compare(phpversion(), '5.4.0') < 0 && (bool) @ini_get('short_open_tag') === FALSE)
+		if (version_compare(phpversion(), '5.4.0') < 0 && (bool) @ini_get('short_open_tag') === false)
 		{
 			try
 			{
