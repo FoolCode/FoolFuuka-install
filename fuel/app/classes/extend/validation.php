@@ -148,9 +148,9 @@ class Validation extends \Fuel\Core\Validation
 						}
 					}
 				}
-				else if ($item['type'] == 'checkbox' && isset($item[$name]))
+				else if ($item['type'] == 'checkbox')
 				{
-					if ($input[$name] == 1)
+					if (isset($input[$name]) && $input[$name] == 1)
 					{
 						$result[$name] = 1;
 					}

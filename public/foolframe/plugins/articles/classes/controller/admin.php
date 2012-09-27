@@ -62,7 +62,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 				'help' => __('Insert the short name of the article to use in the url. Only alphanumeric and dashes.'),
 				'placeholder' => __('Required'),
 				'class' => 'span4',
-				'validation' => 'required|alpha_dash',
+				'validation' => 'required|valid_string[alpha,dashes,numeric]',
 				'validation_func' => function($input, $form_internal)
 				{
 					// if we're working on the same object
@@ -204,7 +204,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
 			{
-				set_notice('warning', $result['error']);
+				\Notices::set('warning', $result['error']);
 			}
 			else
 			{
@@ -233,7 +233,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			$data['object'] = Articles::get_by_slug($slug);
 			if($data['object'] == FALSE)
 			{
-				show_404();
+				throw new HttpServerErrorException;
 			}	
 			
 			$this->_views["method_title"] = __('Article') . ': ' . $data['object']->slug;

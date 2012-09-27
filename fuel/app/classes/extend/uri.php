@@ -24,7 +24,14 @@ class Uri extends \Fuel\Core\Uri
 			$uri = implode('/', $uri);
 		}
 
-		return parent::create($uri, $variables, $get_variables, $secure);
+		$result = parent::create($uri, $variables, $get_variables, $secure);
+		
+		if (substr($result, -1) !== '/')
+		{
+			$result .= '/';
+		}
+			
+		return $result;
 	}
 	
 	

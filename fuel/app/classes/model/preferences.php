@@ -121,7 +121,7 @@ class Preferences extends \Model
 				// but we want to keep 0s
 				$value = serialize(array_filter($value, function($var){
 					if($var === 0)
-						return TRUE;
+						return true;
 					return $var;
 				}));
 			}
