@@ -67,16 +67,18 @@ return array(
 	 */
 	'roles' => array(
 		'user' => array(
-			'access' => array('user', 'member'), 
+			'access' => array('user', 'member'),
 			'maccess' => array('user')
 		),
 		'mod' => array(
 			'access' => array('mod'),
 			'maccess' => array('user', 'mod'),
+			'users' => array('access')
 		),
 		'admin' => array(
 			'access' => array('admin'),
 			'maccess' => array('user', 'mod', 'admin'),
+			'users' => array('access', 'change_credentials', 'change_group')
 		),
 		/**
 		 * Examples

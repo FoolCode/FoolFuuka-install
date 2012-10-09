@@ -16,3 +16,6 @@
 [submodule "public/foolpod"]
 	path = public/foolpod
 	url = https://github.com/FoolRulez/FoolPod-public.git
+[submodule "fuel/packages/plugin"]
+	path = fuel/packages/plugin
+	url = git@github.com:FoolRulez/Plugin.git

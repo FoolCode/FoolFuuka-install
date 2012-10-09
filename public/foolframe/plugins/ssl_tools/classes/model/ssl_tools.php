@@ -28,24 +28,27 @@ class Ssl_Tools extends \Plugins
 			}
 		}
 	}
-	
-	public static function nav_top($nav)
+
+	public static function nav_top($result)
 	{
-		return static::nav('top', $nav);
+		return static::nav('top', $result);
 	}
-	
-	public static function nav_bottom($nav)
+
+	public static function nav_bottom($result)
 	{
-		return static::nav('bottom', $nav);
+		return static::nav('bottom', $result);
 	}
-	
-	public static function nav($position, $nav)
+
+	public static function nav($position, $result)
 	{
+		$nav = $result->getParam('nav');
+
 		if(\Preferences::get('ff.plugins.ssl_tools.enable_'.$position.'_link') && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off'))
 		{
 			$nav[] = array('href' => 'https' . substr(\Uri::current(), 4), 'text' => '<i class="icon-lock"></i> SSL');
 		}
-		return array('return' => $nav);
+
+		$result->setParam('nav', $nav)->set($nav);
 	}
 
 }

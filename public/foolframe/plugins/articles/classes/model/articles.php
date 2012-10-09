@@ -15,15 +15,15 @@ class Articles extends \Plugins
 	{
 		// this might throw ArticlesArticleNotFound, catch in controller
 		static::get_by_id($id);
-		
+
 		\DB::delete('plugin_ff-articles')
 			->where('id', $id)
 			->execute();
 
 		static::clear_cache();
 	}
-	
-	
+
+
 	public static function clear_cache()
 	{
 		\Cache::delete('ff.plugin.articles.model.get_nav_top');
@@ -32,19 +32,19 @@ class Articles extends \Plugins
 
 
 	/**
-	 * Grab the whole table of articles 
+	 * Grab the whole table of articles
 	 */
 	public static function get_all()
 	{
 		$query = \DB::select()
 			->from('plugin_ff-articles');
-			
+
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			$query->where('top', 1)
 				->or_where('bottom', 1);
 		}
-		
+
 		$result = $query->as_object()
 			->execute()
 			->as_array();
@@ -58,7 +58,7 @@ class Articles extends \Plugins
 		$query = \DB::select()
 			->from('plugin_ff-articles')
 			->where('slug', $slug);
-			
+
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			$query->where_open()
@@ -66,7 +66,7 @@ class Articles extends \Plugins
 				->or_where('bottom', 1)
 				->where_close();
 		}
-		
+
 		$result = $query->as_object()
 			->execute()
 			->as_array();
@@ -85,7 +85,7 @@ class Articles extends \Plugins
 		$query = \DB::select()
 			->from('plugin_ff-articles')
 			->where('id', $id);
-			
+
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			$query->where_open()
@@ -93,7 +93,7 @@ class Articles extends \Plugins
 				->or_where('bottom', 1)
 				->where_close();
 		}
-		
+
 		$result = $query->as_object()
 			->execute()
 			->as_array();
@@ -102,78 +102,82 @@ class Articles extends \Plugins
 		{
 			throw new ArticlesArticleNotFoundException;
 		}
-		
+
 		return $result[0];
 	}
-	
-	
-	public static function get_top($nav)
+
+
+	public static function get_top($result)
 	{
-		return static::get_nav('top', $nav);
+		return static::get_nav('top', $result);
 	}
-	
-	public static function get_bottom($nav)
+
+	public static function get_bottom($result)
 	{
-		return static::get_nav('bottom', $nav);
+		return static::get_nav('bottom', $result);
 	}
-	
-	
-	public static function get_nav($where, $nav)
+
+
+	public static function get_nav($where, $result)
 	{
+		$nav = $result->getParam('nav');
+
 		try
 		{
-			$result = \Cache::get('ff.plugin.articles.model.get_nav_'.$where);
+			$res = \Cache::get('ff.plugin.articles.model.get_nav_'.$where);
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$result = \DB::select('slug', 'title')
+			$res = \DB::select('slug', 'title')
 				->from('plugin_ff-articles')
 				->where($where, 1)
 				->as_object()
 				->execute()
 				->as_array();
-			
-			\Cache::set('ff.plugin.articles.model.get_nav_'.$where, $result, 3600);
-		}
-		
-		if( ! count($result))
-		{
-			return array('return' => $nav);
+
+			\Cache::set('ff.plugin.articles.model.get_nav_'.$where, $res, 3600);
 		}
 
-		foreach($result as $article)
+		if( ! count($res))
+		{
+			return;
+		}
+
+		foreach($res as $article)
 		{
 			$nav[] = array('href' => \Uri::create('_/articles/' . $article->slug), 'text' => e($article->title));
 		}
-		
-		return array('return' => $nav);
+
+		//$result->setParam('nav', $nav)->set($nav);
 	}
-	
-	
-	public static function get_index($nav)
+
+
+	public static function get_index($result)
 	{
-		$result = \DB::select('slug', 'title')
+		$nav = $result->getParam('nav');
+
+		$res = \DB::select('slug', 'title')
 			->from('plugin_ff-articles')
 			->as_object()
 			->execute()
 			->as_array();
-		
-		if(!count($result))
+
+		if( ! count($res))
 		{
-			return array('return' => $nav);
+			return;
 		}
 
 		$nav['articles'] = array('title' => __('Articles'), 'elements' => array());
-		
-		foreach($result as $article)
+
+		foreach($res as $article)
 		{
 			$nav['articles']['elements'][] = array(
-				'href' => \Uri::create('_/articles/' . $article->slug), 
+				'href' => \Uri::create('_/articles/' . $article->slug),
 				'text' => e($article->title)
 			);
 		}
-		
-		return array('return' => $nav);
+
+		$result->setParam('nav', $nav)->set($nav);
 	}
 
 
@@ -192,7 +196,7 @@ class Articles extends \Plugins
 				->set($data)
 				->execute();
 		}
-		
+
 		static::clear_cache();
 	}
 

@@ -100,8 +100,18 @@ class Theme extends \Model
 	 */
 	private $_metadata = array();
 
+	/**
+	 * Array of named instances to grab the objects anywhere
+	 *
+	 * @var array
+	 */
 	private static $_instances = array();
 
+	/**
+	 * Currently active instance
+	 *
+	 * @var Theme
+	 */
 	private static $_set_instance = null;
 
 

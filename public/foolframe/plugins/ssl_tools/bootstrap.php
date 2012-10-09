@@ -27,6 +27,10 @@ if (\Auth::has_access('maccess.admin'))
 // we can just run base checks now
 \Foolframe\Plugins\Ssl_Tools\Ssl_Tools::check();
 
-\Plugins::register_hook('ff.themes.generic_top_nav_buttons', '\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools::nav_top', 4);
+\Foolz\Plugin\Event::forge('ff.themes.generic_top_nav_buttons')
+	->setCall('\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools::nav_top')
+	->setPriority(4);
 
-\Plugins::register_hook('ff.themes.generic_bottom_nav_buttons', '\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools::nav_bottom', 4);
+\Foolz\Plugin\Event::forge('ff.themes.generic_bottom_nav_buttons')
+	->setCall('\\Foolframe\\Plugins\\Ssl_Tools\\Ssl_Tools::nav_bottom')
+	->setPriority(4);

@@ -6,18 +6,16 @@ class Controller_Admin_Plugins extends Controller_Admin
 	public function before()
 	{
 		parent::before();
-		
+
 		if( ! Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
-		
+
 		// set controller title
 		$this->_views['controller_title'] = '<a href="' . Uri::Create("admin/plugins") . '">' . __("Plugins") . '</a>';
-
-		\Plugins::lookup_plugins();
 	}
-	
+
 	function action_manage()
 	{
 		$data = array();
@@ -35,7 +33,7 @@ class Controller_Admin_Plugins extends Controller_Admin
 			\Notices::set_flash('warning', __('The security token wasn\'t found. Try resubmitting.'));
 			\Response::redirect('admin/plugins/manage');
 		}
-		
+
 		if (!\Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
 		{
 			throw new HttpNotFoundException;
@@ -43,13 +41,13 @@ class Controller_Admin_Plugins extends Controller_Admin
 
 		$action = \Input::post('action');
 
-		$plugin = \Plugins::get_info($identifier, $slug);
+		$plugin = \Plugins::get_plugin($identifier, $slug);
 
 		if (!$plugin)
 		{
 			throw new HttpNotFoundException;
 		}
-		
+
 		switch ($action)
 		{
 			case 'enable':
@@ -59,14 +57,14 @@ class Controller_Admin_Plugins extends Controller_Admin
 				}
 				catch (\Plugins\PluginException $e)
 				{
-					\Notices::set_flash('error', \Str::tr(__('The plugin :slug couldn\'t be enabled.'), 
-						array('slug' => $plugin['info']['name'])));
+					\Notices::set_flash('error', \Str::tr(__('The plugin :slug couldn\'t be enabled.'),
+						array('slug' => $plugin->getJsonConfig('extra.name'))));
 					break;
 				}
-				
+
 				\Notices::set_flash('success',
-					\Str::tr(__('The :slug plugin is now enabled.'), array('slug' => $plugin['info']['name'])));
-				
+					\Str::tr(__('The :slug plugin is now enabled.'), array('slug' => $plugin->getJsonConfig('extra.name'))));
+
 				break;
 
 			case 'disable':
@@ -76,13 +74,13 @@ class Controller_Admin_Plugins extends Controller_Admin
 				}
 				catch (\Plugins\PluginException $e)
 				{
-					\Notices::set_flash('error', \Str::tr(__('The :slug plugin couldn\'t be enabled.'), 
-						array('slug' => $plugin['info']['name'])));
+					\Notices::set_flash('error', \Str::tr(__('The :slug plugin couldn\'t be enabled.'),
+						array('slug' => $plugin->getJsonConfig('extra.name'))));
 					break;
 				}
-				
+
 				\Notices::set_flash('success',
-					\Str::tr(__('The :slug plugin is now disabled.'), array('slug' => $plugin['info']['name'])));
+					\Str::tr(__('The :slug plugin is now disabled.'), array('slug' => $plugin->getJsonConfig('extra.name'))));
 				break;
 
 			case 'remove':
@@ -93,12 +91,12 @@ class Controller_Admin_Plugins extends Controller_Admin
 				catch (\Plugins\PluginException $e)
 				{
 					\Notices::set_flash('error',
-						\Str::tr(__('The :slug plugin couldn\'t be removed.'), 
-							array('slug' => $plugin['info']['name'])));
+						\Str::tr(__('The :slug plugin couldn\'t be removed.'),
+							array('slug' => $plugin->getJsonConfig('extra.name'))));
 					break;
 				}
 				\Notices::set_flash('success',
-					\Str::tr(__('The :slug plugin was removed.'), array('slug' => $plugin['info']['name'])));
+					\Str::tr(__('The :slug plugin was removed.'), array('slug' => $plugin->getJsonConfig('extra.name'))));
 				break;
 		}
 

@@ -1,7 +1,6 @@
-<?php foreach ($plugins as $identifier => $plugins_array) : ?>
+<?php foreach ($plugins as $module => $plugins_array) : ?>
 
-<h3><?= \Str::tr(__('Plugins for :module'), array('module' => 
-	\Config::get(\Plugins::get_module_name_by_identifier($identifier).'.main.name'))) ?></h3>
+<h3><?= \Str::tr(__('Plugins for :module'), array('module' => \Config::get($module.'.main.name'))) ?></h3>
 
 <table class="table table-bordered table-striped table-condensed">
 	<thead>
@@ -15,15 +14,15 @@
 	<tbody>
 		<?php foreach ($plugins_array as $plugin) : ?>
 			<tr>
-				<td><?php echo $plugin['info']['name'] ?></td>
-				<td><?php echo $plugin['info']['description'] ?></td>
+				<td><?php echo $plugin->getJsonConfig('extra.name', $plugin->getJsonConfig('name')) ?></td>
+				<td><?php echo $plugin->getJsonConfig('description') ?></td>
 				<td>
 					<?php
-					echo \Form::open('admin/plugins/action/'.$plugin['info']['identifier'].'/'.$plugin['info']['slug'],
-						array('action' => $plugin['enabled'] ? 'disable' : 'enable')
+					echo \Form::open('admin/plugins/action/'.$plugin->getJsonConfig('extra.identifier').'/'.$plugin->getJsonConfig('extra.slug'),
+						array('action' => $plugin->isEnabled() ? 'disable' : 'enable')
 					);
 					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-					echo '<input type="submit" class="btn" value="' . ($plugin['enabled'] ? __('Disable')
+					echo '<input type="submit" class="btn" value="' . ($plugin->isEnabled() ? __('Disable')
 							: __('Enable')) . '" />';
 					echo \Form::close();
 					?>
