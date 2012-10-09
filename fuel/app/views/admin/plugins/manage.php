@@ -19,11 +19,10 @@
 				<td>
 					<?php
 					echo \Form::open('admin/plugins/action/'.$plugin->getJsonConfig('extra.identifier').'/'.$plugin->getJsonConfig('extra.slug'),
-						array('action' => $plugin->isEnabled() ? 'disable' : 'enable')
+						array('action' => isset($plugin->enabled) ? 'disable' : 'enable')
 					);
 					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-					echo '<input type="submit" class="btn" value="' . ($plugin->isEnabled() ? __('Disable')
-							: __('Enable')) . '" />';
+					echo '<input type="submit" class="btn '.(isset($plugin->enabled) ? 'btn-warning':'btn-success').'" value="' . (isset($plugin->enabled) ? __('Disable') : __('Enable')) . '" />';
 					echo \Form::close();
 					?>
 				</td>

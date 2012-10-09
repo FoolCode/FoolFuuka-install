@@ -20,7 +20,7 @@ class PluginException extends \FuelException {}
  * @package        	FoOlFrame
  * @subpackage    	Models
  * @category    	Models
- * @author        	FoOlRulez
+ * @author        	Foolz
  * @license         http://www.apache.org/licenses/LICENSE-2.0.html
  */
 class Plugins extends \Model
@@ -78,6 +78,7 @@ class Plugins extends \Model
 			try
 			{
 				static::$loader->getPlugin($enabled['identifier'], $enabled['slug'])->execute();
+				static::$loader->getPlugin($enabled['identifier'], $enabled['slug'])->enabled = true;
 			}
 			catch (\OutOfBoundsException $e)
 			{}
@@ -101,7 +102,7 @@ class Plugins extends \Model
 		return static::$loader->getPlugins();
 	}
 
-	protected static function get_enabled()
+	public static function get_enabled()
 	{
 		try
 		{
@@ -156,9 +157,10 @@ class Plugins extends \Model
 	/**
 	 * Disables plugin and runs plugin_disable()
 	 */
-	public static function disable($identifier, $slug)
+	public static function disable($module, $slug)
 	{
-		$dir = static::get_plugin_dir($identifier, $slug);
+		$plugin = static::$loader->getPlugin($module, $slug);
+		$dir = $plugin->getDir();
 
 		if (file_exists($dir.'disable.php'))
 		{
@@ -166,7 +168,7 @@ class Plugins extends \Model
 		}
 
 		\DB::update('plugins')
-			->where('identifier', $identifier)
+			->where('identifier', $module)
 			->where('slug', $slug)
 			->value('enabled', 0)
 			->execute();

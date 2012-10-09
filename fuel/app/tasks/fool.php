@@ -7,7 +7,7 @@ class Fool
 	public function run()
 	{
 		\Cli::write(__('Welcome to the FoolFrame command line system.'));
-		
+
 		$modules = \Config::get('foolframe.modules.installed');
 		
 		if(count($modules) > 1)
