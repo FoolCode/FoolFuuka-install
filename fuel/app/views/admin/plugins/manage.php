@@ -1,6 +1,5 @@
 <?php foreach ($plugins as $module => $plugins_array) : ?>
-
-<h3><?= \Str::tr(__('Plugins for :module'), array('module' => \Config::get($module.'.main.name'))) ?></h3>
+<h3><?= \Str::tr(__('Plugins for :module'), array('module' => \Config::get(\Plugins::get_module_name_by_identifier($module).'.main.name'))) ?></h3>
 
 <table class="table table-bordered table-striped table-condensed">
 	<thead>
@@ -8,7 +7,7 @@
 			<th><?= __('Plugin name') ?></th>
 			<th><?= __('Description') ?></th>
 			<th><?= __('Status') ?></th>
-			<th><?= __('Remove') ?></th>
+			<!--<th><?= __('Remove') ?></th>-->
 		</tr>
 	</thead>
 	<tbody>
@@ -18,7 +17,7 @@
 				<td><?php echo $plugin->getJsonConfig('description') ?></td>
 				<td>
 					<?php
-					echo \Form::open('admin/plugins/action/'.$plugin->getJsonConfig('extra.identifier').'/'.$plugin->getJsonConfig('extra.slug'),
+					echo \Form::open('admin/plugins/action/'.$plugin->getJsonConfig('extra.identifier').'/'.$plugin->getJsonConfig('name'),
 						array('action' => isset($plugin->enabled) ? 'disable' : 'enable')
 					);
 					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
@@ -26,14 +25,14 @@
 					echo \Form::close();
 					?>
 				</td>
-				<td><?php
+<!--				<td><?php
 					echo \Form::open('admin/plugins/action', array('action' => 'remove')
 					);
 					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 					echo '<input type="submit" class="btn" value="' . __('Remove') . '" />';
 					echo \Form::close();
 					?>
-				</td></td>
+				</td></td>-->
 			</tr>
 		<?php endforeach; ?>
 	</tbody>

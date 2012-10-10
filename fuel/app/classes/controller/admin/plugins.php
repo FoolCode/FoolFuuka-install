@@ -26,8 +26,10 @@ class Controller_Admin_Plugins extends Controller_Admin
 	}
 
 
-	function action_action($identifier, $slug)
+	function action_action($identifier, $vendor, $slug)
 	{
+		$slug = $vendor.'/'.$slug;
+
 		if (\Input::post() && ! \Security::check_token())
 		{
 			\Notices::set_flash('warning', __('The security token wasn\'t found. Try resubmitting.'));
@@ -86,7 +88,7 @@ class Controller_Admin_Plugins extends Controller_Admin
 			case 'remove':
 				try
 				{
-					\Plugin::remove($slug);
+					\Plugin::remove($identifier, $slug);
 				}
 				catch (\Plugins\PluginException $e)
 				{

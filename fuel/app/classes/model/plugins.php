@@ -180,10 +180,7 @@ class Plugins extends \Model
 	{
 		$plugin = static::$loader->getPlugin($module, $slug);
 
-		if (file_exists($plugin->getDir().'install.php'))
-		{
-			\Fuel::load($plugin->getDir().'install.php');
-		}
+		$plugin->install();
 
 		\DB::insert('plugins')
 			->set(array('identifier' => $module, 'slug' => $slug, 'enabled' => 1))
