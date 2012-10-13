@@ -23,6 +23,7 @@ i {
 
 i.icon-white {
 	color:#fff;
+	background-image:none !important;
 }
 
 .navbar {
