@@ -68,7 +68,7 @@ class Controller_Install extends \Controller
 			$val->add_field('hostname', __('Hostname'), 'required|trim');
 			$val->add_field('prefix', __('Prefix'), 'trim');
 			$val->add_field('username', __('Username'), 'required|trim');
-			$val->add_field('password', __('Password'), 'required');
+			$val->add_field('password', __('Password'), '');
 			$val->add_field('database', __('Database name'), 'required|trim');
 
 			if ($val->run())

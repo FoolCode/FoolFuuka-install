@@ -77,8 +77,8 @@ class Plugins extends \Model
 		{
 			try
 			{
-				static::$loader->getPlugin($enabled['identifier'], $enabled['slug'])->execute();
-				static::$loader->getPlugin($enabled['identifier'], $enabled['slug'])->enabled = true;
+				static::$loader->get($enabled['identifier'], $enabled['slug'])->execute();
+				static::$loader->get($enabled['identifier'], $enabled['slug'])->enabled = true;
 			}
 			catch (\OutOfBoundsException $e)
 			{}
@@ -99,7 +99,7 @@ class Plugins extends \Model
 
 	public static function get_all()
 	{
-		return static::$loader->getPlugins();
+		return static::$loader->get();
 	}
 
 	public static function get_enabled()
@@ -124,12 +124,12 @@ class Plugins extends \Model
 
 	public static function get_plugin($module, $slug)
 	{
-		return static::$loader->getPlugin($module, $slug);
+		return static::$loader->get($module, $slug);
 	}
 
 	public static function enable($module, $slug)
 	{
-		$plugin = static::$loader->getPlugin($module, $slug);
+		$plugin = static::$loader->get($module, $slug);
 
 		$count = \DB::select(\DB::expr('COUNT(*) as count'))
 			->from('plugins')
@@ -159,7 +159,7 @@ class Plugins extends \Model
 	 */
 	public static function disable($module, $slug)
 	{
-		$plugin = static::$loader->getPlugin($module, $slug);
+		$plugin = static::$loader->get($module, $slug);
 		$dir = $plugin->getDir();
 
 		if (file_exists($dir.'disable.php'))
@@ -178,7 +178,7 @@ class Plugins extends \Model
 
 	public static function install($module, $slug)
 	{
-		$plugin = static::$loader->getPlugin($module, $slug);
+		$plugin = static::$loader->get($module, $slug);
 
 		$plugin->install();
 
