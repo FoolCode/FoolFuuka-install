@@ -99,7 +99,7 @@ class Plugins extends \Model
 
 	public static function get_all()
 	{
-		return static::$loader->get();
+		return static::$loader->getAll();
 	}
 
 	public static function get_enabled()
