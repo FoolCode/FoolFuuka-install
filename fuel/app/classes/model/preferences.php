@@ -153,9 +153,9 @@ class Preferences extends \Model
 				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 				return false;
 			}
-			
+
 			$post = array();
-			
+
 			foreach (\Input::post() as $key => $item)
 			{
 				// PHP doesn't allow periods in POST array

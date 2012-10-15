@@ -49,7 +49,7 @@ class Controller_Admin_Users extends Controller_Admin
 			$data['object'] = Users::get_user_by('id', $id);
 			$data['object']->password = '';
 		}
-		catch (Model\UsersWrongIdException $e)
+		catch (UsersWrongIdException $e)
 		{
 			throw new HttpNotFoundException;
 		}

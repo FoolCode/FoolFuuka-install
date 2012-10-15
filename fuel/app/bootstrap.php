@@ -71,12 +71,17 @@ Autoloader::register();
  */
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 
+// bootstrap doctrine
+require PKGPATH.'doctrine/Doctrine/Common/ClassLoader.php';
+$classLoader = new \Doctrine\Common\ClassLoader('Doctrine', PKGPATH.'doctrine');
+$classLoader->register();
 
 // Initialize the framework with the config file.
 \Config::load('foolframe', 'foolframe');
 Fuel::init('config.php');
 
 Autoloader::add_classes(array(
+	'Model\\DC' => APPPATH.'classes/model/dc.php',
 	'Model\\Model_Base' => APPPATH.'classes/model/model_base.php',
 	'Model\\Preferences' => APPPATH.'classes/model/preferences.php',
 	'Model\\Notices' => APPPATH.'classes/model/notices.php',
