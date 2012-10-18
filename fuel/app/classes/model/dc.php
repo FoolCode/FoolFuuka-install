@@ -12,12 +12,20 @@ class DC
 	 *
 	 * @var  array
 	 */
-	protected static $instances = array();
+	protected static $instances = [];
+
+	/**
+	 * The prefixes by instance
+	 *
+	 * @var  array
+	 */
+	protected static $prefixes = [];
 
 	/**
 	 * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
 	 *
 	 * @param   string  $instance  The named instance
+	 *
 	 * @return  \Doctrine\DBAL\Connection
 	 * @throws  \DomainException  If the database configuration doesn't exist
 	 */
@@ -50,6 +58,8 @@ class DC
 			'driver' => 'pdo_mysql',
 		];
 
+		static::$prefixes[$instance] = \Config::get('db.table_prefix');
+
 		return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
 	}
 
@@ -57,11 +67,37 @@ class DC
 	 * Returns a query builder
 	 *
 	 * @param   string  $instance  The named instance
+	 *
 	 * @return  \Doctrine\DBAL\Query\QueryBuilder
 	 * @throws  \DomainException  If the database configuration doesn't exist
 	 */
 	public static function qb($instance = 'default')
 	{
 		return static::forge($instance)->createQueryBuilder();
+	}
+
+	/**
+	 * Returns the prefix
+	 *
+	 * @param  string  $instance  The named instance
+	 *
+	 * @return string  The prefix for the instance
+	 */
+	public static function getPrefix($instance = 'default')
+	{
+		return static::$prefixes[$instance];
+	}
+
+	/**
+	 * Returns the table name with the prefix
+	 *
+	 * @param   string  $table The table name
+	 * @param   string  $instance  The named instance
+	 *
+	 * @return  string the table name with the prefix
+	 */
+	public static function p($table, $instance = 'default')
+	{
+		return static::$prefixes[$instance].$table;
 	}
 }

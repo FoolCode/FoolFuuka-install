@@ -3,23 +3,23 @@
 
 class Router extends \Fuel\Core\Router
 {
-	
+
 	protected static function parse_match($match)
 	{
 		$namespace = '';
 		$segments = $match->segments;
 		$module = false;
-		
+
 		if ($segments[0] === 'plugin')
 		{
-			$namespace = 
+			$namespace =
 				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).
 					'\\Plugins\\'.\Inflector::words_to_upper($segments[2]).'\\';
 		}
-		
+
 		if ($segments[0] === 'theme')
 		{
-			$namespace = 
+			$namespace =
 				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).
 					'\\Themes\\'.\Inflector::words_to_upper($segments[2]).'\\';
 		}
@@ -46,5 +46,5 @@ class Router extends \Fuel\Core\Router
 			return null;
 		}
 	}
-	
+
 }
