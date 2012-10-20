@@ -15,6 +15,11 @@ class Model_Base extends \Model
 	{
 		$class = strtolower(get_class($this));
 
+		if ( ! method_exists($this, 'p_'.$name))
+		{
+			throw new \BadMethodCallException('Method "'.$name.'" does not exist.');
+		}
+
 		$before = \Foolz\Plugin\Hook::forge($class.'.'.$name.'.call.before')
 			->setObject($this)
 			->setParams($parameters)
@@ -72,6 +77,11 @@ class Model_Base extends \Model
 	public static function __callStatic($name, $parameters)
 	{
 		$class = str_replace('\\', '/', strtolower(get_called_class()));
+
+		if ( ! method_exists(get_called_class(), 'p_'.$name))
+		{
+			throw new \BadMethodCallException('Static method "'.$name.'" does not exist.');
+		}
 
 		$before = \Foolz\Plugin\Hook::forge($class.'.'.$name.'.call.before')
 			->setParams($parameters)
