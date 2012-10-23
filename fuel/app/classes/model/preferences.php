@@ -39,7 +39,11 @@ class Preferences extends \Model
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$preferences = \DB::select()->from('preferences')->as_assoc()->execute();
+			$preferences = \DC::qb()
+				->select('*')
+				->from(\DC::p('preferences'), 'p')
+				->execute()
+				->fetchAll();
 
 			foreach($preferences as $pref)
 			{
@@ -84,16 +88,26 @@ class Preferences extends \Model
 			$value = serialize($value);
 		}
 
-		$count = \DB::select(\DB::expr('COUNT(*) as count'))
-				->from('preferences')->where('name', $setting)->execute()->current();
+		$count = \DC::qb()
+			->select('COUNT(*) as count')
+			->from(\DC::p('preferences'), 'p')
+			->where('p.name = :name')
+			->setParameter(':name', $setting)
+			->execute()
+			->fetch();
 
 		if ($count['count'])
 		{
-			\DB::update('preferences')->value('value', $value)->where('name', $setting)->execute();
+			\DC::qb()
+				->update(\DC::p('preferences'))
+				->set('value', ':value')
+				->where('name', ':name')
+				->setParameters([':value' => $value, ':name' => $setting])
+				->execute();
 		}
 		else
 		{
-			\DB::insert('preferences')->set(array('name' => $setting, 'value' => $value))->execute();
+			\DC::forge()->insert(\DC::p('preferences'), ['name' => $setting, 'value' => $value]);
 		}
 
 		if ($reload)

@@ -17,18 +17,20 @@ class Users extends \Model
 		$id = \Auth::get_user_id();
 		$id = $id[1];
 
-		$query = \DB::select()
-			->from(\Config::get('foolauth.table_name'))
-			->where('id', $id)
-			->as_object()
-			->execute(\Config::get('foolauth.db_connection'));
+		$result = \DC::qb()
+			->select('*')
+			->from(\DC::p(\Config::get('foolauth.table_name')), 't')
+			->where('t.id = :id')
+			->setParameter(':id', $id)
+			->execute()
+			->fetch();
 
-		if (!count($query))
+		if ( ! $result)
 		{
 			throw new UsersWrongIdException;
 		}
 
-		return User::forge($query->current());
+		return User::forge($result);
 	}
 
 
@@ -40,18 +42,19 @@ class Users extends \Model
 	 */
 	public static function get_user_by($field, $id)
 	{
-		$query = \DB::select()
-			->from(\Config::get('foolauth.table_name'))
-			->where($field, $id)
-			->as_object()
-			->execute(\Config::get('foolauth.db_connection'));
+		$result = \DC::qb()
+			->select('*')
+			->from(\DC::p(\Config::get('foolauth.table_name')), 't')
+			->where($field.' = '.\DC::forge()->quote($id))
+			->execute()
+			->fetch();
 
-		if ( ! count($query))
+		if ( ! $result)
 		{
 			throw new UsersWrongIdException;
 		}
 
-		return User::forge($query->current());
+		return User::forge($result);
 	}
 
 
@@ -64,22 +67,23 @@ class Users extends \Model
 	 */
 	public static function get_all($page = 1, $limit = 40)
 	{
-		$users = \DB::select()
-			->from(\Config::get('foolauth.table_name'))
-			->limit($limit)
-			->offset(($page * $limit) - $limit)
-			->execute(\Config::get('foolauth.db_connection'))
-			->as_array();
+		$users = \DC::qb()
+			->select('*')
+			->from(\DC::p(\Config::get('foolauth.table_name')), 't')
+			->setMaxResults($limit)
+			->setFirstResult(($page * $limit) - $limit)
+			->execute()
+			->fetchAll();
 
 		$users = User::forge($users);
 
-		$count = \DB::select(\DB::expr('COUNT(*) as count'))
-			->from(\Config::get('foolauth.table_name'))
-			->as_object()
-			->execute(\Config::get('foolauth.db_connection'))
-			->current()->count;
+		$count = \DC::qb()
+			->select('COUNT(*) as count')
+			->from(\DC::p(\Config::get('foolauth.table_name')), 't')
+			->execute()
+			->fetch();
 
-		return array('result' => $users, 'count' => $count);
+		return array('result' => $users, 'count' => $count['count']);
 	}
 
 }

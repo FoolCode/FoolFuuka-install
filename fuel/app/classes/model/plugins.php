@@ -9,20 +9,6 @@ use Foolz\Plugin\Event;
 
 class PluginException extends \FuelException {}
 
-
-/**
- * FoOlFrame Plugins Model
- *
- * The Plugins Model allows running code wherever there are hooks,
- * change parameters passed to functions manipulate returns, and create
- * (ficticious) controllers, and controller functions.
- *
- * @package        	FoOlFrame
- * @subpackage    	Models
- * @category    	Models
- * @author        	Foolz
- * @license         http://www.apache.org/licenses/LICENSE-2.0.html
- */
 class Plugins extends \Model
 {
 
@@ -110,11 +96,13 @@ class Plugins extends \Model
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$result = \DB::select()
-				->from('plugins')
-				->where('enabled', 1)
+			$result = \DC::qb()
+				->select('*')
+				->from(\DC::p('plugins'), 'p')
+				->where('enabled = :enabled')
+				->setParameter(':enabled', true)
 				->execute()
-				->as_array();
+				->fetchAll();
 
 			\Cache::set('ff.model.plugins.get_enabled.query', $result, 3600);
 		}
@@ -131,13 +119,14 @@ class Plugins extends \Model
 	{
 		$plugin = static::$loader->get($module, $slug);
 
-		$count = \DB::select(\DB::expr('COUNT(*) as count'))
-			->from('plugins')
-			->where('identifier', $module)
-			->where('slug', $slug)
-			->as_object()
+		$count = \DC::qb()
+			->select('COUNT(*) as count')
+			->from(\DC::p('plugins'), 'p')
+			->where('identifier = :identifier')
+			->andWhere('slug = :slug')
+			->setParameters([':identifier' => $module, ':slug' => $slug])
 			->execute()
-			->current()->count;
+			->fetch()['count'];
 
 		// if the plugin isn't installed yet, we will run install.php and NOT enable.php
 		if ( ! $count)
@@ -145,10 +134,12 @@ class Plugins extends \Model
 			return static::install($module, $slug);
 		}
 
-		\DB::update('plugins')
-			->where('identifier', $module)
-			->where('slug', $slug)
-			->value('enabled', 1)
+		\DC::qb()
+			->update(\DC::p('plugins'))
+			->set('enabled', ':enabled')
+			->where('identifier = :identifier')
+			->andWhere('slug = :slug')
+			->setParameters(['enabled' => true, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
 		static::clear_cache();
@@ -167,10 +158,12 @@ class Plugins extends \Model
 			\Fuel::load($dir.'disable.php');
 		}
 
-		\DB::update('plugins')
-			->where('identifier', $module)
-			->where('slug', $slug)
-			->value('enabled', 0)
+		\DC::qb()
+			->update(\DC::p('plugins'))
+			->set('enabled', ':enabled')
+			->where('identifier = :identifier')
+			->andWhere('slug = :slug')
+			->setParameters([':enabled' => false, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
 		static::clear_cache();
@@ -182,9 +175,7 @@ class Plugins extends \Model
 
 		$plugin->install();
 
-		\DB::insert('plugins')
-			->set(array('identifier' => $module, 'slug' => $slug, 'enabled' => 1))
-			->execute();
+		\DC::forge()->insert(\DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
 
 		static::clear_cache();
 	}
@@ -198,9 +189,11 @@ class Plugins extends \Model
 			\Fuel::load($dir.'uninstall.php');
 		}
 
-		\DB::delete('plugins')
-			->where('identifier', $identifier)
-			->where('slug', $slug)
+		\DC::qb()
+			->delete(\DC::p('plugins'))
+			->where('identifier = :identifier')
+			->andWhere('slug = :slug')
+			->setParameters([':identifier' => $identifier, ':slug' => $slug])
 			->execute();
 
 		static::clear_cache();

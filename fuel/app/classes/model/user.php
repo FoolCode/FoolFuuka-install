@@ -81,15 +81,22 @@ class User extends \Model
 			$set[$filter] = $this->$filter;
 		}
 
-		if (!is_null($set['password']) && $set['password'] !== '')
+		if ( ! is_null($set['password']) && $set['password'] !== '')
 			$set['password'] = \Auth::hash_password($set['password']);
 		else
 			unset($set['password']);
 
-		\DB::update(\Config::get('foolauth.table_name'))
-			->where('id', '=', $this->id)
-			->set($set)
-			->execute(\Config::get('foolauth.db_connection'));
+		$query = \DC::qb()
+			->update(\DC::p(\Config::get('foolauth.table_name')))
+			->where('id = :id')
+			->setParameter(':id', $this->id);
+
+		foreach ($set as $key => $item)
+		{
+			$query->set($key, \DC::forge()->quote($item));
+		}
+
+		$query->execute();
 	}
 
 }
