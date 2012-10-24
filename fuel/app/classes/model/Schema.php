@@ -83,7 +83,7 @@ class Schema
 		$user_autologin->addColumn('user_agent', 'string', ['length' => 150]);
 		$user_autologin->addColumn('last_login', 'integer', ['unsigned' => true]);
 		$user_autologin->setPrimaryKey(['login_hash']);
-		$user_autologin->addUniqueIndex(['user_id'], 'user_id_index');
+		$user_autologin->addIndex(['user_id'], 'user_id_index');
 
 		$user_login_attempts = $schema->createTable(\DC::p('user_login_attempts'));
 		$user_login_attempts->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
