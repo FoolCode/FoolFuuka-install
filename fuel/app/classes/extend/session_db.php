@@ -96,7 +96,7 @@ class Session_Db extends Fuel\Core\Session_Driver
 		// read the session record
 		$this->record = \DC::qb()
 			->select('*')
-			->from(\DC::p($this->config['table']), 't')
+			->from(\DC::p($this->config['table']), 's')
 			->where('session_id = :session_id')
 			->setParameter('session_id', $this->keys['session_id'])
 			->execute()
@@ -112,7 +112,7 @@ class Session_Db extends Fuel\Core\Session_Driver
 			// try to find the session on previous id
 			$this->record = \DC::qb()
 				->select('*')
-				->from(\DC::p($this->config['table']))
+				->from(\DC::p($this->config['table']), 's')
 				->where('previous_id = :session_id')
 				->setParameter('session_id', $this->keys['session_id'])
 				->execute()
@@ -182,7 +182,7 @@ class Session_Db extends Fuel\Core\Session_Driver
 					->execute();
 
 				// update went well?
-				if ($result)
+				if ($result !== false)
 				{
 					// then update the cookie
 					$this->_set_cookie();
