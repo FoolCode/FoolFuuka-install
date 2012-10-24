@@ -8,7 +8,7 @@ class User extends \Model
 	public $id = null;
 	public $username = null;
 	public $password = null;
-	public $group = null;
+	public $group_id = null;
 	public $email = null;
 	public $new_email = null;
 	public $new_email_key = null;
@@ -30,7 +30,7 @@ class User extends \Model
 	private $editable_fields = array(
 		'username',
 		'password',
-		'group',
+		'group_id',
 		'email',
 		'profile_fields',
 		'bio',

@@ -206,31 +206,13 @@ class Install extends \Model
 			),
 			'identifier' => '',
 			'table_prefix' => $array['prefix'],
-			'charset'      => 'utf8',
+			'charset'      => 'utf8mb4',
 			'enable_cache' => true,
 			'profiling'    => false,
 		));
 
 		\Config::save(\Fuel::$env.DS.'db', 'db');
-
-		// check if mb4 is supported and in case enable it
-		\DBUtil::set_connection('default');
-		$query = \DB::query("SHOW CHARACTER SET WHERE Charset = 'utf8mb4'", \DB::SELECT)->execute();
-		if (count($query))
-		{
-			\Config::set('db.default.charset', 'utf8mb4');
-			\Config::save(\Fuel::$env.DS.'db', 'db');
-		}
 	}
-
-	public static function clear_database_users()
-	{
-		\Config::load('foolauth', 'foolauth');
-
-		\DBUtil::set_connection('default');
-		\DBUtil::truncate_table(\Config::get('foolauth.table_name'));
-	}
-
 
 	public static function create_salts()
 	{
@@ -250,9 +232,9 @@ class Install extends \Model
 		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::save(\Fuel::$env.DS.'cache', 'cache');
-		
+
 		$crypt = array();
-		
+
 		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
 		{
 			$crypto = '';
@@ -260,15 +242,15 @@ class Install extends \Model
 			{
 				$crypto .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
 			}
-			
+
 			$crypt[$key] = $crypto;
 		}
-		
+
 		\Config::set('crypt', $crypt);
 		\Config::save(\Fuel::$env.DS.'crypt', 'crypt');
 	}
-	
-	
+
+
 	private static function safe_b64encode($value)
 	{
 		$data = base64_encode($value);

@@ -132,7 +132,7 @@ class Controller_Admin_Users extends Controller_Admin
 
 		if (Auth::has_access('users.change_group'))
 		{
-			$form['group'] = array(
+			$form['group_id'] = array(
 				'type' => 'radio',
 				'database' => true,
 				'label' => 'Display name',

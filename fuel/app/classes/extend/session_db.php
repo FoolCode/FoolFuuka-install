@@ -197,7 +197,11 @@ class Session_Db extends Fuel\Core\Session_Driver
 			if (mt_rand(0,100) < $this->config['gc_probability'])
 			{
 				$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
-				$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
+				\DC::qb()
+					->delete(\DC::p($this->config['table']))
+					->where('updated < :expired')
+					->setParameter(':expired', $expired)
+					->execute();
 			}
 		}
 

@@ -90,6 +90,8 @@ Autoloader::add_classes(array(
 	'Model\\Theme' => APPPATH.'classes/model/theme.php',
 	'Model\\Users' => APPPATH.'classes/model/users.php',
 	'Model\\User' => APPPATH.'classes/model/user.php',
+	'Foolz\Foolframe\Model\Schema' => APPPATH.'classes/model/Schema.php',
+	'Foolz\Foolframe\Model\SchemaManager' => APPPATH.'classes/model/SchemaManager.php',
 ));
 
 Autoloader::add_core_namespace('Model');
@@ -99,6 +101,8 @@ Package::load('inet');
 Autoloader::alias_to_namespace('Foolz\\Inet\\Inet');
 
 Package::load('plugin');
+
+
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
 if ( ! \Config::get('foolframe.install.installed'))

@@ -80,9 +80,9 @@ class Controller_Install extends \Controller
 				{
 					\Install::setup_database($input);
 					\Install::create_salts();
-					\Migrate::latest();
-					// due to random salt generation, truncate users table
-					\Install::clear_database_users();
+					$sm = \Foolz\Foolframe\Model\SchemaManager::forgeForModules(\DC::forge(), \DC::getPrefix());
+					\Foolz\Foolframe\Model\Schema::load($sm);
+					$sm->commit();
 					\Response::redirect('install/create_admin');
 				}
 				else
@@ -130,7 +130,7 @@ class Controller_Install extends \Controller
 				\Auth::activate_user($id, $activation_key);
 				\Auth::force_login($id);
 				$user = \Users::get_user();
-				$user->save(array('group' => 100));
+				$user->save(array('group_id' => 100));
 				\Response::redirect('install/modules');
 			}
 			else
@@ -157,23 +157,28 @@ class Controller_Install extends \Controller
 
 			$modules = array();
 
+			$sm = \Foolz\Foolframe\Model\SchemaManager::forgeForModules(\DC::forge(), \DC::getPrefix());
+			\Foolz\Foolframe\Model\Schema::load($sm);
+
 			if (\Input::post('foolfuuka'))
 			{
 				$modules[] = 'foolfuuka';
-				\Migrate::latest('foolfuuka', 'module');
+
+				require_once APPPATH.'modules/foolfuuka/classes/Foolz/Foolfuuka/Model/Schema.php';
+				\Foolz\Foolfuuka\Model\Schema::load($sm);
 			}
 
 			if (\Input::post('foolpod'))
 			{
 				$modules[] = 'foolpod';
-				\Migrate::latest('foolpod', 'module');
 			}
 
 			if (\Input::post('foolslide'))
 			{
 				$modules[] = 'foolslide';
-				\Migrate::latest('foolslide', 'module');
 			}
+
+			$sm->commit();
 
 			if (count($modules) > 0)
 			{

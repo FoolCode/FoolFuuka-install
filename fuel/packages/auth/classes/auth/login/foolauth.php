@@ -47,7 +47,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	protected static $guest_login = array(
 		'id' => 0,
 		'username' => 'guest',
-		'group' => '0',
+		'group_id' => '0',
 		'login_hash' => false,
 		'email' => false
 	);
@@ -58,7 +58,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	protected static $cli_login = array(
 		'id' => 0,
 		'username' => 'cli_admin',
-		'group' => '100',
+		'group_id' => '100',
 		'login_hash' => false,
 		'email' => false
 	);
@@ -349,7 +349,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			'username'        => (string) $username,
 			'password'        => $this->hash_password((string) $password),
 			'email'           => $email,
-			'group'           => (int) $group,
+			'group_id'           => (int) $group,
 			'activated'		  => $activated,
 			'activation_key'  => $this->hash_password((string) $activation_key),
 			'profile_fields'  => serialize($profile_fields),
@@ -412,7 +412,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		// try activating
 		$affected_rows = \DC::qb()
 			->update(\DC::p(\Config::get('foolauth.table_name')))
-			->set('activated = :activated')
+			->set('activated', ':activated')
 			->where('id = :id')
 			->andWhere('activation_key = :activation_key')
 			->setParameters([':activated' => true, ':id' => $id, ':activation_key' => $this->hash_password($activation_key)])
@@ -735,7 +735,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			return false;
 		}
 
-		return array(array('FoolGroup', $this->user['group']));
+		return array(array('FoolGroup', $this->user['group_id']));
 	}
 
 	/**
