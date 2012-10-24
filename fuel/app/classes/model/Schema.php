@@ -52,7 +52,7 @@ class Schema
 			$users->addOption('charset', $charset);
 			$users->addOption('collate', $collation);
 		}
-		$users->addColumn('id', 'integer', ['unsigned' => true]);
+		$users->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
 		$users->addColumn('username', 'string', ['length' => 32]);
 		$users->addColumn('password', 'string', ['length' => 255]);
 		$users->addColumn('group_id', 'integer', ['unsigned' => true]);

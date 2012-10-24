@@ -55,10 +55,10 @@ class DC
 			'user' => $db_data['username'],
 			'password' => $db_data['password'],
 			'host' => $db_data['hostname'],
-			'driver' => 'pdo_mysql',
+			'driver' => \Config::get('db.'.$instance.'.type'),
 		];
 
-		static::$prefixes[$instance] = \Config::get('db.table_prefix');
+		static::$prefixes[$instance] = \Config::get('db.'.$instance.'.table_prefix');
 
 		return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
 	}

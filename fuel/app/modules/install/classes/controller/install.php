@@ -74,7 +74,7 @@ class Controller_Install extends \Controller
 			if ($val->run())
 			{
 				$input = $val->input();
-				$input['type'] = 'mysqli';
+				$input['type'] = 'pdo_mysql';
 
 				if ( ! \Install::check_database($input))
 				{

@@ -52,7 +52,7 @@ class SchemaManager
 		{
 			foreach ($tables as $key => $table)
 			{
-				if (strpos($table->getName(), $this->prefix) !== 0)
+				if (strpos($table->getName(), $new->prefix) !== 0)
 				{
 					unset($tables[$key]);
 				}
