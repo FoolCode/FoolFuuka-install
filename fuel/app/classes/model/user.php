@@ -93,7 +93,7 @@ class User extends \Model
 
 		foreach ($set as $key => $item)
 		{
-			$query->set($key, \DC::forge()->quote($item));
+			$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
 		}
 
 		$query->execute();

@@ -1,21 +1,21 @@
 [submodule "fuel/app/modules/foolfuuka"]
 	path = fuel/app/modules/foolfuuka
-	url = https://github.com/FoolRulez/FoolFuuka-module.git
+	url = https://github.com/FoolCode/FoolFuuka-module.git
 [submodule "public/foolfuuka"]
 	path = public/foolfuuka
-	url = https://github.com/FoolRulez/FoolFuuka-public.git
+	url = https://github.com/FoolCode/FoolFuuka-public.git
 [submodule "fuel/packages/sphinxql"]
 	path = fuel/packages/sphinxql
-	url = https://github.com/FoolRulez/fuel-sphinxql.git
+	url = https://github.com/FoolCode/fuel-sphinxql.git
 [submodule "fuel/packages/inet"]
 	path = fuel/packages/inet
-	url = https://github.com/FoolRulez/Inet.git
+	url = https://github.com/FoolCode/Inet.git
 [submodule "fuel/app/modules/foolpod"]
 	path = fuel/app/modules/foolpod
-	url = https://github.com/FoolRulez/FoolPod-module.git
+	url = https://github.com/FoolCode/FoolPod-module.git
 [submodule "public/foolpod"]
 	path = public/foolpod
-	url = https://github.com/FoolRulez/FoolPod-public.git
+	url = https://github.com/FoolCode/FoolPod-public.git
 [submodule "fuel/packages/plugin"]
 	path = fuel/packages/plugin
-	url = https://github.com/FoolRulez/Plugin.git
+	url = https://github.com/FoolCode/Plugin.git
