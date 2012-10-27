@@ -251,7 +251,7 @@ class Upgrade
 			throw new UpgradeException(__('The upgrade server sent an error: "'.$container['error'].'".'));
 		}
 
-		$temp_dir = $this->dir_temp.str_replace('/', $this->name).'/';
+		$temp_dir = $this->dir_temp.str_replace('/', '_', $this->name).'/';
 
 		if ( ! file_exists($temp_dir))
 		{
@@ -303,7 +303,7 @@ class Upgrade
 	 */
 	public function replace()
 	{
-		$temp_dir = $this->dir_temp.str_replace('/', $this->name).'/';
+		$temp_dir = $this->dir_temp.str_replace('/', '_', $this->name).'/';
 
 		// move the ignored files in a safe place
 		Util::renameArray($this->path_ignore, $this->dir, $temp_dir.'backup/');
@@ -323,7 +323,7 @@ class Upgrade
 	 */
 	public function clean()
 	{
-		$temp_dir = $this->dir_temp.str_replace('/', $this->name).'/';
+		$temp_dir = $this->dir_temp.str_replace('/', '_', $this->name).'/';
 		static::flushDir($temp_dir);
 		rmdir($temp_dir);
 	}
