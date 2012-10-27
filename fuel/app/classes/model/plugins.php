@@ -3,9 +3,6 @@
 namespace Model;
 
 use Foolz\Plugin\Loader;
-use Foolz\Plugin\Plugin;
-use Foolz\Plugin\Hook;
-use Foolz\Plugin\Event;
 
 class PluginException extends \FuelException {}
 
@@ -25,13 +22,6 @@ class Plugins extends \Model
 	 * @var array
 	 */
 	protected static $modules = array();
-
-	/**
-	 * List of routes and callbacks
-	 *
-	 * @var array
-	 */
-	protected static $_routes = array();
 
 
 	/**
@@ -110,6 +100,13 @@ class Plugins extends \Model
 		return $result;
 	}
 
+	/**
+	 *
+	 * @param type $module
+	 * @param type $slug
+	 *
+	 * @return \Foolz\Plugin\Plugin
+	 */
 	public static function get_plugin($module, $slug)
 	{
 		return static::$loader->get($module, $slug);
@@ -167,6 +164,14 @@ class Plugins extends \Model
 			->execute();
 
 		static::clear_cache();
+	}
+
+	public static function upgrade($module, $slug)
+	{
+		$plugin = static::$loader->get($module, $slug);
+
+		$upgrade = \Foolz\Autoupgrade\Upgrade::forge($plugin->getDir());
+		$upgrade->run();
 	}
 
 	public static function install($module, $slug)

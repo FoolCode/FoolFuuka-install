@@ -85,6 +85,9 @@ class Controller_Admin_Plugins extends Controller_Admin
 					\Str::tr(__('The :slug plugin is now disabled.'), array('slug' => $plugin->getJsonConfig('extra.name'))));
 				break;
 
+			case 'upgrade':
+				break;
+
 			case 'remove':
 				try
 				{

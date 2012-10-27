@@ -96,11 +96,11 @@ Autoloader::add_classes(array(
 
 Autoloader::add_core_namespace('Model');
 
+\Fuel::load(PKGPATH.'foolz/bootstrap.php');
+
 // load Inet class for decimal use: \Inet::ptod($ip)
-Package::load('inet');
 Autoloader::alias_to_namespace('Foolz\\Inet\\Inet');
 
-Package::load('plugin');
 
 
 
