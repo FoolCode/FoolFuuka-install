@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use \Foolz\Config\Config;
+
 class Preferences extends \Foolz\Foolframe\Controller\Admin
 {
 
@@ -9,13 +11,13 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 	{
 		parent::before();
 
-		if( ! Auth::has_access('maccess.admin'))
+		if( ! \Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
 
 		// set controller title
-		$this->_views['controller_title'] = '<a href="' . Uri::Create("admin/preferences") . '">' . __("Preferences") . '</a>';
+		$this->_views['controller_title'] = __("Preferences");
 	}
 
 
@@ -53,7 +55,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'select',
 			'label' => __('Default language'),
 			'help' => __('The language the users will see as they reach your site.'),
-			'options' => \Config::get('foolframe.preferences.lang.available'),
+			'options' => Config::get('foolz/foolframe', 'package', 'preferences.lang.available'),
 			'preferences' => TRUE,
 		);
 
@@ -62,16 +64,19 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		);
 
 		$themes = array();
-		$theme_obj = new Theme();
+		$theme_obj = new \Theme();
 
-
-
-		foreach (\Config::get('foolframe.modules.installed') as $module)
+		foreach (Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
 		{
+			if ($module === 'foolz/foolframe')
+			{
+				continue;
+			}
+
 			$theme_obj->set_module($module);
 
-			$identifier = \Config::get($module.'.main.identifier');
-			$module_name = \Config::get($module.'.main.name');
+			$identifier = Config::get($module, 'package', 'main.identifier');
+			$module_name = Config::get($module, 'package', 'main.name');
 
 			foreach($theme_obj->get_all() as $name => $theme)
 			{
@@ -82,7 +87,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 					'array_key' => $name,
 					'preferences' => TRUE,
 					'checked' => defined('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') ?
-						constant('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED'):0
+						constant('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') : 0
 				);
 			}
 
@@ -174,8 +179,8 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		\Preferences::submit_auto($form);
 
 		// create a form
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
-		return Response::forge(View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 
@@ -239,8 +244,8 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		\Preferences::submit_auto($form);
 
 		// create a form
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
-		return Response::forge(View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 
@@ -312,10 +317,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		\Preferences::submit_auto($form);
 
 		// create a form
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
-		return Response::forge(View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
-
 }
-
-/* end of file preferences.php */

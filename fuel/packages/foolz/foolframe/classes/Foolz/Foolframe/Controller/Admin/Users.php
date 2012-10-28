@@ -8,7 +8,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 	public function before()
 	{
 		// only mods and admins can see and edit users
-		if(!Auth::has_access('maccess.mod'))
+		if( ! \Auth::has_access('maccess.mod'))
 		{
 			Response::redirect('admin');
 		}
@@ -32,9 +32,9 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		$data['count'] = $users_data['count'];
 
 		$this->_views['method_title'] = __('Manage');
-		$this->_views['main_content_view'] = View::forge('admin/users/manage', $data);
+		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/users/manage', $data);
 
-		return Response::forge(View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 
@@ -42,17 +42,17 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 	{
 		if (intval($id) < 1)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
 		try
 		{
-			$data['object'] = Users::get_user_by('id', $id);
+			$data['object'] = \Foolz\Foolframe\Model\Users::get_user_by('id', $id);
 			$data['object']->password = '';
 		}
-		catch (UsersWrongIdException $e)
+		catch (\Foolz\Foolframe\Model\UsersWrongIdException $e)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
 
@@ -69,12 +69,12 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		$form['paragraph-2'] = array(
 			'type' => 'paragraph',
-			'help' => '<img src="'.Gravatar::get_gravatar($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
-				Str::tr(__('The avatar is automatically fetched from :gravatar, based on the user\'s registration email.'),
+			'help' => '<img src="'.\Gravatar::get_gravatar($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+				\Str::tr(__('The avatar is automatically fetched from :gravatar, based on the user\'s registration email.'),
 				array('gravatar' => '<a href="http://gravatar.com" target="_blank">Gravatar</a>'))
 		);
 
-		if (Auth::has_access('users.change_credentials'))
+		if (\Auth::has_access('users.change_credentials'))
 		{
 			$form['username'] = array(
 				'type' => 'input',
@@ -131,7 +131,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			'validation' => 'trim|max_length[32]'
 		);
 
-		if (Auth::has_access('users.change_group'))
+		if (\Auth::has_access('users.change_group'))
 		{
 			$form['group_id'] = array(
 				'type' => 'radio',
@@ -162,7 +162,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (Input::post())
+		else if (\Input::post())
 		{
 			$result = \Validation::form_validate($form);
 
@@ -179,7 +179,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 				\Notices::set('success', __('Preferences updated.'));
 
-				$user = Users::get_user_by('id', $id);
+				$user = \Foolz\Foolframe\Model\Users::get_user_by('id', $id);
 
 				$user->save($result['success']);
 				$data['object'] = $user;
@@ -188,10 +188,9 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// create a form
-		$this->_views["controller_title"] = __('Users');
 		$this->_views["method_title"] = __('User');
-		$this->_views["main_content_view"] = View::forge('admin/form_creator', $data);
-		return Response::forge(View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 }

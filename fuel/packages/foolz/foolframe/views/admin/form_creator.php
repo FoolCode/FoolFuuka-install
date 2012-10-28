@@ -163,7 +163,7 @@
 							isset($item['attributes']) ? merge($item['attributes'], $open_default_attr) : $open_default_attr,
 							isset($item['hidden']) ? $item['hidden'] : array()
 						);
-						
+
 						echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 						break;
 
@@ -301,7 +301,7 @@
 								$data['hide'] = FALSE;
 							if (isset($object)) $data['object'] = $object;
 							$data['parent'] = $name;
-							echo View::forge('admin/form_creator', $data);
+							echo View::forge('foolz/foolframe::admin/form_creator', $data);
 						}
 
 						if(isset($helpers['sub_inverse']))
@@ -313,7 +313,7 @@
 								$data['hide'] = FALSE;
 							if (isset($object)) $data['object'] = $object;
 							$data['parent'] = $name . '_inverse';
-							echo View::forge('admin/form_creator', $data);
+							echo \View::forge('foolz/foolframe::admin/form_creator', $data);
 						}
 
 						break;
@@ -351,7 +351,7 @@
 							);
 						}
 						echo $helpers['help'];
-						echo View::forge('admin/form_creator', array('form' => $data_form));
+						echo View::forge('foolz/foolframe::admin/form_creator', array('form' => $data_form));
 						break;
 
 					case 'select':
@@ -385,8 +385,7 @@
 						<?php
 						break;
 
-					// These are the standard CodeIgniter functions that accept array
-					// http://codeigniter.com/user_guide/helpers/Form::helper.html
+
 					case 'input':
 					case 'password':
 					case 'upload':

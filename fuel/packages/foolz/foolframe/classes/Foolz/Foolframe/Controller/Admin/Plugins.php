@@ -9,13 +9,13 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 	{
 		parent::before();
 
-		if( ! Auth::has_access('maccess.admin'))
+		if( ! \Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
 
 		// set controller title
-		$this->_views['controller_title'] = '<a href="' . Uri::Create("admin/plugins") . '">' . __("Plugins") . '</a>';
+		$this->_views['controller_title'] = __("Plugins");
 	}
 
 	function action_manage()
@@ -23,8 +23,8 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 		$data = array();
 		$data['plugins'] = \Plugins::get_all();
 		$this->_views['method_title'] = __('Manage');
-		$this->_views["main_content_view"] = \View::forge('admin/plugins/manage', $data);
-		return \Response::forge(\View::forge('admin/default', $this->_views));
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/plugins/manage', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 
@@ -38,18 +38,18 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/plugins/manage');
 		}
 
-		if (!\Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
+		if ( ! \Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
 		$action = \Input::post('action');
 
 		$plugin = \Plugins::get_plugin($identifier, $slug);
 
-		if (!$plugin)
+		if ( ! $plugin)
 		{
-			throw new HttpNotFoundException;
+			throw new \HttpNotFoundException;
 		}
 
 		switch ($action)

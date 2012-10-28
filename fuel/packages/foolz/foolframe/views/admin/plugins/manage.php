@@ -1,5 +1,5 @@
 <?php foreach ($plugins as $module => $plugins_array) : ?>
-<h3><?= \Str::tr(__('Plugins for :module'), array('module' => \Config::get(\Plugins::get_module_name_by_identifier($module).'.main.name'))) ?></h3>
+<h3><?= \Str::tr(__('Plugins for :module'), array('module' => \Foolz\Config\Config::get($module, 'package', 'main.name'))) ?></h3>
 
 <table class="table table-bordered table-striped table-condensed">
 	<thead>

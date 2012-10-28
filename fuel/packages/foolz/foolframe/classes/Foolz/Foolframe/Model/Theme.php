@@ -296,14 +296,14 @@ class Theme extends \Model
 
 		$array = array();
 
-		if ($handle = opendir(DOCROOT.$this->_selected_module.'/themes/'))
+		if ($handle = opendir(DOCROOT.$this->getMod().'/themes/'))
 		{
 			while (false !== ($file = readdir($handle)))
 			{
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir(DOCROOT.$this->_selected_module.'/themes/'.$file))
+				if (is_dir(DOCROOT.$this->getMod().'/themes/'.$file))
 				{
 					$array[] = $file;
 				}
