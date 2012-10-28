@@ -17,8 +17,12 @@
 				<td><?php echo $plugin->getJsonConfig('description') ?></td>
 				<td>
 					<?php
-					echo \Form::open('admin/plugins/action/'.$plugin->getJsonConfig('extra.identifier').'/'.$plugin->getJsonConfig('name'),
-						array('action' => isset($plugin->enabled) ? 'disable' : 'enable')
+					echo \Form::open('admin/plugins/action/',
+						[
+							'action' => isset($plugin->enabled) ? 'disable' : 'enable',
+							'module' => $module,
+							'name' => $plugin->getJsonConfig('name')
+						]
 					);
 					echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 					echo '<input type="submit" class="btn '.(isset($plugin->enabled) ? 'btn-warning':'btn-success').'" value="' . (isset($plugin->enabled) ? __('Disable') : __('Enable')) . '" />';

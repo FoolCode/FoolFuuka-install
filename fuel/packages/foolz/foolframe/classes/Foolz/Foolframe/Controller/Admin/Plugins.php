@@ -38,6 +38,16 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/plugins/manage');
 		}
 
+		if ( ! $identifier = \Input::post('module'))
+		{
+			throw new \HttpNotFoundException;
+		}
+
+		if ( ! $slug = \Input::post('name'))
+		{
+			throw new \HttpNotFoundException;
+		}
+
 		if ( ! \Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
 		{
 			throw new \HttpNotFoundException;

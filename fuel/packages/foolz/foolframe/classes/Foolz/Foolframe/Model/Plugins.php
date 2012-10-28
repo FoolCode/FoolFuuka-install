@@ -32,7 +32,7 @@ class Plugins
 		static::$loader = new Loader();
 
 		// store all the relevant data from the modules
-		foreach (array_merge(['foolz/foolframe'], \Config::get('foolframe.modules.installed')) as $module)
+		foreach (\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
 		{
 			$dir = \Foolz\Config\Config::get($module, 'package', 'directories.plugins');
 			static::$_identifiers[$module] = $dir;
