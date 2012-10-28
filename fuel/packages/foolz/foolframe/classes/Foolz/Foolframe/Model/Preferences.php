@@ -25,13 +25,7 @@ class Preferences extends \Model
 		}
 
 		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
-		$modules = \Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed');
-		$modules[] = 'foolz/foolframe';
-
-		foreach ($modules as $module)
-		{
-			static::$_module_identifiers[\Foolz\Config\Config::get($module, 'package', 'main.identifier')] = $module;
-		}
+		static::$_module_identifiers = \Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed');
 
 		try
 		{

@@ -132,6 +132,11 @@ class Theme extends \Model
 		return static::$_instances[$name];
 	}
 
+	public function getMod()
+	{
+		return str_replace('foolz/', '', $this->_selected_module);
+	}
+
 	/**
 	 * Returns all the themes available and saves the array in a variable
 	 *
@@ -194,7 +199,7 @@ class Theme extends \Model
 		}
 		else
 		{
-			$active_themes = Preferences::get(\Foolz\Config\Config::get($this->_selected_module, 'package' ,'main.identifier').'.theme.active_themes');
+			$active_themes = Preferences::get(\Foolz\Config\Config::get($this->_selected_module, 'package','main.identifier').'.theme.active_themes');
 			if ( ! $active_themes || ! $active_themes = @unserialize($active_themes))
 			{
 				// default WORKING themes coming with the application
@@ -324,7 +329,7 @@ class Theme extends \Model
 		\Profiler::mark('Start Theme::load_config');
 		\Profiler::mark_memory($this, 'Start Theme::load_config');
 
-		return \Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$name.'/config.php');
+		return \Fuel::load(DOCROOT.$this->getMod().'/themes/'.$name.'/config.php');
 
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
@@ -361,7 +366,7 @@ class Theme extends \Model
 
 		if ( ! in_array($theme, $this->get_available_themes()))
 		{
-			$theme = \Preferences::get(\Config::get($this->_selected_module.'.main.identifier').'.themes.default');
+			$theme = \Preferences::get(\Foolz\Config\Config::get($this->_selected_module, 'package','main.identifier').'.themes.default');
 		}
 
 		$result = $this->get_by_name($theme);
@@ -369,7 +374,7 @@ class Theme extends \Model
 		$this->_selected_theme_version = $result['version'];
 
 		// load the theme bootstrap file if present
-		\Fuel::load(DOCROOT.$this->_selected_module.'/themes/'.$theme.'/bootstrap.php');
+		\Fuel::load(DOCROOT.$this->getMod().'/themes/'.$theme.'/bootstrap.php');
 
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
@@ -490,13 +495,13 @@ class Theme extends \Model
 		$asset = ltrim($asset, '/');
 
 		$version = $this->_selected_theme_version;
-		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset))
+		if (file_exists(DOCROOT.$this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset))
 		{
-			return $this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
+			return $this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 		}
 		else
 		{
-			return $this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
+			return $this->getMod().'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 		}
 	}
 
@@ -518,11 +523,11 @@ class Theme extends \Model
 
 		$version = $this->_selected_theme_version;
 		$result = array();
-		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset))
-			$result[] = $this->_selected_module.'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
+		if (file_exists(DOCROOT.$this->getMod().'/themes/'.$this->get_config('extends').'/'.$asset))
+			$result[] = $this->getMod().'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 
-		if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset))
-			$result[] = $this->_selected_module.'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
+		if (file_exists(DOCROOT.$this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset))
+			$result[] = $this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 
 		// we want first extended theme and then the override
 		return $result;
@@ -601,7 +606,7 @@ class Theme extends \Model
 		// check if we have a class corresponding the view we looked for
 		foreach (array($this->get_selected_theme(), $this->get_config('extends')) as $_directory)
 		{
-			$class = ucfirst($this->_selected_module).'\\Themes\\'
+			$class = ucfirst($this->getMod()).'\\Themes\\'
 				.($_directory === 'default' ?'Default_' : ucfirst($_directory)).'\\Views\\'.ucfirst($_file);
 			if (class_exists($class))
 			{
@@ -616,16 +621,16 @@ class Theme extends \Model
 			switch ($_type)
 			{
 				case 'layout':
-					if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
+					if (file_exists(DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
 					{
-						$_location = DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
+						$_location = DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
 					}
 					break;
 				case 'content':
 				case 'partial':
-					if (file_exists(DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/'.$_file.'.php'))
+					if (file_exists(DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/'.$_file.'.php'))
 					{
-						$_location = DOCROOT.$this->_selected_module.'/themes/'.$_directory.'/views/'.$_file.'.php';
+						$_location = DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/'.$_file.'.php';
 					}
 					break;
 			}
