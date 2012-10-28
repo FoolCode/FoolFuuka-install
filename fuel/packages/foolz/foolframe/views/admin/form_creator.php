@@ -95,9 +95,9 @@
 
 			$item['value_array'] = array();
 
-			if (Input::post($item['name']))
+			if (\Input::post($item['name']))
 			{
-				$item['value_array'] = Input::post($item['name']);
+				$item['value_array'] = \Input::post($item['name']);
 				$item['value_array'] = array_filter($item['value_array']);
 			}
 			else
@@ -114,9 +114,9 @@
 		{
 			$item['name'] = $name;
 
-			if (Input::post($item['name']))
+			if (\Input::post($item['name']))
 			{
-				$item['value'] = Input::post($item['name']);
+				$item['value'] = \Input::post($item['name']);
 			}
 
 			$count = 1;
@@ -243,7 +243,7 @@
 
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$checked = Preferences::get(str_replace(',', '.', $name));
+							$checked = \Preferences::get(str_replace(',', '.', $name));
 
 							if(isset($helpers['array_key']))
 							{
@@ -360,7 +360,7 @@
 						<?php
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
-							$item['selected'] = Preferences::get(str_replace(',', '.', $name));
+							$item['selected'] = \Preferences::get(str_replace(',', '.', $name));
 						}
 						else if (isset($item['value']))
 						{
@@ -400,7 +400,7 @@
 						{
 							if (isset($helpers['preferences']) && $helpers['preferences'])
 							{
-								$item['value'] = Preferences::get(str_replace(',', '.', $name));
+								$item['value'] = \Preferences::get(str_replace(',', '.', $name));
 								if(isset($helpers['array']) && $helpers['array'])
 								{
 									$item['value'] = unserialize($item['value']);
