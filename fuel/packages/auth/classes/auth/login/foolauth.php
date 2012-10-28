@@ -339,7 +339,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		$activated = (bool) \Preferences::get('ff.reg_email_disabled');
 		$activation_key = '';
 
-		if (!$activated)
+		if ( ! $activated)
 		{
 			// get a string for validation email
 			$activation_key = \Str::random('sha1');
@@ -349,8 +349,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			'username'        => (string) $username,
 			'password'        => $this->hash_password((string) $password),
 			'email'           => $email,
-			'group_id'           => (int) $group,
-			'activated'		  => $activated,
+			'group_id'        => (int) $group,
+			'activated'       => $activated,
 			'activation_key'  => $this->hash_password((string) $activation_key),
 			'profile_fields'  => serialize($profile_fields),
 			'created_at'      => \Date::forge()->get_timestamp()
@@ -358,7 +358,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$result = \DC::forge()->insert(\DC::p(\Config::get('foolauth.table_name')), $user);
 
-		return ($result[1] > 0) ? array($result[0], $activation_key) : false;
+		return ($result) ? array(\DC::forge()->lastInsertId(), $activation_key) : false;
 	}
 
 	/**
