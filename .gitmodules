@@ -19,3 +19,9 @@
 [submodule "fuel/packages/foolz/plugin"]
 	path = fuel/packages/foolz/plugin
 	url = https://github.com/FoolCode/Plugin.git
+[submodule "fuel/packages/foolz/foolpod"]
+	path = fuel/packages/foolz/foolpod
+	url = https://github.com/FoolCode/FoolPod-module.git
+[submodule "fuel/packages/foolz/foolfuuka"]
+	path = fuel/packages/foolz/foolfuuka
+	url = https://github.com/FoolCode/FoolFuuka-module.git

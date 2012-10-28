@@ -23,21 +23,22 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 	{
 		\Profiler::mark('Start Auth_Acl_FoolAcl::__init()');
 		\Profiler::mark_memory(false, 'Start Auth_Acl_FoolAcl::__init()');
-		
+
 		static::$_valid_roles = array_keys(\Config::get('foolauth.roles'));
-		
+
 		static::$_role_permissions = \Config::get('foolauth.roles', array());
-		
+
 		foreach (\Config::get('foolframe.modules.installed') as $module)
 		{
-			$permissions = \Config::load($module.'::foolauth', 'foolauth_'.$module);
+			$permissions = \Foolz\Config\Config::get($module, 'foolauth');
+
 			foreach ($permissions['roles'] as $key => $item)
 			{
 				static::$_role_permissions[$key] = array_merge(static::$_role_permissions[$key], $item);
 			}
-			
+
 		}
-		
+
 		\Profiler::mark('End Auth_Acl_FoolAcl::__init()');
 		\Profiler::mark_memory(false, 'End Auth_Acl_FoolAcl::__init()');
 	}
@@ -60,7 +61,7 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 		if (is_array($current_roles))
 		{
 			$roles = static::$_role_permissions;
-			
+
 			array_key_exists('#', $roles) && array_unshift($current_roles, '#');
 			foreach ($current_roles as $r_role)
 			{
@@ -83,7 +84,7 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 				}
 			}
 		}
-		
+
 		// start checking rights, terminate false when right not found
 		foreach ($rights as $right)
 		{

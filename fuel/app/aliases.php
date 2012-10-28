@@ -8,5 +8,5 @@
 
 namespace
 {
-	abstract class DC extends \Model\DC {}
+	abstract class DC extends \Foolz\Foolframe\Model\DC {}
 }
