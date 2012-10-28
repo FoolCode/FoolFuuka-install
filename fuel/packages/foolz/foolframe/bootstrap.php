@@ -51,7 +51,7 @@ else
 		// foolframe is already loaded
 		if ($module !== 'foolz/foolframe')
 		{
-			\Module::load($module, PKGPATH.$module);
+			\Module::load($module, PKGPATH.$module.'/');
 		}
 
 		// load the module routing
