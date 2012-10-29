@@ -1,27 +1,21 @@
-[submodule "fuel/app/modules/foolfuuka"]
-	path = fuel/app/modules/foolfuuka
+[submodule "fuel/packages/foolz/foolfuuka"]
+	path = fuel/packages/foolz/foolfuuka
 	url = https://github.com/FoolCode/FoolFuuka-module.git
 [submodule "public/foolfuuka"]
 	path = public/foolfuuka
 	url = https://github.com/FoolCode/FoolFuuka-public.git
-[submodule "fuel/packages/foolz/sphinxql"]
-	path = fuel/packages/foolz/sphinxql
-	url = https://github.com/FoolCode/fuel-sphinxql.git
-[submodule "fuel/packages/foolz/inet"]
-	path = fuel/packages/foolz/inet
-	url = https://github.com/FoolCode/Inet.git
-[submodule "fuel/app/modules/foolpod"]
-	path = fuel/app/modules/foolpod
+[submodule "fuel/packages/foolz/foolpod"]
+	path = fuel/packages/foolz/foolpod
 	url = https://github.com/FoolCode/FoolPod-module.git
 [submodule "public/foolpod"]
 	path = public/foolpod
 	url = https://github.com/FoolCode/FoolPod-public.git
+[submodule "fuel/packages/foolz/inet"]
+	path = fuel/packages/foolz/inet
+	url = https://github.com/FoolCode/Inet.git
 [submodule "fuel/packages/foolz/plugin"]
 	path = fuel/packages/foolz/plugin
 	url = https://github.com/FoolCode/Plugin.git
-[submodule "fuel/packages/foolz/foolpod"]
-	path = fuel/packages/foolz/foolpod
-	url = https://github.com/FoolCode/FoolPod-module.git
-[submodule "fuel/packages/foolz/foolfuuka"]
-	path = fuel/packages/foolz/foolfuuka
-	url = https://github.com/FoolCode/FoolFuuka-module.git
+[submodule "fuel/packages/foolz/sphinxql"]
+	path = fuel/packages/foolz/sphinxql
+	url = https://github.com/FoolCode/fuel-sphinxql.git
