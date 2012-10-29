@@ -4,15 +4,15 @@
 		<title><?php echo Preferences::get('fu.gen.website_title'); ?> <?php echo __('Control Panel') ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/admin/admin.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='. \Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Config::get('foolframe.main.version') ?>"></script>
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/admin/admin.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
+		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='. \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<!--[if lt IE 8]>
-			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
-		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
 	</head>
 
 	<body>
@@ -83,8 +83,8 @@
 
 					<footer class="footer">
 						<p style="padding-left: 20px;">
-							<?= \Config::get('foolframe.main.name') ?> Version <?= \Config::get('foolframe.main.version') ?>
-							<?php if (\Auth::member('admin') && (\Config::get('foolframe.main.version') != \Preferences::get('ff.cron.latest_version') && \Preferences::get('ff.cron.latest_version'))) : ?>
+							<?= \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.name') ?> Version <?= \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>
+							<?php if (\Auth::member('admin') && (\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') != \Preferences::get('ff.cron.latest_version') && \Preferences::get('ff.cron.latest_version'))) : ?>
 								- <a href="<?= Uri::create('admin/system/upgrade') ?>"><?= \Str::tr(__('New Version Available: :version'), array('version' => \Preferences::get('ff.cron.latest_version'))) ?></a>
 							<?php endif; ?>
 						</p>
