@@ -20,6 +20,8 @@ Autoloader::add_classes([
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
 	'Session_Db' => APPPATH.'classes/extend/session_db.php',
 	'ReCaptcha' => APPPATH.'classes/extend/recaptcha.php',
+
+	'Foolz\\Config\\Config' => PKGPATH.'foolz/config/classes/Foolz/Config/Config.php'
 ]);
 
 // Register the autoloader
@@ -36,7 +38,6 @@ Autoloader::register();
 Fuel::$env = (isset($_SERVER['FUEL_ENV']) ? $_SERVER['FUEL_ENV'] : Fuel::DEVELOPMENT);
 
 // Initialize the framework with the config file.
-\Config::load('foolframe', 'foolframe');
 Fuel::init('config.php');
 
 // let's run FoolFrame and fuck off FuelPHP
