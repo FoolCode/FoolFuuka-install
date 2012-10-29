@@ -62,7 +62,7 @@ else
 	}
 
 	// run the bootstrap for each module
-	foreach(\Config::get('foolframe.modules.installed') as $module)
+	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
 	{
 		if ($module !== 'foolz/foolframe')
 		{

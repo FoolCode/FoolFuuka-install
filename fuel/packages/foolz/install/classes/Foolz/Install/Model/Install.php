@@ -213,13 +213,14 @@ class Install
 		Config::set('foolz/foolframe', 'package', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
 		Config::save('foolz/foolframe', 'package');
 
-		\Config::load('auth', 'auth');
-		\Config::set('auth.salt', \Str::random('alnum', 24));
-		\Config::save(\Fuel::$env.DS.'auth', 'auth');
+		// once we change hashes, the users table is useless
+		\Foolz\Foolframe\Model\DC::qb()
+			->delete(\Foolz\Foolframe\Model\DC::p('users'))
+			->execute();
 
-		\Config::load('foolauth', 'foolauth');
-		\Config::set('foolauth.login_hash_salt', \Str::random('alnum', 24));
-		\Config::save(\Fuel::$env.DS.'foolauth', 'foolauth');
+		Config::set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
+		Config::set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
+		Config::save('foolz/foolframe', 'foolauth');
 
 		\Config::load('cache', 'cache');
 		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');

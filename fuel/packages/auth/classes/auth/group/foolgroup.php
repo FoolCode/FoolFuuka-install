@@ -12,6 +12,7 @@
 
 namespace Auth;
 
+use \Foolz\Config\Config;
 
 class Auth_Group_FoolGroup extends \Auth_Group_Driver
 {
@@ -20,7 +21,7 @@ class Auth_Group_FoolGroup extends \Auth_Group_Driver
 
 	public static function _init()
 	{
-		static::$_valid_groups = array_keys(\Config::get('foolauth.groups', array()));
+		static::$_valid_groups = array_keys(Config::get('foolz/foolframe', 'foolauth', 'groups', array()));
 	}
 
 	protected $config = array(
@@ -57,7 +58,7 @@ class Auth_Group_FoolGroup extends \Auth_Group_Driver
 			$group = isset($groups[0][1]) ? $groups[0][1] : null;
 		}
 
-		return \Config::get('foolauth.groups.'.$group.'.name', null);
+		return Config::get('foolz/foolframe', 'foolauth', 'groups.'.$group.'.name', null);
 	}
 
 	public function get_roles($group = null)
@@ -78,7 +79,7 @@ class Auth_Group_FoolGroup extends \Auth_Group_Driver
 			return array();
 		}
 
-		$groups = \Config::get('foolauth.groups');
+		$groups = Config::get('foolz/foolframe', 'foolauth', 'groups');
 		return $groups[(int) $group]['roles'];
 	}
 }

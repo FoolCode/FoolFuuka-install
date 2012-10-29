@@ -12,6 +12,7 @@
 
 namespace Auth;
 
+use \Foolz\Config\Config;
 
 class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 {
@@ -24,19 +25,22 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 		\Profiler::mark('Start Auth_Acl_FoolAcl::__init()');
 		\Profiler::mark_memory(false, 'Start Auth_Acl_FoolAcl::__init()');
 
-		static::$_valid_roles = array_keys(\Config::get('foolauth.roles'));
+		static::$_valid_roles = array_keys(Config::get('foolz/foolframe', 'foolauth', 'roles'));
 
-		static::$_role_permissions = \Config::get('foolauth.roles', array());
+		static::$_role_permissions = Config::get('foolz/foolframe', 'foolauth', 'roles');
 
-		foreach (\Config::get('foolframe.modules.installed') as $module)
+		foreach (Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
 		{
-			$permissions = \Foolz\Config\Config::get($module, 'foolauth');
-
-			foreach ($permissions['roles'] as $key => $item)
+			// basics are already loaded
+			if ($module !== 'foolz/foolframe')
 			{
-				static::$_role_permissions[$key] = array_merge(static::$_role_permissions[$key], $item);
-			}
+				$permissions = Config::get($module, 'foolauth', 'roles');
 
+				foreach ($permissions as $key => $item)
+				{
+					static::$_role_permissions[$key] = array_merge(static::$_role_permissions[$key], $item);
+				}
+			}
 		}
 
 		\Profiler::mark('End Auth_Acl_FoolAcl::__init()');
@@ -98,5 +102,3 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 		return true;
 	}
 }
-
-/* end of file foolacl.php */

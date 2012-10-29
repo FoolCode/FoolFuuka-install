@@ -50,7 +50,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				// account has been locked due to excess authentication failures
 				$data['username'] = \Input::post('username');
-				\Notices::set('error', \Str::tr(__('After :number failed login attempts, this account has been locked. In order to unlock your account, you are required to use the "forget password" system.'), array('number' => \Config::get('foolauth.attempts_to_lock'))));
+				\Notices::set('error', \Str::tr(__('After :number failed login attempts, this account has been locked. In order to unlock your account, you are required to use the "forget password" system.'), array('number' => Config::get('foolz/foolframe', 'foolauth', 'attempts_to_lock'))));
 			}
 		}
 

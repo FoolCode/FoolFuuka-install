@@ -106,6 +106,11 @@ return array(
 	'login_hash_salt' => 'put_some_salt_in_here',
 
 	/**
+	 * Salt for passwords
+	 */
+	'salt' => 'give_me_salt',
+
+	/**
 	 * $_POST key for login username
 	 */
 	'username_post_key' => 'username',

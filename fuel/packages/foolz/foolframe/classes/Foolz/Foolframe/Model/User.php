@@ -43,7 +43,10 @@ class User extends \Model
 		foreach($data as $key => $item)
 		{
 			if ($key == 'password')
+			{
 				$key = 'password_current';
+			}
+			
 			$this->$key = $item;
 		}
 	}
@@ -87,7 +90,7 @@ class User extends \Model
 			unset($set['password']);
 
 		$query = \DC::qb()
-			->update(\DC::p(\Config::get('foolauth.table_name')))
+			->update(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
 			->setParameter(':id', $this->id);
 
