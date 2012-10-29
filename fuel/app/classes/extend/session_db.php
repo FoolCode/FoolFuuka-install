@@ -267,8 +267,7 @@ class Session_Db extends Fuel\Core\Session_Driver
 						// do we have a database?
 						if ( empty($item) or ! is_string($item))
 						{
-							\Config::load('db', true);
-							$item = \Config::get('db.active', false);
+							$item = \Foolz\Config\Config::get('foolz/foolframe', 'db', 'default');
 						}
 						if ($item === false)
 						{

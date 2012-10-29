@@ -89,7 +89,9 @@ return array(
 		/**
 		 * The installed modules
 		 */
-		'installed' => array()
+		'installed' => array(
+			'ff' => 'foolz/foolframe'
+		)
 	),
 
 	/**

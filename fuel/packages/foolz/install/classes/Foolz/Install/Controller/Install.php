@@ -184,8 +184,8 @@ class Install extends \Controller
 
 			if (count($modules) > 0)
 			{
-				\Config::set('foolframe.modules.installed', $modules);
-				\Config::save(\Fuel::$env.DS.'foolframe', 'foolframe');
+				Config::set('foolz/foolframe', 'package', 'modules.installed', $modules);
+				Config::save('foolz/foolframe', 'package');
 
 				\Response::redirect('install/complete');
 			}
