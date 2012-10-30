@@ -10,20 +10,6 @@ class Router extends \Fuel\Core\Router
 		$segments = $match->segments;
 		$module = false;
 
-		if ($segments[0] === 'plugin')
-		{
-			$namespace =
-				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).
-					'\\Plugins\\'.\Inflector::words_to_upper($segments[2]).'\\';
-		}
-
-		if ($segments[0] === 'theme')
-		{
-			$namespace =
-				ucfirst(\Plugins::get_module_name_by_identifier($segments[1])).
-					'\\Themes\\'.\Inflector::words_to_upper($segments[2]).'\\';
-		}
-
 		if (count($segments) > 3)
 		{
 			$i = 0;
