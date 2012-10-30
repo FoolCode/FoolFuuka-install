@@ -81,10 +81,10 @@ class Install extends \Controller
 				if ( ! \Foolz\Install\Model\Install::check_database($input))
 				{
 					\Foolz\Install\Model\Install::setup_database($input);
-					\Foolz\Install\Model\Install::create_salts();
 					$sm = \Foolz\Foolframe\Model\SchemaManager::forgeForModules(\DC::forge(), \DC::getPrefix());
 					\Foolz\Foolframe\Model\Schema::load($sm);
 					$sm->commit();
+					\Foolz\Install\Model\Install::create_salts();
 					\Response::redirect('install/create_admin');
 				}
 				else
