@@ -15,3 +15,5 @@ fuel/app/cache/*/*
 fuel/app/tmp/
 fuel/app/config/development/
 fuel/app/config/production/
+
+vendor
