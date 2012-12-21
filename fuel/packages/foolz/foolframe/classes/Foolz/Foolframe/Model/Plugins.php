@@ -167,6 +167,14 @@ class Plugins
 
 		\DC::forge()->insert(\DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
 
+		// run the schema update
+		$sm = \Foolz\Foolframe\Model\SchemaManager::forge(\DC::forge(), \DC::getPrefix().'plugin_');
+		\Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate')
+			->setParam('schema', $sm->getCodedSchema())
+			->execute();
+
+		$sm->commit();
+
 		static::clear_cache();
 	}
 
@@ -215,7 +223,7 @@ class Plugins
 
 		static::$_admin_sidebars[$type][] = $array;
 
-		\Controller_Admin::add_sidebar_element($array);
+		\Foolz\Foolframe\Controller\Admin::add_sidebar_element($array);
 	}
 
 }

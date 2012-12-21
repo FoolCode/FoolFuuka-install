@@ -35,10 +35,13 @@ class SchemaManager
 	/**
 	 * Creates a schema manager for testing if the modules are up to date
 	 *
-	 * @param  \Doctrine\DBAL\Connection  $connection  The doctrine database connection
-	 * @param  string                     $prefix      The prefix used for the database
+	 * @param  \Doctrine\DBAL\Connection  $connection        The doctrine database connection
+	 * @param  string                     $prefix            The prefix used for the database (will ignore any other prefix)
+	 * @param  array                      $prefixes_ignored  Prefix in the database that should be ignored between the ones with the selected $prefix. Do not prepend $prefix.
+	 *
+	 * @return  \Foolz\Foolframe\Model\SchemaManager  A new SchemaManager
 	 */
-	public static function forgeForModules(\Doctrine\DBAL\Connection $connection, $prefix = '')
+	public static function forge(\Doctrine\DBAL\Connection $connection, $prefix = '', $prefixes_ignored = [])
 	{
 		$new = new static();
 		$new->connection = $connection;
@@ -59,8 +62,30 @@ class SchemaManager
 			}
 		}
 
+		// get more prefixes ignored
+		$prefixes_ignored = \Foolz\Plugin\Hook::forge('\Foolz\Foolframe\Model\SchemaManager::forge.prefixes_ignored')
+			->setObject($new)
+			->setParam('prefixes_ignored', $prefixes_ignored)
+			->execute()
+			->get($prefixes_ignored);
+
+		// get rid of the ignored prefixes (in example ff_plugin_)
+		if (count($prefixes_ignored))
+		{
+			foreach ($tables as $key => $table)
+			{
+				foreach ($prefixes_ignored as $prefix_ignored)
+				{
+					if (strpos($table->getName(), $new->prefix.$prefix_ignored) === 0)
+					{
+						unset($tables[$key]);
+					}
+				}
+			}
+		}
+
 		// get more tables ignored
-		$tables = \Foolz\Plugin\Hook::forge('\Foolz\Foolframe\Model\SchemaManager.forgeForModules.tables')
+		$tables = \Foolz\Plugin\Hook::forge('\Foolz\Foolframe\Model\SchemaManager::forge.tables')
 			->setObject($new)
 			->setParam('tables', $tables)
 			->execute()
