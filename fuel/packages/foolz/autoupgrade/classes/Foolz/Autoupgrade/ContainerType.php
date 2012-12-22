@@ -106,9 +106,9 @@ class ContainerType
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$result = \DC::qb()
+			$result = DC::qb()
 				->select('*')
-				->from(\DC::p('container_types'), 'ct')
+				->from(DC::p('container_types'), 'ct')
 				->execute()
 				->fetchAll();
 
@@ -133,9 +133,9 @@ class ContainerType
 	{
 		if (isset($data['id']))
 		{
-			$old = \DC::qb()
+			$old = DC::qb()
 				->select('*')
-				->from(\DC::p('container_types'), 'ct')
+				->from(DC::p('container_types'), 'ct')
 				->where('id = :id')
 				->setParameter(':id', $data['id'])
 				->execute()
@@ -146,12 +146,12 @@ class ContainerType
 				throw new ContainerTypeNotFoundException(__('Container type not found.'));
 			}
 
-			$query = \DC::qb()
-				->update(\DC::p('container_types'));
+			$query = DC::qb()
+				->update(DC::p('container_types'));
 
 			foreach ($data as $key => $item)
 			{
-				$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
+				$query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
 			}
 
 			$query->where('id = :id')
@@ -162,9 +162,9 @@ class ContainerType
 		{
 			// @todo validation to check if all the content is sent
 
-			$old = \DC::qb()
+			$old = DC::qb()
 				->select('*')
-				->from(\DC::p('container_types'), 'ct')
+				->from(DC::p('container_types'), 'ct')
 				->where('name = :name')
 				->orWhere('slug = :slug')
 				->setParameters([':name' => $data['name'], ':slug' => $data['slug']])
@@ -184,7 +184,7 @@ class ContainerType
 				}
 			}
 
-			\DC::forge()->insert(\DC::p('container_types'), $data);
+			DC::forge()->insert(DC::p('container_types'), $data);
 		}
 
 		static::clearCache();

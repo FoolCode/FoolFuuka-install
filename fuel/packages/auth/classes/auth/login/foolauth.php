@@ -13,15 +13,16 @@
 namespace Auth;
 
 use \Foolz\Config\Config;
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
-class FoolUserUpdateException extends \FuelException {}
+class FoolUserUpdateException extends \Exception {}
 
-class FoolUserWrongUsernameOrPassword extends \FuelException {}
-class FoolUserLimitExceeded extends \FuelException {}
-class FoolUserWrongPassword extends \FuelException {}
-class FoolUserWrongEmail extends \FuelException {}
-class FoolUserWrongKey extends \FuelException {}
-class FoolUserEmailExists extends \FuelException {}
+class FoolUserWrongUsernameOrPassword extends \Exception {}
+class FoolUserLimitExceeded extends \Exception {}
+class FoolUserWrongPassword extends \Exception {}
+class FoolUserWrongEmail extends \Exception {}
+class FoolUserWrongKey extends \Exception {}
+class FoolUserEmailExists extends \Exception {}
 
 /**
  * FoolAuth basic login driver
@@ -102,9 +103,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		{
 			if (is_null($this->user) and $this->user != static::$guest_login)
 			{
-				$autologin_query = \DC::qb()
+				$autologin_query = DC::qb()
 					->select('*')
-					->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')), 'la')
+					->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')), 'la')
 					->where('la.login_hash = :login_hash')
 					->andWhere('la.expiration > :time')
 					->setParameters([':login_hash' => $this->hash_password($autologin_hash), ':time' => time()])
@@ -113,9 +114,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 				if ($autologin_query)
 				{
-					$this->user = \DC::qb()
+					$this->user = DC::qb()
 						->select('*')
-						->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+						->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 						->where('l.id = :id')
 						->setParameter(':id', $autologin_query['user_id'])
 						->execute()
@@ -159,9 +160,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$password = $this->hash_password($password);
 
-		$this->user = \DC::qb()
+		$this->user = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('username = :username')
 			->andWhere('password = :password')
 			->setParameters([':username' => $username_or_email, ':password' => $password])
@@ -174,7 +175,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		}
 		else
 		{
-			\DC::forge()->insert(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')), [
+			DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')), [
 				'username' => $username_or_email,
 				'ip' => \Input::ip_decimal(),
 				'time' => time()
@@ -193,9 +194,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function count_attempts($username)
 	{
-		return \DC::qb()
+		return DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')), 'lt')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')), 'lt')
 			->where('lt.username = :username')
 			->setParameter(':username', $username)
 			->execute()
@@ -210,8 +211,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function reset_attempts($username)
 	{
-		\DC::qb()
-			->delete(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')))
+		DC::qb()
+			->delete(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_login_attempts_name')))
 			->where('username = :username')
 			->setParameter(':username', $username)
 			->execute();
@@ -266,9 +267,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			return false;
 		}
 
-		$this->user = \DC::qb()
+		$this->user = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :user_id')
 			->setParameter(':user_id', $user_id)
 			->execute()
@@ -277,7 +278,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		if ($this->user == false)
 		{
 			$this->user = Config::get('foolz/foolframe', 'foolauth', 'guest_login', true) ? static::$guest_login : false;
-			\Cookie::set('autologin');
+			\Cookie::delete('autologin');
 			return false;
 		}
 
@@ -295,8 +296,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	{
 		if ($all)
 		{
-			\DC::qb()
-				->delete(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')))
+			DC::qb()
+				->delete(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')))
 				->where('user_id = :user_id')
 				->setParameter(':user_id', $this->user['id'])
 				->execute();
@@ -327,9 +328,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new \FoolUserUpdateException('Username, password and email address can\'t be empty.', 1);
 		}
 
-		$same_users = \DC::qb()
+		$same_users = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('l.username = :username')
 			->orWhere('l.email = :email')
 			->setParameters([':username' => $username, ':email' => $email])
@@ -368,9 +369,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			'created_at'      => \Date::forge()->get_timestamp()
 		);
 
-		$result = \DC::forge()->insert(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), $user);
+		$result = DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), $user);
 
-		return ($result) ? array(\DC::forge()->lastInsertId(), $activation_key) : false;
+		return ($result) ? array(DC::forge()->lastInsertId(), $activation_key) : false;
 	}
 
 	/**
@@ -384,14 +385,14 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		// select only what we can insert
 		$data = \Arr::filter_keys($data, array('bio', 'twitter', 'display_name'));
 
-		$query = \DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$query = DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
 			->setParameter(':id', $this->user['id']);
 
 		foreach ($data as $key => $item)
 		{
-			$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
+			$query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
 		}
 
 		$query->execute();
@@ -402,9 +403,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 	public function get_profile()
 	{
-		return \DC::qb()
+		return DC::qb()
 			->select('bio, twitter, display_name')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->setParameter(':id', $this->user['id'])
 			->execute()
@@ -422,8 +423,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	public function activate_user($id, $activation_key)
 	{
 		// try activating
-		$affected_rows = \DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$affected_rows = DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->set('activated', ':activated')
 			->where('id = :id')
 			->andWhere('activation_key = :activation_key')
@@ -443,8 +444,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function change_password($id, $password_key, $new_password)
 	{
-		$affected_rows = \DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$affected_rows = DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
 			->andWhere('new_password_key = :new_password_key')
 			->andWhere('new_password_time > :new_password_time')
@@ -480,9 +481,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function check_new_password_key($id, $password_key)
 	{
-		$count = \DC::qb()
+		$count = DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('new_password_key = :new_password_key')
 			->andWhere('new_password_time > :new_password_time')
@@ -508,8 +509,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	{
 		$new_password_key = sha1(Config::get('foolz/foolframe', 'foolauth', 'login_hash_salt').$email.time());
 
-		$affected_rows = \DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$affected_rows = DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->set('new_password_key', $this->hash_password($new_password_key))
 			->set('new_password_time', time())
 			->where('email = :email')
@@ -533,9 +534,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function create_change_email_key($email, $password)
 	{
-		$check_email = \DC::qb()
+		$check_email = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('email = :email')
 			->orWhere('(id <> :user_id AND new_email = :new_email)')
 			->execute()
@@ -548,9 +549,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$new_email_key = sha1(Config::get('foolz/foolframe', 'foolauth', 'login_hash_salt').$email.time());
 
-		$check_password = \DC::qb()
+		$check_password = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('password = :password')
 			->setParameters([':id' => $this->user['id'], ':password' => $this->hash_password($password)])
@@ -562,8 +563,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new FoolUserWrongPassword;
 		}
 
-		\DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->set('new_email', $email)
 			->set('new_email_key', $this->hash_password($new_email_key))
 			->set('new_email_time', time())
@@ -583,9 +584,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function	change_email($id, $email_key)
 	{
-		$user = \DC::qb()
+		$user = DC::qb()
 			->select('*')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('new_email_key = :new_email_key')
 			->andWhere('new_email_time > :new_email_time')
@@ -602,8 +603,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new FoolUserWrongKey;
 		}
 
-		\DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->set('email', $user['new_email'])
 			->set('new_email', null)
 			->set('new_email_key', null)
@@ -627,9 +628,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function create_account_deletion_key($password)
 	{
-		$check_password = \DC::qb()
+		$check_password = DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('password = :password')
 			->setParameters([':id' => $this->user['id'], ':password' => $this->hash_password($password)])
@@ -643,8 +644,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$key = sha1(Config::get('foolz/foolframe', 'foolauth', 'login_hash_salt').time());
 
-		\DC::qb()
-			->update(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		DC::qb()
+			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->set('deletion_key', $this->hash_password($key))
 			->set('deletion_time', time())
 			->where('id = :id')
@@ -664,8 +665,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function delete_account($id, $key)
 	{
-		$affected_rows = \DC::qb()
-			->delete(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$affected_rows = DC::qb()
+			->delete(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
 			->andWhere('deletion_key = :deletion_key')
 			->andWhere('deletion_time > :deletion_time')
@@ -706,7 +707,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			\DB::delete(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name'))->where('expiration', '<', time())->execute();
 		}
 
-		\DC::forge()->insert(\DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')),[
+		DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')),[
 			'user_id' => $this->user['id'],
 			'login_hash' => $this->hash_password($login_hash),
 			'expiration' => time() + 604800, // 7 days

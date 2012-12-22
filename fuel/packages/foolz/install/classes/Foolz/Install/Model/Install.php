@@ -3,6 +3,7 @@
 namespace Foolz\Install\Model;
 
 use \Foolz\Config\Config;
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class Install
 {
@@ -214,8 +215,8 @@ class Install
 		Config::save('foolz/foolframe', 'package');
 
 		// once we change hashes, the users table is useless
-		\Foolz\Foolframe\Model\DC::qb()
-			->delete(\Foolz\Foolframe\Model\DC::p('users'))
+		DC::qb()
+			->delete(DC::p('users'))
 			->execute();
 
 		Config::set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));

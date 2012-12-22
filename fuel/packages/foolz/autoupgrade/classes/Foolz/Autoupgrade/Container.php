@@ -197,9 +197,9 @@ class Container
 			throw new ContainerNotFoundException('The type specified doesn\'t exist.');
 		}
 
-		$query = \DC::qb()
+		$query = DC::qb()
 			->select('*')
-			->from(\DC::p('containers'), 'c')
+			->from(DC::p('containers'), 'c')
 			->where('type_id = :type_id')
 			->andWhere('name = :name')
 			->setParameters([':type_id' => $container_type->id, ':name' => $name])
@@ -241,9 +241,9 @@ class Container
 
 	public static function getById($id)
 	{
-		$result = \DC::qb()
+		$result = DC::qb()
 			->select('*')
-			->from(\DC::p('containers'), 'c')
+			->from(DC::p('containers'), 'c')
 			->where('id = :id')
 			->setParameter(':id', $id)
 			->execute()
@@ -365,9 +365,9 @@ class Container
 			'created' => time()
 		];
 
-		$find = \DC::qb()
+		$find = DC::qb()
 			->select('*')
-			->from(\DC::p('containers'), 'c')
+			->from(DC::p('containers'), 'c')
 			->where('name = :name')
 			->andWhere('major = :major')
 			->andWhere('minor = :minor')
@@ -383,25 +383,25 @@ class Container
 			->execute()
 			->fetch();
 
-		\DC::forge()->beginTransaction();
+		DC::forge()->beginTransaction();
 
 		if ($find)
 		{
-			$query = \DC::qb()
-				->update(\DC::p('containers'))
+			$query = DC::qb()
+				->update(DC::p('containers'))
 				->where('id = :id')
 				->setParameter(':id', $find['id']);
 
 			foreach ($to_insert as $key => $item)
 			{
-				$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
+				$query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
 			}
 
 			$query->execute();
 		}
 		else
 		{
-			\DC::forge()->insert(\DC::p('containers'), $to_insert);
+			DC::forge()->insert(DC::p('containers'), $to_insert);
 		}
 
 		$type = ContainerType::getBySlug($this->type);
@@ -412,7 +412,7 @@ class Container
 		{
 			if ( ! mkdir($dest, 0777, true))
 			{
-				\DC::forge()->rollBack();
+				DC::forge()->rollBack();
 				throw new ContainerInsertException(__('Couldn\'t create the directory for the container.'));
 			}
 		}
@@ -424,11 +424,11 @@ class Container
 
 		if ( ! $copy)
 		{
-			\DC::forge()->rollBack();
+			DC::forge()->rollBack();
 			throw new ContainerInsertException(__('Couldn\'t create the file for the container.'));
 		}
 
-		\DC::forge()->commit();
+		DC::forge()->commit();
 
 		return $this;
 	}

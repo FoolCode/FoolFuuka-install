@@ -41,7 +41,6 @@ class Config
 	public static function removePackage($package_name)
 	{
 		unset(static::$packages[$package_name]);
-		return $this;
 	}
 
 	/**
@@ -58,9 +57,9 @@ class Config
 		if ( ! isset(static::$packages[$package_name]))
 		{
 			// try using Composer format, the config could be somewhere down here!
-			if (file_exists(__DIR__.'/../../../../../'.$package_name.'/config'))
+			if (file_exists(VENDPATH.$package_name.'/config'))
 			{
-				static::addPackage($package_name, __DIR__.'/../../../../../'.$package_name);
+				static::addPackage($package_name, VENDPATH.$package_name);
 			}
 			else
 			{

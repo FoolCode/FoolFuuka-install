@@ -3,6 +3,7 @@
 namespace Foolz\Install\Controller;
 
 use \Foolz\Config\Config;
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class Install extends \Controller
 {
@@ -81,7 +82,7 @@ class Install extends \Controller
 				if ( ! \Foolz\Install\Model\Install::check_database($input))
 				{
 					\Foolz\Install\Model\Install::setup_database($input);
-					$sm = \Foolz\Foolframe\Model\SchemaManager::forgeForModules(\DC::forge(), \DC::getPrefix());
+					$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix());
 					\Foolz\Foolframe\Model\Schema::load($sm);
 					$sm->commit();
 					\Foolz\Install\Model\Install::create_salts();
@@ -109,7 +110,7 @@ class Install extends \Controller
 	{
 		// if an admin account exists, lock down this step and redirect to the next step instead
 		\Config::load('foolauth', 'foolauth');
-		$check_users = \Users::get_all();
+		$check_users = \Foolz\Foolframe\Model\Users::get_all();
 
 		if ($check_users['count'] > 0)
 		{
@@ -131,7 +132,7 @@ class Install extends \Controller
 				list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
 				\Auth::activate_user($id, $activation_key);
 				\Auth::force_login($id);
-				$user = \Users::get_user();
+				$user = \Foolz\Foolframe\Model\Users::get_user();
 				$user->save(['group_id' => 100]);
 				\Response::redirect('install/modules');
 			}
@@ -159,14 +160,13 @@ class Install extends \Controller
 
 			$modules = ['ff' => 'foolz/foolframe'];
 
-			$sm = \Foolz\Foolframe\Model\SchemaManager::forgeForModules(\DC::forge(), \DC::getPrefix());
+			$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix());
 			\Foolz\Foolframe\Model\Schema::load($sm);
 
 			if (\Input::post('foolfuuka'))
 			{
 				$modules['fu'] = 'foolz/foolfuuka';
 
-				require_once PKGPATH.'foolz/foolfuuka/classes/Foolz/Foolfuuka/Model/Schema.php';
 				\Foolz\Foolfuuka\Model\Schema::load($sm);
 			}
 

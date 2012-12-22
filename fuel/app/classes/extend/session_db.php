@@ -14,6 +14,8 @@
 
 // --------------------------------------------------------------------
 
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+
 class Session_Db extends Fuel\Core\Session_Driver
 {
 
@@ -66,7 +68,7 @@ class Session_Db extends Fuel\Core\Session_Driver
 		$this->keys['payload'] = $payload;
 
 		// create the session record
-		\DC::forge()->insert(\DC::p($this->config['table']), $this->keys);
+		DC::forge()->insert(DC::p($this->config['table']), $this->keys);
 
 		return $this;
 	}
@@ -94,9 +96,9 @@ class Session_Db extends Fuel\Core\Session_Driver
 		}
 
 		// read the session record
-		$this->record = \DC::qb()
+		$this->record = DC::qb()
 			->select('*')
-			->from(\DC::p($this->config['table']), 's')
+			->from(DC::p($this->config['table']), 's')
 			->where('session_id = :session_id')
 			->setParameter('session_id', $this->keys['session_id'])
 			->execute()
@@ -110,9 +112,9 @@ class Session_Db extends Fuel\Core\Session_Driver
 		else
 		{
 			// try to find the session on previous id
-			$this->record = \DC::qb()
+			$this->record = DC::qb()
 				->select('*')
-				->from(\DC::p($this->config['table']), 's')
+				->from(DC::p($this->config['table']), 's')
 				->where('previous_id = :session_id')
 				->setParameter('session_id', $this->keys['session_id'])
 				->execute()
@@ -169,12 +171,12 @@ class Session_Db extends Fuel\Core\Session_Driver
 				$session['payload'] = $this->_serialize(array($this->data, $this->flash));
 
 				// update the database
-				$query = \DC::qb()
-					->update(\DC::p($this->config['table']));
+				$query = DC::qb()
+					->update(DC::p($this->config['table']));
 
 				foreach ($session as $key => $item)
 				{
-					$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
+					$query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
 				}
 
 				$result = $query->where('session_id = :session_id')
@@ -197,8 +199,8 @@ class Session_Db extends Fuel\Core\Session_Driver
 			if (mt_rand(0,100) < $this->config['gc_probability'])
 			{
 				$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
-				\DC::qb()
-					->delete(\DC::p($this->config['table']))
+				DC::qb()
+					->delete(DC::p($this->config['table']))
 					->where('updated < :expired')
 					->setParameter(':expired', $expired)
 					->execute();
@@ -222,8 +224,8 @@ class Session_Db extends Fuel\Core\Session_Driver
 		if ( ! empty($this->keys) and ! empty($this->record))
 		{
 			// delete the session record
-			\DC::qb()
-				->delete(\DC::p($this->config['table']))
+			DC::qb()
+				->delete(DC::p($this->config['table']))
 				->where('session_id = :session_id')
 				->setParameter(':session_id', $this->keys['session_id'])
 				->execute();
