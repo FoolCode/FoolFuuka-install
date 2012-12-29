@@ -3,6 +3,25 @@
 
 class Router extends \Fuel\Core\Router
 {
+	/**
+	 * Reformats a lowercase string to a class name by splitting on underscores and capitalizing
+	 *
+	 * @param  string  $class_name  The name of the class, lowercase and with words separated by underscore
+	 *
+	 * @return  string
+	 */
+	public static function lowercaseToClassName($class_name)
+	{
+		$pieces = explode('_', $class_name);
+
+		$result = '';
+		foreach ($pieces as $piece)
+		{
+			$result .= ucfirst($piece);
+		}
+
+		return $result;
+	}
 
 	protected static function parse_match($match)
 	{
@@ -26,7 +45,7 @@ class Router extends \Fuel\Core\Router
 
 				foreach (array_slice($temp_segments, 2) as $segment)
 				{
-					$temp_namespace .= '\\'.ucfirst($segment);
+					$temp_namespace .= '\\'.static::lowercaseToClassName($segment);
 				}
 
 				$hook = \Foolz\Plugin\Hook::forge('Fuel\Core\Router.parse_match.intercept')
@@ -45,6 +64,7 @@ class Router extends \Fuel\Core\Router
 					$match->method_params = $hook->getParam('method_params');
 					return $match;
 				}
+
 
 				if (class_exists($temp_namespace))
 				{
