@@ -211,8 +211,8 @@ class Install
 	public static function create_salts()
 	{
 		// config without slash is the custom foolz one, otherwise it's the fuelphp one
-		Config::set('foolz/foolframe', 'package', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
-		Config::save('foolz/foolframe', 'package');
+		Config::set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+		Config::save('foolz/foolframe', 'config');
 
 		// once we change hashes, the users table is useless
 		DC::qb()

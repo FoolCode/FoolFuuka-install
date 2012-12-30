@@ -16,7 +16,7 @@ class Install extends \Controller
 	public function before()
 	{
 		// don't let in people if it's already installed
-		if (Config::get('foolz/foolframe', 'package', 'install.installed'))
+		if (Config::get('foolz/foolframe', 'config', 'install.installed'))
 		{
 			throw new \HttpNotFoundException;
 		}
@@ -71,12 +71,13 @@ class Install extends \Controller
 			$val->add_field('hostname', __('Hostname'), 'required|trim');
 			$val->add_field('prefix', __('Prefix'), 'trim');
 			$val->add_field('username', __('Username'), 'required|trim');
-			$val->add_field('password', __('Password'), '');
+			//$val->add_field('password', __('Password'), '');
 			$val->add_field('database', __('Database name'), 'required|trim');
 
 			if ($val->run())
 			{
 				$input = $val->input();
+				$input['password'] = \Input::post('password');
 				$input['type'] = 'pdo_mysql';
 
 				if ( ! \Foolz\Install\Model\Install::check_database($input))
@@ -184,8 +185,8 @@ class Install extends \Controller
 
 			if (count($modules) > 0)
 			{
-				Config::set('foolz/foolframe', 'package', 'modules.installed', $modules);
-				Config::save('foolz/foolframe', 'package');
+				Config::set('foolz/foolframe', 'config', 'modules.installed', $modules);
+				Config::save('foolz/foolframe', 'config');
 
 				\Response::redirect('install/complete');
 			}
@@ -205,8 +206,8 @@ class Install extends \Controller
 	public function action_complete()
 	{
 		// lock down the install system
-		Config::set('foolz/foolframe', 'package', 'install.installed', true);
-		Config::save('foolz/foolframe', 'package');
+		Config::set('foolz/foolframe', 'config', 'install.installed', true);
+		Config::save('foolz/foolframe', 'config');
 
 		$this->process('complete');
 		$this->_view_data['method_title'] = __('Congratulations');

@@ -12,7 +12,7 @@ class Input extends Fuel\Core\Input
 	 */
 	public static function cookie($index = null, $default = null)
 	{
-		$index = \Foolz\Config\Config::get('foolz/foolframe', 'package', 'config.cookie_prefix').$index;
+		$index = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'config.cookie_prefix').$index;
 		return (func_num_args() === 0) ? $_COOKIE : \Arr::get($_COOKIE, $index, $default);
 	}
 

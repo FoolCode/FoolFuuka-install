@@ -29,7 +29,7 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 
 		static::$_role_permissions = Config::get('foolz/foolframe', 'foolauth', 'roles');
 
-		foreach (Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
+		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
 			// basics are already loaded
 			if ($module !== 'foolz/foolframe')

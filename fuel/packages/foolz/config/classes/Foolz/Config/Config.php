@@ -21,11 +21,10 @@ class Config
 	 * @param  string  $dir           The directory of the package
 	 * @param  string  $config_dir    The actual location of the config. Normally the "config/" dir relative to $dir
 	 */
-	public static function addPackage($package_name, $dir, $environment = 'override', $config_dir = 'config/')
+	public static function addPackage($package_name, $dir, $config_dir = 'config/')
 	{
 		static::$packages[$package_name] = [
 			'dir' => rtrim($dir, '/').'/',
-			'environment' => $environment,
 			'config_dir' => rtrim($config_dir, '/').'/',
 			'data' => null
 		];
@@ -69,8 +68,8 @@ class Config
 
 		if ( ! isset(static::$packages[$package_name]['data'][$file]))
 		{
-			$upper_level = static::$packages[$package_name]['dir'].static::$packages[$package_name]['config_dir']
-					.static::$packages[$package_name]['environment'].'/'.$file.'.php';
+			$upper_level = VAPPPATH.$package_name.'/'.static::$packages[$package_name]['config_dir']
+					.'/'.$file.'.php';
 
 			$lower_level = static::$packages[$package_name]['dir'].static::$packages[$package_name]['config_dir']
 					.$file.'.php';
@@ -135,12 +134,11 @@ class Config
 	{
 		static::load($package_name, $file);
 
-		$path = static::$packages[$package_name]['dir'].static::$packages[$package_name]['config_dir']
-			.static::$packages[$package_name]['environment'].'/';
+		$path = VAPPPATH.$package_name.'/'.static::$packages[$package_name]['config_dir'].'/';
 
 		if ( ! is_dir($path))
 		{
-			mkdir($path);
+			mkdir($path, 0777, true);
 		}
 
 		static::saveArrayToFile($path.$file.'.php', static::$packages[$package_name]['data'][$file]);
