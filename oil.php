@@ -33,11 +33,23 @@ define('PKGPATH', realpath(__DIR__.'/fuel/packages/').DIRECTORY_SEPARATOR);
  */
 define('COREPATH', realpath(__DIR__.'/fuel/core/').DIRECTORY_SEPARATOR);
 
+/**
+ * The path to the Composer vendor directory.
+ */
+define('VENDPATH', realpath(__DIR__.'/vendor/').DIRECTORY_SEPARATOR);
+
+/**
+ * The "VENDOR APP" directory where live content can be stored
+ */
+define('VAPPPATH', realpath(__DIR__.'/app/').DIRECTORY_SEPARATOR);
+
 // Get the start time and memory for use later
 defined('FUEL_START_TIME') or define('FUEL_START_TIME', microtime(true));
 defined('FUEL_START_MEM') or define('FUEL_START_MEM', memory_get_usage());
 
 // Boot the app
+require VENDPATH.'autoload.php';
+
 require APPPATH.'bootstrap.php';
 
 Package::load('oil');
