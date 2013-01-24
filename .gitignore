@@ -16,4 +16,5 @@ fuel/app/tmp/
 fuel/app/config/development/
 fuel/app/config/production/
 
+composer.lock
 vendor
