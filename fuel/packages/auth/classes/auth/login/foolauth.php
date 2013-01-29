@@ -451,11 +451,12 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->andWhere('new_password_time > :new_password_time')
 			->set('new_password_key', null)
 			->set('new_password_time', null)
-			->set('password', $this->hash_password($new_password))
+			->set('password', ':new_password')
 			->setParameters([
-				'id' => $id,
-				'new_password_key' => $this->hash_password($new_password),
-				'new_password_time' => time() - 900
+				':id' => $id,
+				':new_password' => $this->hash_password($new_password),
+				':new_password_key' => $this->hash_password($new_password),
+				':new_password_time' => time() - 900
 			])
 			->execute();
 
@@ -511,9 +512,10 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$affected_rows = DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
-			->set('new_password_key', $this->hash_password($new_password_key))
+			->set('new_password_key', ':new_password_key')
 			->set('new_password_time', time())
 			->where('email = :email')
+			->setParameter(':new_password_key', $this->hash_password($new_password_key))
 			->setParameter(':email', $email)
 			->execute();
 
@@ -538,7 +540,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->select('*')
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('email = :email')
-			->orWhere('(id <> :user_id AND new_email = :new_email)')
+			->orWhere('(id <> :user_id AND new_email = :email)')
+			->setParameter(':user_id', $this->user['id'])
+			->setParameter(':email', $email)
 			->execute()
 			->fetch();
 
@@ -565,11 +569,13 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
-			->set('new_email', $email)
-			->set('new_email_key', $this->hash_password($new_email_key))
+			->set('new_email', ':new_email')
+			->set('new_email_key', ':new_email_key')
 			->set('new_email_time', time())
 			->where('id = :id')
 			->setParameter(':id', $this->user['id'])
+			->setParameter(':new_email', $email)
+			->setParameter(':new_email_key', $new_email_key)
 			->execute();
 
 		return $new_email_key;
@@ -605,12 +611,13 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
-			->set('email', $user['new_email'])
+			->set('email', ':email')
 			->set('new_email', null)
 			->set('new_email_key', null)
 			->set('new_email_time', null)
 			->where('id = :id')
 			->setParameter(':id', $id)
+			->setParameter(':email', $user['new_email'])
 			->execute();
 
 		$this->logout();
@@ -646,10 +653,11 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
-			->set('deletion_key', $this->hash_password($key))
+			->set('deletion_key', ':deletion_key')
 			->set('deletion_time', time())
 			->where('id = :id')
 			->setParameter(':id', $this->user['id'])
+			->setParameter(':deletion_key', $this->hash_password($key))
 			->execute();
 
 		return $key;
