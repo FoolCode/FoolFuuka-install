@@ -4,6 +4,7 @@ namespace Foolz\Install\Controller;
 
 use \Foolz\Config\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use \Foolz\Foolframe\Model\System as System;
 
 class Install extends \Controller
 {
@@ -44,7 +45,7 @@ class Install extends \Controller
 
 		$this->process('welcome');
 		$this->_view_data['method_title'] = __('Welcome');
-		$this->_view_data['main_content_view'] = \View::forge('install::welcome', $data);
+		$this->_view_data['main_content_view'] = \View::forge('install::install/welcome', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -52,11 +53,11 @@ class Install extends \Controller
 	public function action_system_check()
 	{
 		$data = [];
-		$data['system'] = \Foolz\Install\Model\Install::check_system();
+		$data['system'] = \Foolz\Foolframe\Model\System::environment();
 
 		$this->process('system_check');
 		$this->_view_data['method_title'] = __('System Check');
-		$this->_view_data['main_content_view'] = \View::forge('install::system_check', $data);
+		$this->_view_data['main_content_view'] = \View::forge('install::install/system_check', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -102,7 +103,7 @@ class Install extends \Controller
 
 		$this->process('database_setup');
 		$this->_view_data['method_title'] = __('Database Setup');
-		$this->_view_data['main_content_view'] = \View::forge('install::database_setup', $data);
+		$this->_view_data['main_content_view'] = \View::forge('install::install/database_setup', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -111,7 +112,7 @@ class Install extends \Controller
 	{
 		// if an admin account exists, lock down this step and redirect to the next step instead
 		\Config::load('foolauth', 'foolauth');
-		$check_users = \Foolz\Foolframe\Model\Users::get_all();
+		$check_users = \Foolz\Foolframe\Model\Users::getAll();
 
 		if ($check_users['count'] > 0)
 		{
@@ -133,7 +134,7 @@ class Install extends \Controller
 				list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
 				\Auth::activate_user($id, $activation_key);
 				\Auth::force_login($id);
-				$user = \Foolz\Foolframe\Model\Users::get_user();
+				$user = \Foolz\Foolframe\Model\Users::getUser();
 				$user->save(['group_id' => 100]);
 				\Response::redirect('install/modules');
 			}
@@ -145,7 +146,7 @@ class Install extends \Controller
 
 		$this->process('create_admin');
 		$this->_view_data['method_title'] = __('Admin Account');
-		$this->_view_data['main_content_view'] = \View::forge('install::create_admin');
+		$this->_view_data['main_content_view'] = \View::forge('install::install/create_admin');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -198,7 +199,7 @@ class Install extends \Controller
 
 		$this->process('modules');
 		$this->_view_data['method_title'] = __('Install FoolFrame Modules');
-		$this->_view_data['main_content_view'] = \View::forge('install::modules', $data);
+		$this->_view_data['main_content_view'] = \View::forge('install::install/modules', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -211,7 +212,7 @@ class Install extends \Controller
 
 		$this->process('complete');
 		$this->_view_data['method_title'] = __('Congratulations');
-		$this->_view_data['main_content_view'] = \View::forge('install::complete');
+		$this->_view_data['main_content_view'] = \View::forge('install::install/complete');
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 

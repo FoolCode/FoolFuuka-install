@@ -18,5 +18,5 @@
 
 	<hr />
 
-	<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success btn-large pull-right')) ?>
+	<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 <?= \Form::close() ?>

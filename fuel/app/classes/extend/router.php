@@ -62,6 +62,7 @@ class Router extends \Fuel\Core\Router
 					$match->controller = $hook->getParam('controller');
 					$match->action = $hook->getParam('action');
 					$match->method_params = $hook->getParam('method_params');
+
 					return $match;
 				}
 
@@ -71,6 +72,7 @@ class Router extends \Fuel\Core\Router
 					$match->controller = $temp_namespace;
 					$match->action = $method_params[0];
 					$match->method_params = array_slice($method_params, 1);
+
 					return $match;
 				}
 			}
@@ -91,6 +93,7 @@ class Router extends \Fuel\Core\Router
 			$match->controller = $info['controller'];
 			$match->action = $info['action'];
 			$match->method_params = $info['method_params'];
+
 			return $match;
 		}
 		else

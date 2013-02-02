@@ -4,6 +4,7 @@ namespace Foolz\Install\Model;
 
 use \Foolz\Config\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use \Foolz\Foolframe\Model\System as System;
 
 class Install
 {

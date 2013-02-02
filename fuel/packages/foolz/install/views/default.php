@@ -1,33 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8">
 		<title><?= $title ?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Config::get('foolframe.main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap-responsive.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
+		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='. \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.min.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
+		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<!--[if lt IE 8]>
-			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Config::get('foolframe.main.version') ?>" rel="stylesheet" type="text/css" />
+			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" rel="stylesheet" type="text/css" />
 		<![endif]-->
-		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/install/style.css?v='.\Config::get('foolframe.main.version') ?>" />
-		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='.\Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Config::get('foolframe.main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Config::get('foolframe.main.version') ?>"></script>
+		<style type="text/css">
+			body {
+				padding-top: 40px;
+				padding-bottom: 60px;
+			}
+			.well {
+				padding: 1px;
+			}
+			.system-check-container {
+				position: relative;
+				margin: 15px 0;
+				padding: 15px 15px 10px;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
+			}
+
+			.system-check-container-header {
+				position: relative;
+				top: -16px;
+				left: -16px;
+				padding: 3px 7px;
+				font-size: 12px;
+				font-weight: bold;
+				background-color: #f5f5f5;
+				border: 1px solid #ddd;
+				color: #9da0a4;
+				-webkit-border-radius: 4px 0 4px 0;
+				-moz-border-radius: 4px 0 4px 0;
+				border-radius: 4px 0 4px 0;
+			}
+			.install-sidebar {
+				margin-top: 70px;
+			}
+		</style>
 	</head>
 
 	<body>
+		<div class="container">
+			<div class="row">
+				<div class="span3 install-sidebar">
+					<?= $sidebar ?>
+				</div>
 
-		<div class="container-fluid clearfix">
+				<div class="span9">
+					<h2><?= $method_title ?></h2>
 
-			<?= $sidebar ?>
+					<hr/>
 
-			<div class="row-fluid" style="margin-top: 10px;">
-				<div>
-					<div class="satin content-rounded clearfix">
-						<?php if (isset($method_title)) : ?>
-							<h3><?= $method_title ?></h3>
-						<?php endif; ?>
-
+					<div class="alerts">
 						<?php if (isset($errors)) : ?>
 							<div class="alert alert-error">
 								<strong><?= __('Error!') ?></strong>
@@ -46,14 +83,30 @@
 							</div>
 						<?php endif; ?>
 
-						<?php if (isset($main_content_view)) : ?>
-							<?= $main_content_view ?>
-						<?php endif; ?>
+						<?php $notices = array_merge(\Notices::get(), \Notices::getFlash()); ?>
+						<?php foreach ($notices as $notice) : ?>
+							<div class="alert alert-<?= $notice['level'] ?>">
+								<?php if (is_array($notice['message'])) : ?>
+									<ul>
+										<?php foreach ($notice['message'] as $message) : ?>
+											<li><?= htmlentities($message, ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?></li>
+										<?php endforeach; ?>
+									</ul>
+								<?php else : ?>
+									<?= htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+								<?php endif; ?>
+							</div>
+						<?php endforeach; ?>
 					</div>
-				</div>
-				<div style="clear: both;"></div>
-			</div>
 
+					<?php if (isset($main_content_view)) : ?>
+						<?= $main_content_view ?>
+					<?php endif; ?>
+				</div>
+				<div style="clear:both"></div>
+			</div>
 		</div>
+
+		<?= \Security::js_set_token(); ?>
 	</body>
 </html>

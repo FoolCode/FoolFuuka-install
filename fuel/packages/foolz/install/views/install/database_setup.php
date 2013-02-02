@@ -1,12 +1,12 @@
 <p>
-	<?= __('Please enter your database connection details below.') ?>
+	<?= __('Please enter the details Please enter your database connection details below.') ?>
 </p>
 
 <div style="padding-top:20px;">
 	<?= Form::open(array('class' => 'form-horizontal')) ?>
 		<fieldset>
 			<div class="control-group">
-				<label class="control-label" for="hostname"><?= __('Database Host') ?></label>
+				<label class="control-label" for="hostname"><?= __('Database Hostname') ?></label>
 				<div class="controls">
 					<?= \Form::input(array('id' => 'hostname', 'name' => 'hostname', 'value' => \Input::post('hostname', 'localhost'))) ?>
 					<p class="help-block small-text"><?= __('Unless you are using a remote database server for this FoolFrame installation, leave it as `localhost`.') ?></p>
@@ -47,7 +47,7 @@
 
 			<hr />
 
-			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success btn-large pull-right')) ?>
+			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 		</fieldset>
 	<?= \Form::close() ?>
 </div>
