@@ -1,5 +1,5 @@
-<p>
-	<?= __('Congratulations, you now have a minimal FoolFrame installation. In order to actually use the framework, you must install at least one of the following modules:') ?>
+<p class="description">
+	<?= __('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
 </p>
 
 <?= \Form::open() ?>

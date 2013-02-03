@@ -1,7 +1,7 @@
-<p>
-	<?= __('Congratulations! Your custom FoolFrame installation is complete.') ?>
+<p class="text-success">
+	<?= __('Congratulations! The installation is complete!') ?>
 </p>
 
-<hr />
+<hr/>
 
-<a href="<?= \Uri::create('admin') ?>" class="btn btn-success pull-right"><?= __('Log In') ?></a>
+<a href="<?= \Uri::create('admin') ?>" class="btn btn-info pull-right"><?= __('Log In') ?></a>

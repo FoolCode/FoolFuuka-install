@@ -1,5 +1,5 @@
-<p>
-	<?= __('Please enter the account details you wish to create with administrative privileges. This account will be used to manage your FoolFrame installation. It is important that you do not lose this information since it required to perform administrative tasks.') ?>
+<p class="description">
+	<?= __('Please enter the following details to create the administrative account. This account will be used to manage the entire installation. It is important that you do not lose this information.') ?>
 </p>
 
 <div style="padding-top:20px;">
@@ -16,7 +16,7 @@
 			<div class="control-group">
 				<label class="control-label" for="email"><?= __('Email') ?></label>
 				<div class="controls">
-					<?= \Form::input(array('id' => 'email', 'name' => 'email', 'value' => \Input::post('email'))) ?>
+					<?= \Form::input(array('id' => 'email', 'name' => 'email', 'type' => 'email', 'value' => \Input::post('email'))) ?>
 					<p class="help-block small-text"><?= __('Enter the email address for the user account specified above. This will be used for account recovery and authentication.') ?></p>
 				</div>
 			</div>
@@ -35,7 +35,7 @@
 				</div>
 			</div>
 
-			<hr />
+			<hr/>
 
 			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 		</fieldset>

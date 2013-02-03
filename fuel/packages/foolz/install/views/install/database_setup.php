@@ -1,5 +1,5 @@
-<p>
-	<?= __('Please enter the details Please enter your database connection details below.') ?>
+<p class="description">
+	<?= __('Please enter the connection details to the MySQL database.') ?>
 </p>
 
 <div style="padding-top:20px;">
@@ -45,7 +45,7 @@
 				</div>
 			</div>
 
-			<hr />
+			<hr/>
 
 			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 		</fieldset>

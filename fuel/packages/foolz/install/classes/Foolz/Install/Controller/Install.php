@@ -172,11 +172,6 @@ class Install extends \Controller
 				\Foolz\Foolfuuka\Model\Schema::load($sm);
 			}
 
-			if (\Input::post('foolpod'))
-			{
-				$modules['fp'] = 'foolz/foolpod';
-			}
-
 			if (\Input::post('foolslide'))
 			{
 				$modules['fs'] = 'foolz/foolslide';
@@ -184,7 +179,7 @@ class Install extends \Controller
 
 			$sm->commit();
 
-			if (count($modules) > 0)
+			if (count($modules) > 1)
 			{
 				Config::set('foolz/foolframe', 'config', 'modules.installed', $modules);
 				Config::save('foolz/foolframe', 'config');
@@ -198,7 +193,7 @@ class Install extends \Controller
 		}
 
 		$this->process('modules');
-		$this->_view_data['method_title'] = __('Install FoolFrame Modules');
+		$this->_view_data['method_title'] = __('Install Modules');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/modules', $data);
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
