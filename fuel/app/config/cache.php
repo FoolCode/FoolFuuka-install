@@ -63,7 +63,7 @@ return array(
 
 	// specific configuration settings for the apc driver
 	'apc'  => array(
-		'cache_id'  => 'ffoolframe',  // unique id to distinquish fuel cache items from others stored on the same server(s)
+		'cache_id'  => 'foolframe',  // unique id to distinquish fuel cache items from others stored on the same server(s)
 	),
 
 	// specific configuration settings for the redis driver

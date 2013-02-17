@@ -85,16 +85,22 @@ class Install
 	{
 		$modules = array(
 			'foolfuuka' => array(
-				'title' => __('FoolFuuka Imageboard'),
+				'title' => 'FoolFuuka Imageboard',
 				'description' => __('FoolFuuka is one of the most advanced imageboard software written.'),
 				'disabled' => false,
 			),
 
 			'foolslide' => array(
-				'title' => __('FoolSlide Online Reader'),
+				'title' => 'FoolSlide Online Reader',
 				'description' => __('FoolSlide provides a clean visual interface to view multiple images in reading format. It can be used standalone to offer users the best reading experience available online.'),
 				'disabled' => true,
 			),
+
+			'foolstatus' => array(
+				'title' => __('FoolStatus'),
+				'description' => __('FoolStatus is an open-source status dashboard that allows content providers to alert users of network interruptions.'),
+				'disabled' => false
+			)
 		);
 
 		return $modules;

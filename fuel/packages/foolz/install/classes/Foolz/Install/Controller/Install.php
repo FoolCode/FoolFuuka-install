@@ -160,21 +160,28 @@ class Install extends \Controller
 		{
 			\Config::load('foolframe', 'foolframe');
 
-			$modules = ['ff' => 'foolz/foolframe'];
+			$modules = ['foolframe' => 'foolz/foolframe'];
 
 			$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix());
 			\Foolz\Foolframe\Model\Schema::load($sm);
 
 			if (\Input::post('foolfuuka'))
 			{
-				$modules['fu'] = 'foolz/foolfuuka';
+				$modules['foolfuuka'] = 'foolz/foolfuuka';
 
 				\Foolz\Foolfuuka\Model\Schema::load($sm);
 			}
 
 			if (\Input::post('foolslide'))
 			{
-				$modules['fs'] = 'foolz/foolslide';
+				$modules['foolslide'] = 'foolz/foolslide';
+			}
+
+			if (\Input::post('foolstatus'))
+			{
+				$modules['foolstatus'] = 'foolz/foolstatus';
+
+				\Foolz\Foolstatus\Model\Schema::load($sm);
 			}
 
 			$sm->commit();
