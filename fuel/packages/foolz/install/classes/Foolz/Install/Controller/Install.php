@@ -81,7 +81,7 @@ class Install extends \Controller
 				$input['password'] = \Input::post('password');
 				$input['type'] = 'pdo_mysql';
 
-				if ( ! \Foolz\Install\Model\Install::check_database($input))
+				if (\Foolz\Install\Model\Install::check_database($input))
 				{
 					\Foolz\Install\Model\Install::setup_database($input);
 					$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix());

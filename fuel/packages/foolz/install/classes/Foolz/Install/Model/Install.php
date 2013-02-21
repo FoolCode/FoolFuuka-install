@@ -12,9 +12,20 @@ class Install
 	{
 		switch ($array['type'])
 		{
-			case 'mysqli':
-				$test = @new \MySQLi($array['hostname'], $array['username'], $array['password'], $array['database'], 3306);
-				return mysqli_connect_errno();
+			case 'pdo_mysql':
+				try
+				{
+					$conn = new \PDO(
+						'mysql:dbname='.$array['database'].';host='.$array['hostname'],
+						$array['username'],
+						$array['password']
+					);
+					return true;
+				}
+				catch (\PDOException $e)
+				{
+					return false;
+				}
 		}
 	}
 
