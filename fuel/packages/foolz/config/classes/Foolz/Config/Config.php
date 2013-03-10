@@ -62,7 +62,7 @@ class Config
 			}
 			else
 			{
-				throw new \OutOfBoundsException;
+				throw new \OutOfBoundsException('Package "'.$package_name.'" not found.');
 			}
 		}
 
