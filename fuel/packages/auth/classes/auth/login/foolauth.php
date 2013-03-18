@@ -349,7 +349,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			}
 		}
 
-		$activated = (bool) \Preferences::get('ff.reg_email_disabled');
+		$activated = (bool) \Preferences::get('foolframe.reg_email_disabled');
 		$activation_key = '';
 
 		if ( ! $activated)
