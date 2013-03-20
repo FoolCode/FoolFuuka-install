@@ -32,7 +32,7 @@ class Gravatar {
 		}
 
 		// build url
-		$url = "http://gravatar.com/avatar.php?gravatar_id=".$config['email']."&amp;rating=".$config['rating']."&amp;size=".$config['size']."&amp;default=".$config['image'];
+		$url = "//gravatar.com/avatar.php?gravatar_id=".$config['email']."&amp;rating=".$config['rating']."&amp;size=".$config['size']."&amp;default=".$config['image'];
 
 		//return url
 		return $url;
