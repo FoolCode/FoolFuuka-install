@@ -61,6 +61,9 @@ class Install
 		Config::set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
 		Config::save('foolz/foolframe', 'foolauth');
 
+		Config::set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+		Config::save('foolz/foolframe', 'cache');
+
 		\Config::load('cache', 'cache');
 		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
 		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
