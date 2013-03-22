@@ -712,7 +712,10 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		// autologin garbage collection
 		if (time() % 25 == 0)
 		{
-			\DB::delete(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name'))->where('expiration', '<', time())->execute();
+			DC::qb()
+				->delete(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')))
+				->where('expiration', '<', time())
+				->execute();
 		}
 
 		DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')),[
