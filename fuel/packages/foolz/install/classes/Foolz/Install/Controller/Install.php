@@ -46,6 +46,7 @@ class Install extends \Controller
 		$this->process('welcome');
 		$this->_view_data['method_title'] = __('Welcome');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/welcome', $data);
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -58,6 +59,7 @@ class Install extends \Controller
 		$this->process('system_check');
 		$this->_view_data['method_title'] = __('System Check');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/system_check', $data);
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -72,7 +74,6 @@ class Install extends \Controller
 			$val->add_field('hostname', __('Hostname'), 'required|trim');
 			$val->add_field('prefix', __('Prefix'), 'trim');
 			$val->add_field('username', __('Username'), 'required|trim');
-			//$val->add_field('password', __('Password'), '');
 			$val->add_field('database', __('Database name'), 'required|trim');
 
 			if ($val->run())
@@ -84,10 +85,13 @@ class Install extends \Controller
 				if (\Foolz\Install\Model\Install::check_database($input))
 				{
 					\Foolz\Install\Model\Install::setup_database($input);
+
 					$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix());
 					\Foolz\Foolframe\Model\Schema::load($sm);
 					$sm->commit();
+
 					\Foolz\Install\Model\Install::create_salts();
+
 					\Response::redirect('install/create_admin');
 				}
 				else
@@ -104,6 +108,7 @@ class Install extends \Controller
 		$this->process('database_setup');
 		$this->_view_data['method_title'] = __('Database Setup');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/database_setup', $data);
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -136,6 +141,7 @@ class Install extends \Controller
 				\Auth::force_login($id);
 				$user = \Foolz\Foolframe\Model\Users::getUser();
 				$user->save(['group_id' => 100]);
+
 				\Response::redirect('install/modules');
 			}
 			else
@@ -147,6 +153,7 @@ class Install extends \Controller
 		$this->process('create_admin');
 		$this->_view_data['method_title'] = __('Admin Account');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/create_admin');
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -202,6 +209,7 @@ class Install extends \Controller
 		$this->process('modules');
 		$this->_view_data['method_title'] = __('Install Modules');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/modules', $data);
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 
@@ -215,6 +223,7 @@ class Install extends \Controller
 		$this->process('complete');
 		$this->_view_data['method_title'] = __('Congratulations');
 		$this->_view_data['main_content_view'] = \View::forge('install::install/complete');
+
 		return \Response::forge(\View::forge('install::default', $this->_view_data));
 	}
 

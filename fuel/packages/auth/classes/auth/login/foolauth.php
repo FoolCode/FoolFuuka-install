@@ -281,6 +281,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		{
 			$this->user = Config::get('foolz/foolframe', 'foolauth', 'guest_login', true) ? static::$guest_login : false;
 			\Cookie::delete('autologin');
+
 			return false;
 		}
 
@@ -590,7 +591,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 * @param   string  $email_key
 	 * @return  bool
 	 */
-	public function	change_email($id, $email_key)
+	public function change_email($id, $email_key)
 	{
 		$user = DC::qb()
 			->select('*')
@@ -717,7 +718,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 				->execute();
 		}
 
-		DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')),[
+		DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')), [
 			'user_id' => $this->user['id'],
 			'login_hash' => $this->hash_password($login_hash),
 			'expiration' => time() + 604800, // 7 days
@@ -854,5 +855,3 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	}
 
 }
-
-// end of file foolauth.php
