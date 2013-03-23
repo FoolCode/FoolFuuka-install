@@ -447,7 +447,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 * @param   string  username or null for current user
 	 * @return  bool
 	 */
-	public function change_password($id, $password_key, $new_password)
+	public function change_password($id, $new_password_key, $new_password)
 	{
 		$affected_rows = DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
@@ -457,12 +457,10 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->set('new_password_key', null)
 			->set('new_password_time', null)
 			->set('password', ':new_password')
-			->setParameters([
-				':id' => $id,
-				':new_password' => $this->hash_password($new_password),
-				':new_password_key' => $this->hash_password($new_password),
-				':new_password_time' => time() - 900
-			])
+			->setParameter(':id', $id)
+			->setParameter(':new_password', $this->hash_password($new_password))
+			->setParameter(':new_password_key', $this->hash_password($new_password_key))
+			->setParameter(':new_password_time', time() - 900)
 			->execute();
 
 		if ( ! $affected_rows)
@@ -493,11 +491,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->where('id = :id')
 			->andWhere('new_password_key = :new_password_key')
 			->andWhere('new_password_time > :new_password_time')
-			->setParameters([
-				'id' => $id,
-				'new_password_key' => $this->hash_password($password_key),
-				'new_password_time' => time() - 900,
-			])
+			->setParameter('id', $id)
+			->setParameter('new_password_key', $this->hash_password($password_key))
+			->setParameter('new_password_time', time() - 900)
 			->execute()
 			->fetch()['count'];
 
@@ -602,11 +598,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->where('id = :id')
 			->andWhere('new_email_key = :new_email_key')
 			->andWhere('new_email_time > :new_email_time')
-			->setParameters([
-				':id' => $id,
-				':new_email_key' => $this->hash_password($email_key),
-				':new_email_time' => time() - 86400
-			])
+			->setParameter(':id', $id)
+			->setParameter(':new_email_key', $this->hash_password($email_key))
+			->setParameter(':new_email_time', time() - 86400)
 			->execute()
 			->fetch();
 
@@ -685,11 +679,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->where('id = :id')
 			->andWhere('deletion_key = :deletion_key')
 			->andWhere('deletion_time > :deletion_time')
-			->setParameters([
-				':id' => $id,
-				':deletion_key' => $this->hash_password($key),
-				':deletion_time' => time() - 900
-			])
+			->setParameter(':id', $id)
+			->setParameter(':deletion_key', $this->hash_password($key))
+			->setParameter(':deletion_time', time() - 900)
 			->execute();
 
 		if ( ! $affected_rows)
