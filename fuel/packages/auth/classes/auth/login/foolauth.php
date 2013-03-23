@@ -166,7 +166,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('username = :username')
 			->andWhere('password = :password')
-			->setParameters([':username' => $username_or_email, ':password' => $password])
+			->setParameter(':username', $username_or_email)
+			->setParameter(':password', $password)
 			->execute()
 			->fetch();
 
@@ -334,7 +335,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('l.username = :username')
 			->orWhere('l.email = :email')
-			->setParameters([':username' => $username, ':email' => $email])
+			->setParameter(':username', $username)
+			->setParameter(':email', $email)
 			->execute()
 			->fetchAll();
 
@@ -429,7 +431,9 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->set('activated', ':activated')
 			->where('id = :id')
 			->andWhere('activation_key = :activation_key')
-			->setParameters([':activated' => true, ':id' => $id, ':activation_key' => $this->hash_password($activation_key)])
+			->setParameter(':activated', true)
+			->setParameter(':id', $id)
+			->setParameter(':activation_key', $this->hash_password($activation_key))
 			->execute();
 
 		return $affected_rows ? true : false;
@@ -559,7 +563,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('password = :password')
-			->setParameters([':id' => $this->user['id'], ':password' => $this->hash_password($password)])
+			->setParameter(':id', $this->user['id'])
+			->setParameter(':password', $this->hash_password($password))
 			->execute()
 			->fetch();
 
@@ -641,7 +646,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('id = :id')
 			->andWhere('password = :password')
-			->setParameters([':id' => $this->user['id'], ':password' => $this->hash_password($password)])
+			->setParameter(':id', $this->user['id'])
+			->setParameter(':password', $this->hash_password($password))
 			->execute()
 			->fetch()['count'];
 
