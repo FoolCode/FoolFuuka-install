@@ -108,7 +108,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 					->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')), 'la')
 					->where('la.login_hash = :login_hash')
 					->andWhere('la.expiration > :time')
-					->setParameters([':login_hash' => $this->hash_password($autologin_hash), ':time' => time()])
+					->setParameter(':login_hash', $this->hash_password($autologin_hash))
+					->setParameter(':time', time())
 					->execute()
 					->fetch();
 
@@ -714,7 +715,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 		{
 			DC::qb()
 				->delete(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_autologin_name')))
-				->where('expiration', '<', time())
+				->where('expiration < '.time())
 				->execute();
 		}
 
