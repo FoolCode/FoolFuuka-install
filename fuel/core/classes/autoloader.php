@@ -164,7 +164,7 @@ class Autoloader
 	 */
 	public static function register()
 	{
-		spl_autoload_register('Autoloader::load', true, true);
+		spl_autoload_register('Autoloader::load', true, false);
 	}
 
 	/**
