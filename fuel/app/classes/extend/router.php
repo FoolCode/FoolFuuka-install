@@ -48,7 +48,7 @@ class Router extends \Fuel\Core\Router
 					$temp_namespace .= '\\'.static::lowercaseToClassName($segment);
 				}
 
-				$hook = \Foolz\Plugin\Hook::forge('Fuel\Core\Router.parse_match.intercept')
+				$hook = \Foolz\Plugin\Hook::forge('Fuel\Core\Router::parse_match.intercept')
 					->setParams([
 						'controller' => $temp_namespace,
 						'action' => $method_params[0],

@@ -353,13 +353,13 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			}
 		}
 
-		$activated = (bool) \Preferences::get('foolframe.reg_email_disabled');
-		$activation_key = '';
+		$activated = (bool) \Preferences::get('foolframe.auth.disable_registration_email');
+		$activation_key = null;
 
 		if ( ! $activated)
 		{
 			// get a string for validation email
-			$activation_key = \Str::random('sha1');
+			$activation_key = $this->hash_password((string) \Str::random('sha1'));
 		}
 
 		$user = array(
@@ -368,7 +368,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			'email'           => $email,
 			'group_id'        => (int) $group,
 			'activated'       => $activated,
-			'activation_key'  => $this->hash_password((string) $activation_key),
+			'activation_key'  => $activation_key,
 			'profile_fields'  => serialize($profile_fields),
 			'created_at'      => \Date::forge()->get_timestamp()
 		);
