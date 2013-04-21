@@ -12,7 +12,8 @@
 
 namespace Auth;
 
-use \Foolz\Config\Config;
+use \Foolz\Config\Config,
+	\Foolz\Cache\Cache;
 
 class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 {
@@ -25,22 +26,38 @@ class Auth_Acl_FoolAcl extends \Auth_Acl_Driver
 		\Profiler::mark('Start Auth_Acl_FoolAcl::__init()');
 		\Profiler::mark_memory(false, 'Start Auth_Acl_FoolAcl::__init()');
 
-		static::$_valid_roles = array_keys(Config::get('foolz/foolframe', 'foolauth', 'roles'));
-
-		static::$_role_permissions = Config::get('foolz/foolframe', 'foolauth', 'roles');
-
-		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
+		try
 		{
-			// basics are already loaded
-			if ($module !== 'foolz/foolframe')
-			{
-				$permissions = Config::get($module, 'foolauth', 'roles');
+			$cache = Cache::item('fuel.package.foolacl._init.roles')->get();
+		}
+		catch (\OutOfBoundsException $e)
+		{
+			$cache = [];
 
-				foreach ($permissions as $key => $item)
+			$cache['_valid_roles'] = array_keys(Config::get('foolz/foolframe', 'foolauth', 'roles'));
+
+			$cache['_role_permissions'] = Config::get('foolz/foolframe', 'foolauth', 'roles');
+
+			foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
+			{
+				// basics are already loaded
+				if ($module !== 'foolz/foolframe')
 				{
-					static::$_role_permissions[$key] = array_merge(static::$_role_permissions[$key], $item);
+					$permissions = Config::get($module, 'foolauth', 'roles');
+
+					foreach ($permissions as $key => $item)
+					{
+						$cache['_role_permissions'][$key] = array_merge($cache['_role_permissions'][$key], $item);
+					}
 				}
 			}
+
+			Cache::item('fuel.package.foolacl._init.roles')->set($cache, 8);
+		}
+
+		foreach ($cache as $key => $item)
+		{
+			static::$$key = $item;
 		}
 
 		\Profiler::mark('End Auth_Acl_FoolAcl::__init()');
