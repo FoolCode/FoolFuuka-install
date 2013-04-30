@@ -44,6 +44,15 @@ require VENDPATH.'autoload.php';
 
 require APPPATH.'bootstrap.php';
 
+use Symfony\Component\HttpFoundation\Request;
+
+use Foolz\Foolframe\Model\Framework;
+
+$request = Request::createFromGlobals();
+$response = (new Framework())->handle($request);
+$response->send();
+
+/*
 // Generate the request, execute it and send the output.
 try
 {
@@ -74,3 +83,4 @@ $response->body(
 );
 
 $response->send(true);
+*/
