@@ -15,7 +15,7 @@ Autoloader::add_classes([
 	// Example: 'View' => APPPATH.'classes/view.php',
 	'Router' => APPPATH.'classes/extend/router.php',
 	'Input' => APPPATH.'classes/extend/input.php',
-	'Uri' => APPPATH.'classes/extend/uri.php',
+	//'Uri' => APPPATH.'classes/extend/uri.php',
 	'Validation' => APPPATH.'classes/extend/validation.php',
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
 	'Session_Db' => APPPATH.'classes/extend/session_db.php',

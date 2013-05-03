@@ -45,42 +45,8 @@ require VENDPATH.'autoload.php';
 require APPPATH.'bootstrap.php';
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Foolz\Foolframe\Model\Framework;
 
 $request = Request::createFromGlobals();
-$response = (new Framework())->handle($request);
+$response = (new Framework($request))->handle($request);
 $response->send();
-
-/*
-// Generate the request, execute it and send the output.
-try
-{
-	$response = Request::forge()->execute()->response();
-}
-catch (HttpNotFoundException $e)
-{
-	$route = array_key_exists('_404_', Router::$routes) ? Router::$routes['_404_']->translation : Config::get('routes._404_');
-	if ($route)
-	{
-		$response = Request::forge($route)->execute()->response();
-	}
-	else
-	{
-		throw $e;
-	}
-}
-
-// This will add the execution time and memory usage to the output.
-// Comment this out if you don't use it.
-$bm = Profiler::app_total();
-$response->body(
-	str_replace(
-		array('{exec_time}', '{mem_usage}'),
-		array(round($bm[0], 4), round($bm[1] / pow(1024, 2), 3)),
-		$response->body()
-	)
-);
-
-$response->send(true);
-*/

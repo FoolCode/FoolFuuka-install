@@ -236,7 +236,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Theme'          => COREPATH.'classes/theme.php',
 		'Fuel\\Core\\ThemeException' => COREPATH.'classes/theme.php',
 
-		'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
+	//	'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
 
 		'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
 

@@ -8,7 +8,7 @@ class Uri extends \Fuel\Core\Uri
 		{
 			return parent::create($uri, $variables, $get_variables, $secure);
 		}
-		
+
 		if(is_string($uri))
 		{
 			$uri = explode('/', $uri);
@@ -25,37 +25,37 @@ class Uri extends \Fuel\Core\Uri
 		}
 
 		$result = parent::create($uri, $variables, $get_variables, $secure);
-		
+
 		if (substr($result, -1) !== '/')
 		{
 			$result .= '/';
 		}
-			
+
 		return $result;
 	}
-	
-	
+
+
 	public static function uri_to_assoc($uri, $index = 0, $allowed = null)
 	{
 		if (is_string($uri))
 		{
 			$uri = explode('/', $uri);
 		}
-		
+
 		if (\Input::extension() !== null)
 		{
 			$uri[count($uri) - 1] = $uri[count($uri) - 1].'.'.\Input::extension();
 		}
-		
+
 		for ($i = 0; $i < $index; $i++)
-		{ 
+		{
 			array_shift($uri);
 		}
-		
+
 		// reorder the keys
 		$uri = array_values($uri);
 		$result = array();
-		
+
 		foreach ($uri as $key => $item)
 		{
 			if ($key % 2)
@@ -67,17 +67,17 @@ class Uri extends \Fuel\Core\Uri
 				$temp = $item;
 			}
 		}
-		
+
 		if ($allowed !== null)
 		{
 			foreach ($allowed as $item)
 			{
 				$filtered[$item] = isset($result[$item]) ? $result[$item] : null;
 			}
-			
+
 			$result = $filtered;
 		}
-		
+
 		return $result;
 	}
 }
