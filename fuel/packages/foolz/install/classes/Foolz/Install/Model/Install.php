@@ -15,11 +15,27 @@ class Install
 			case 'pdo_mysql':
 				try
 				{
-					$conn = new \PDO(
+					new \PDO(
 						'mysql:dbname='.$array['database'].';host='.$array['hostname'],
 						$array['username'],
 						$array['password']
 					);
+
+					return true;
+				}
+				catch (\PDOException $e)
+				{
+					return false;
+				}
+			case 'pdo_pgsql':
+				try
+				{
+					new \PDO(
+						'pgsql:dbname='.$array['database'].';host='.$array['hostname'],
+						$array['username'],
+						$array['password']
+					);
+
 					return true;
 				}
 				catch (\PDOException $e)
@@ -63,11 +79,6 @@ class Install
 
 		Config::set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
 		Config::save('foolz/foolframe', 'cache');
-
-		\Config::load('cache', 'cache');
-		\Config::set('cache.apc.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
-		\Config::set('cache.memcached.cache_id', 'foolframe_'.\Str::random('alnum', 3).'_');
-		\Config::save(\Fuel::$env.DS.'cache', 'cache');
 
 		$crypt = [];
 

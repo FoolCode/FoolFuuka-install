@@ -6,6 +6,14 @@
 	<?= Form::open(array('class' => 'form-horizontal')) ?>
 		<fieldset>
 			<div class="control-group">
+				<label class="control-label" for="hostname"><?= __('Database Type') ?></label>
+				<div class="controls">
+					<?= \Form::select('type', \Input::post('type', 'pdo_mysql'), array('pdo_mysql' => 'MySQL', 'pdo_pgsql' => 'PostgreSQL')); ?>
+					<p class="help-block small-text"><?= __('The database software you are using.') ?></p>
+				</div>
+			</div>
+
+			<div class="control-group">
 				<label class="control-label" for="hostname"><?= __('Database Hostname') ?></label>
 				<div class="controls">
 					<?= \Form::input(array('id' => 'hostname', 'name' => 'hostname', 'value' => \Input::post('hostname', 'localhost'))) ?>
