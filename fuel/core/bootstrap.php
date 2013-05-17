@@ -27,6 +27,7 @@ define('MBSTRING', function_exists('mb_get_info'));
 /**
  * Register all the error/shutdown handlers
  */
+/*
 register_shutdown_function(function ()
 {
 	// Fire off the shutdown events
@@ -47,6 +48,7 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 	load_error_classes();
 	return \Error::error_handler($severity, $message, $filepath, $line);
 });
+*/
 
 function setup_autoloader()
 {
