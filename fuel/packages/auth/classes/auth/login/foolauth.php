@@ -367,7 +367,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			'password'        => $this->hash_password((string) $password),
 			'email'           => $email,
 			'group_id'        => (int) $group,
-			'activated'       => $activated,
+			'activated'       => (int) $activated,
 			'activation_key'  => $activation_key,
 			'profile_fields'  => serialize($profile_fields),
 			'created_at'      => \Date::forge()->get_timestamp()
@@ -375,7 +375,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 
 		$result = DC::forge()->insert(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), $user);
 
-		return ($result) ? array(DC::forge()->lastInsertId(), $activation_key) : false;
+		return ($result) ? array(DC::forge()->lastInsertId(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name').'_id_seq')), $activation_key) : false;
 	}
 
 	/**
@@ -432,7 +432,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->set('activated', ':activated')
 			->where('id = :id')
 			->andWhere('activation_key = :activation_key')
-			->setParameter(':activated', true)
+			->setParameter(':activated', 1)
 			->setParameter(':id', $id)
 			->setParameter(':activation_key', $this->hash_password($activation_key))
 			->execute();

@@ -80,7 +80,7 @@ class Install extends \Controller
 			{
 				$input = $val->input();
 				$input['password'] = \Input::post('password');
-				$input['type'] = 'pdo_mysql';
+				$input['type'] = \Input::post('type');
 
 				if (\Foolz\Install\Model\Install::check_database($input))
 				{
