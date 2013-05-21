@@ -55,5 +55,5 @@ ErrorHandler::register();
 ExceptionHandler::register();
 
 $request = Request::createFromGlobals();
-$response = (new Framework($request))->handle($request);
-$response->send();
+
+new Framework($request);
