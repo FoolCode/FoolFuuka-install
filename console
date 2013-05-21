@@ -1,10 +1,9 @@
+#!/usr/bin/env php
 <?php
-/**
- * Refuse to run oil when called from php-cgi !
- */
+
 if (substr(php_sapi_name(), 0, 3) == 'cgi')
 {
-    die("The use of oil is not supported when running php-cgi. Oil needs php-cli to function!\n\n");
+    die("You can run the FoolFrame console only from the command line.\n\n");
 }
 
 /**
@@ -43,18 +42,9 @@ define('VENDPATH', realpath(__DIR__.'/vendor/').DIRECTORY_SEPARATOR);
  */
 define('VAPPPATH', realpath(__DIR__.'/app/').DIRECTORY_SEPARATOR);
 
-// Get the start time and memory for use later
-defined('FUEL_START_TIME') or define('FUEL_START_TIME', microtime(true));
-defined('FUEL_START_MEM') or define('FUEL_START_MEM', memory_get_usage());
-
 // Boot the app
 require VENDPATH.'autoload.php';
 
 require APPPATH.'bootstrap.php';
 
-Package::load('oil');
-
-// Fire up the command line interfact
-Oil\Command::init($_SERVER['argv']);
-
-/* End of file oil */
+(new Foolz\Foolframe\Model\Framework())->handleConsole();
