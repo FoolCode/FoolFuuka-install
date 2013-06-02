@@ -8,12 +8,12 @@
         }
     ],
     "require": {
-		"foolz/foolframe": "dev-master",
-		"foolz/foolfuuka": "dev-master",
+		"foolz/foolframe": "dev-develop",
+		"foolz/foolfuuka": "dev-develop",
 		"foolz/inet": "dev-master",
-		"foolz/package": "dev-master",
-		"foolz/plugin": "dev-master",
-		"foolz/theme": "dev-master",
+		"foolz/package": "dev-develop",
+		"foolz/plugin": "dev-develop",
+		"foolz/theme": "dev-develop",
 		"foolz/cache": "dev-master",
 		"foolz/sphinxql-query-builder": "dev-master",
 
