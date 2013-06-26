@@ -163,7 +163,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->select('*')
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('username = :username')
-			->andWhere('password = :password')
+			//->andWhere('password = :password')
 			->setParameter(':username', $username_or_email)
 			//->setParameter(':password', $password)
 			->execute()
