@@ -13,6 +13,8 @@
 namespace Auth;
 
 
+use Foolz\Config\Config;
+
 class AuthException extends \FuelException {}
 
 
@@ -55,12 +57,10 @@ class Auth
 
 	public static function _init()
 	{
-		\Config::load('auth', true);
-
 		// Whether to allow multiple drivers of any type, defaults to not allowed
-		static::$_verify_multiple = \Config::get('auth.verify_multiple_logins', false);
+		static::$_verify_multiple = false;
 
-		foreach((array) \Config::get('auth.driver', array()) as $driver => $config)
+		foreach(array('FoolAuth') as $driver => $config)
 		{
 			$config = is_int($driver)
 				? array('driver' => $config)
@@ -85,7 +85,7 @@ class Auth
 	{
 		// Driver is given as array key or just string in custom
 		$custom = ! is_array($custom) ? array('driver' => $custom) : $custom;
-		$config = \Config::get('auth.'.$custom['driver'].'_config', array());
+		$config = Config::get('foolz/foolframe', 'foolauth', '', array());
 		$config = array_merge($config, $custom);
 
 		// Driver must be set

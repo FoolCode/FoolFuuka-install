@@ -41,7 +41,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function hash_password($password)
 	{
-		return base64_encode($this->hasher()->pbkdf2($password, \Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'salt'), 10000, 32));
+		return base64_encode($this->hasher()->pbkdf2($password, '', 10000, 32));
 	}
 
 	public static function _init()
@@ -159,19 +159,17 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new FoolUserLimitExceeded;
 		}
 
-		$password = $this->hash_password($password);
-
 		$this->user = DC::qb()
 			->select('*')
 			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
 			->where('username = :username')
 			->andWhere('password = :password')
 			->setParameter(':username', $username_or_email)
-			->setParameter(':password', $password)
+			//->setParameter(':password', $password)
 			->execute()
 			->fetch();
 
-		if ($this->user)
+		if ($this->user && password_verify($password, $this->user['password']))
 		{
 			return $this->user;
 		}
@@ -362,9 +360,15 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			$activation_key = $this->hash_password((string) \Str::random('sha1'));
 		}
 
+		$hashed_password = password_hash($password, PASSWORD_BCRYPT);
+		if ( ! $hashed_password)
+		{
+			throw new \FoolUserUpdateException('Issues hashing the password', 4);
+		}
+
 		$user = array(
 			'username'        => (string) $username,
-			'password'        => $this->hash_password((string) $password),
+			'password'        => $hashed_password,
 			'email'           => $email,
 			'group_id'        => (int) $group,
 			'activated'       => (int) $activated,
@@ -450,6 +454,8 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 	 */
 	public function change_password($id, $new_password_key, $new_password)
 	{
+		$new_password = password_hash($new_password, PASSWORD_BCRYPT);
+
 		$affected_rows = DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
@@ -459,7 +465,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->set('new_password_time', 'null')
 			->set('password', ':new_password')
 			->setParameter(':id', $id)
-			->setParameter(':new_password', $this->hash_password($new_password))
+			->setParameter(':new_password', $new_password)
 			->setParameter(':new_password_key', $this->hash_password($new_password_key))
 			->setParameter(':new_password_time', time() - 900)
 			->execute();
