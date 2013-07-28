@@ -40,4 +40,4 @@ require VENDPATH.'autoload.php';
 
 require APPPATH.'bootstrap.php';
 
-(new Foolz\Foolframe\Model\Framework())->handleWeb();
+(new Foolz\Foolframe\Model\Context())->handleWeb();

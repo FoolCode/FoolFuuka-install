@@ -14,7 +14,6 @@ Autoloader::add_classes([
 	// Add classes you want to override here
 	// Example: 'View' => APPPATH.'classes/view.php',
 	'Input' => APPPATH.'classes/extend/input.php',
-	'Validation' => APPPATH.'classes/extend/validation.php',
 	'Cookie' => APPPATH.'classes/extend/cookie.php',
 	'Session_Db' => APPPATH.'classes/extend/session_db.php',
 	'ReCaptcha' => APPPATH.'classes/extend/recaptcha.php',
