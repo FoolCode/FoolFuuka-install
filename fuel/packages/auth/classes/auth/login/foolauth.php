@@ -13,7 +13,7 @@
 namespace Auth;
 
 use \Foolz\Config\Config;
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 
 class FoolUserUpdateException extends \Exception {}
 

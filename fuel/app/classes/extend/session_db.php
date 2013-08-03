@@ -14,7 +14,7 @@
 
 // --------------------------------------------------------------------
 
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 
 class Session_Db extends Fuel\Core\Session_Driver
 {

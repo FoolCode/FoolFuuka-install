@@ -1,6 +1,6 @@
 <?php
 
-use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Legacy\Preferences;
 
 class ReCaptcha extends \ReCaptcha\ReCaptcha
 {
