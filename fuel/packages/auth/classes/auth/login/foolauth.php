@@ -559,22 +559,12 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			throw new FoolUserEmailExists;
 		}
 
-		$new_email_key = sha1(Config::get('foolz/foolframe', 'foolauth', 'login_hash_salt').$email.time());
-
-		$check_password = DC::qb()
-			->select('*')
-			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 'l')
-			->where('id = :id')
-			->andWhere('password = :password')
-			->setParameter(':id', $this->user['id'])
-			->setParameter(':password', $this->hash_password($password))
-			->execute()
-			->fetch();
-
-		if ( ! $check_password)
+		if ($this->user && !password_verify($password, $this->user['password']))
 		{
 			throw new FoolUserWrongPassword;
 		}
+
+        $new_email_key = sha1(Config::get('foolz/foolframe', 'foolauth', 'login_hash_salt').$email.time());
 
 		DC::qb()
 			->update(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')))
