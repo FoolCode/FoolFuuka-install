@@ -596,7 +596,7 @@ class Auth_Login_FoolAuth extends \Auth_Login_Driver
 			->andWhere('new_email_key = :new_email_key')
 			->andWhere('new_email_time > :new_email_time')
 			->setParameter(':id', $id)
-			->setParameter(':new_email_key', $this->hash_password($email_key))
+			->setParameter(':new_email_key', $email_key)
 			->setParameter(':new_email_time', time() - 86400)
 			->execute()
 			->fetch();
