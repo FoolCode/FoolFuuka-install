@@ -47,4 +47,4 @@ require VENDPATH.'autoload.php';
 
 require APPPATH.'bootstrap.php';
 
-(new Foolz\Foolframe\Model\Framework())->handleConsole();
+(new Foolz\Foolframe\Model\Context())->handleConsole();
