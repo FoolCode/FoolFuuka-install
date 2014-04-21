@@ -11,21 +11,6 @@ ini_set('display_errors', 1);
 define('DOCROOT', __DIR__.DIRECTORY_SEPARATOR);
 
 /**
- * Path to the application directory.
- */
-define('APPPATH', realpath(__DIR__.'/../fuel/app/').DIRECTORY_SEPARATOR);
-
-/**
- * Path to the default packages directory.
- */
-define('PKGPATH', realpath(__DIR__.'/../fuel/packages/').DIRECTORY_SEPARATOR);
-
-/**
- * The path to the framework core.
- */
-define('COREPATH', realpath(__DIR__.'/../fuel/core/').DIRECTORY_SEPARATOR);
-
-/**
  * The path to the Composer vendor directory.
  */
 define('VENDPATH', realpath(__DIR__.'/../vendor/').DIRECTORY_SEPARATOR);
@@ -35,9 +20,36 @@ define('VENDPATH', realpath(__DIR__.'/../vendor/').DIRECTORY_SEPARATOR);
  */
 define('VAPPPATH', realpath(__DIR__.'/../app/').DIRECTORY_SEPARATOR);
 
+function e($string)
+{
+    return htmlentities($string);
+}
+
+function _i()
+{
+    $argc = func_num_args();
+    $args = func_get_args();
+    $args[0] = gettext($args[0]);
+
+    if ($argc <= 1)
+    {
+        return $args[0];
+    }
+
+    return call_user_func_array('sprintf', $args);
+}
+
+function _n()
+{
+    $args = func_get_args();
+    $args[0] = ngettext($args[0], $args[1], $args[2]);
+
+    array_splice($args, 1, 1);
+
+    return call_user_func_array('sprintf', $args);
+}
+
 // Boot the app
 require VENDPATH.'autoload.php';
-
-require APPPATH.'bootstrap.php';
 
 (new Foolz\Foolframe\Model\Context())->handleWeb();
