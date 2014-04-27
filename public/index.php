@@ -25,28 +25,91 @@ function e($string)
     return htmlentities($string);
 }
 
-function _i()
+if (function_exists('_'))
 {
-    $argc = func_num_args();
-    $args = func_get_args();
-    $args[0] = gettext($args[0]);
-
-    if ($argc <= 1)
+    function _i()
     {
-        return $args[0];
+        $argc = func_num_args();
+        $args = func_get_args();
+        $args[0] = gettext($args[0]);
+
+        if ($argc <= 1)
+        {
+            return $args[0];
+        }
+
+        return call_user_func_array('sprintf', $args);
     }
 
-    return call_user_func_array('sprintf', $args);
+    function _n()
+    {
+        $args = func_get_args();
+        $args[0] = ngettext($args[0], $args[1], $args[2]);
+
+        array_splice($args, 1, 1);
+
+        return call_user_func_array('sprintf', $args);
+    }
+
+    /**
+     * @deprecated
+     */
+    function __($text)
+    {
+        return _($text);
+    }
+
+    /**
+     * @deprecated
+     */
+    function _ngettext($msgid1, $msgid2, $n)
+    {
+        return ngettext($msgid1, $msgid2, $n);
+    }
 }
-
-function _n()
+else
 {
-    $args = func_get_args();
-    $args[0] = ngettext($args[0], $args[1], $args[2]);
+    function _i()
+    {
+        $argc = func_num_args();
+        $args = func_get_args();
 
-    array_splice($args, 1, 1);
+        if ($argc <= 1)
+        {
+            return $args[0];
+        }
 
-    return call_user_func_array('sprintf', $args);
+        return call_user_func_array('sprintf', $args);
+    }
+
+    function _n()
+    {
+        $args = func_get_args();
+        $args[0] = ($args[2] != 1) ? $args[1] : $args[0];
+
+        array_splice($args, 1, 1);
+
+        return call_user_func_array('sprintf', $args);
+    }
+
+    /**
+     * @deprecated
+     */
+    function __($text)
+    {
+        return $text;
+    }
+
+    /**
+     * @deprecated
+     */
+    function _ngettext($msgid1, $msgid2, $n)
+    {
+        if($n !== 1)
+            return __($msgid2);
+
+        return __($msgid1);
+    }
 }
 
 // Boot the app
