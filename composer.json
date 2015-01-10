@@ -8,14 +8,14 @@
         }
     ],
     "require": {
-        "foolz/foolframe": "dev-master",
-        "foolz/foolfuuka": "dev-master",
+        "foolz/foolframe": "1.0.*",
+        "foolz/foolfuuka": "2.0.*",
         "foolz/inet": "dev-master",
         "foolz/package": "dev-master",
         "foolz/plugin": "dev-master",
         "foolz/theme": "dev-master",
         "foolz/cache": "dev-master",
-        "foolz/sphinxql-query-builder": "dev-master",
+        "foolz/sphinxql-query-builder": "0.9.*",
         "foolz/profiler": "dev-master",
 
         "symfony/class-loader": "2.2.*",
