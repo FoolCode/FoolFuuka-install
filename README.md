@@ -1,3 +1,1 @@
-## FoolFuuka Installer
-
-This is just an external wrapper to install FoolFuuka. More info at the [FoolFuuka Github page](//github.com/FoolCode/FoolFuuka).
+This install wrapper has been **deprecated** and **will no longer be maintained**. Please refer to the [FoolFuuka](//github.com/FoolCode/FoolFuuka) repository from now on and for more information.
